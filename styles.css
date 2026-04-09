@@ -2442,9 +2442,9 @@ left: 0;
     width: 94px;
     height: 56px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
-    padding: 6px 12px 0 12px;
+    padding: 0px 12px 0 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 5px;
     background: rgba(20, 20, 20, 0.68);
@@ -2952,11 +2952,16 @@ left: 0;
 
     .interview {
         padding: 80px 80px 80px;
+        min-height: 1140px;
     }
 
     .interview-heading {
-        width: 1100px;
+        width: 1190px;
         margin: 0 auto 100px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%) scale(0.9);
+        transform-origin: center top;
     }
 
     .interview-title {
@@ -2973,34 +2978,35 @@ left: 0;
     .interview-ellipse-top {
         width: 1100px;
         height: 200px;
-        top: 353px;
+        top: 253px;
     }
 
     .interview-ellipse-mid {
         width: 1100px;
         height: 200px;
-        top: 505px;
+        top: 405px;
     }
 
     .interview-ellipse-low {
         width: 1100px;
         height: 200px;
-        top: 652px;
+        top: 552px;
     }
 
     .interview-ellipse-bottom {
         width: 920px;
         height: 180px;
-        top: 830px;
+        top: 730px;
     }
 
     .interview-axis {
-        top: 440px !important;
+        top: 340px !important;
         height: 600px !important;
     }
 
     .interview-info-card {
         left: 50% !important;
+        top: 285px !important;
         transform: translateX(-50%) scale(0.65);
         transform-origin: center;
     }
@@ -3015,29 +3021,29 @@ left: 0;
         transform-origin: left center;
     }
 
-    .interview-card-monte-2025 { left: calc(50% - 440px); top: 455px; }
-    .interview-card-kommersant-2025 { left: calc(50% - 235px); top: 490px; }
-    .interview-card-kp1-2025 { left: calc(50% + 40px); top: 485px; }
-    .interview-card-other-2025 { left: calc(50% + 320px); top: 460px; }
+    .interview-card-monte-2025 { left: calc(50% - 440px); top: 355px; }
+    .interview-card-kommersant-2025 { left: calc(50% - 235px); top: 390px; }
+    .interview-card-kp1-2025 { left: calc(50% + 40px); top: 385px; }
+    .interview-card-other-2025 { left: calc(50% + 320px); top: 360px; }
 
-    .interview-card-monte-2024 { left: calc(50% - 440px); top: 605px; }
-    .interview-card-kommersant-2024 { left: calc(50% - 235px); top: 640px; }
-    .interview-card-russian-2024 { left: calc(50% + 60px); top: 640px; }
-    .interview-card-other-2024 { left: calc(50% + 260px); top: 620px; }
+    .interview-card-monte-2024 { left: calc(50% - 440px); top: 505px; }
+    .interview-card-kommersant-2024 { left: calc(50% - 235px); top: 540px; }
+    .interview-card-russian-2024 { left: calc(50% + 60px); top: 540px; }
+    .interview-card-other-2024 { left: calc(50% + 260px); top: 520px; }
 
-    .interview-card-monte-2023 { left: calc(50% - 440px); top: 757px; }
-    .interview-card-kommersant-2023 { left: calc(50% - 235px); top: 792px; }
-    .interview-card-kp1-2023 { left: calc(50% + 60px); top: 777px; }
-    .interview-card-kp2-2023 { left: calc(50% + 320px); top: 747px; }
+    .interview-card-monte-2023 { left: calc(50% - 440px); top: 657px; }
+    .interview-card-kommersant-2023 { left: calc(50% - 235px); top: 692px; }
+    .interview-card-kp1-2023 { left: calc(50% + 60px); top: 677px; }
+    .interview-card-kp2-2023 { left: calc(50% + 320px); top: 647px; }
 
     .interview-year {
         transform: scale(0.7);
         transform-origin: left center;
     }
 
-    .interview-year-2025 { left: calc(50% - 520px); top: 435px !important; }
-    .interview-year-2024 { left: calc(50% - 520px); top: 590px !important; }
-    .interview-year-2023 { left: calc(50% - 520px); top: 735px !important; }
+    .interview-year-2025 { left: calc(50% - 520px); top: 335px !important; }
+    .interview-year-2024 { left: calc(50% - 520px); top: 490px !important; }
+    .interview-year-2023 { left: calc(50% - 520px); top: 635px !important; }
 
     .interview-reveal.is-visible {
         transform: scale(0.65);
@@ -3046,29 +3052,53 @@ left: 0;
     .interview-period {
         transform: scale(0.65);
         transform-origin: center;
-        top: 958px !important;
+        top: 858px !important;
     }
 
     .interview-period-left { left: calc(50% - 330px); }
     .interview-period-right { left: calc(50% + 180px); }
 
-    .interview-mini-year-2010 { left: calc(50% - 490px); }
-    .interview-mini-year-2011a { left: calc(50% - 420px); }
-    .interview-mini-year-2011b { left: calc(50% - 330px); }
-    .interview-mini-year-2012 { left: calc(50% - 230px); }
+    .interview-mini-year {
+        transform: scale(0.65);
+        transform-origin: left center;
+    }
 
-    .interview-mini-year-2013 { left: calc(50% + 160px); }
-    .interview-mini-year-2014 { left: calc(50% + 250px); }
-    .interview-mini-year-2015 { left: calc(50% + 340px); }
-    .interview-mini-year-2016 { left: calc(50% + 420px); }
+    .interview-year-trail.is-open .interview-mini-year {
+        transform: translateY(0) scale(0.7);
+    }
 
-    .interview-mini-year-2017 { left: calc(50% - 410px); }
-    .interview-mini-year-2018 { left: calc(50% - 330px); }
-    .interview-mini-year-2019 { left: calc(50% - 230px); }
+    .interview-year-trail.is-open .interview-mini-year-2010 { transform: translateY(-45px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2011a { transform: translateY(-15px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2011b { transform: translateY(12px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2012 { transform: translateY(28px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2013 { transform: translateY(28px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2014 { transform: translateY(12px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2015 { transform: translateY(-15px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2016 { transform: translateY(-45px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2017 { transform: translateY(-15px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2018 { transform: translateY(12px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2019 { transform: translateY(28px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2020 { transform: translateY(28px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2021 { transform: translateY(12px) scale(0.7) !important; }
+    .interview-year-trail.is-open .interview-mini-year-2022 { transform: translateY(-15px) scale(0.7) !important; }
 
-    .interview-mini-year-2020 { left: calc(50% + 160px); }
-    .interview-mini-year-2021 { left: calc(50% + 250px); }
-    .interview-mini-year-2022 { left: calc(50% + 340px); }
+    .interview-mini-year-2010 { left: calc(50% - 550px) !important; top: 840px !important; }
+    .interview-mini-year-2011a { left: calc(50% - 470px) !important; top: 840px !important; }
+    .interview-mini-year-2011b { left: calc(50% - 370px) !important; top: 840px !important; }
+    .interview-mini-year-2012 { left: calc(50% - 260px) !important; top: 840px !important; }
+    .interview-mini-year-2013 { left: calc(50% + 180px) !important; top: 840px !important; }
+    .interview-mini-year-2014 { left: calc(50% + 290px) !important; top: 840px !important; }
+    .interview-mini-year-2015 { left: calc(50% + 390px) !important; top: 840px !important; }
+    .interview-mini-year-2016 { left: calc(50% + 470px) !important; top: 840px !important; }
+    .interview-mini-year-2017 { left: calc(50% - 460px) !important; top: 840px !important; }
+    .interview-mini-year-2018 { left: calc(50% - 360px) !important; top: 840px !important; }
+    .interview-mini-year-2019 { left: calc(50% - 250px) !important; top: 840px !important; }
+    .interview-mini-year-2020 { left: calc(50% + 180px) !important; top: 840px !important; }
+    .interview-mini-year-2021 { left: calc(50% + 290px) !important; top: 840px !important; }
+    .interview-mini-year-2022 { left: calc(50% + 390px) !important; top: 840px !important; }
+    .interview-mini-year-2020 { left: calc(50% + 180px) !important; top: 880px !important; }
+    .interview-mini-year-2021 { left: calc(50% + 290px) !important; top: 880px !important; }
+    .interview-mini-year-2022 { left: calc(50% + 390px) !important; top: 880px !important; }
 
     .interview-dot-1 { left: calc(50% - 310px); }
     .interview-dot-2 { left: calc(50% - 70px); }
@@ -3080,7 +3110,7 @@ left: 0;
         left: 50% !important;
         transform: translateX(-50%) scale(0.65);
         transform-origin: center;
-        top: 958px !important;
+        top: 858px !important;
     }
 }
 
