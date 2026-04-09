@@ -74,14 +74,13 @@ function initSalesSlider() {
   };
 
   // Initialize Swiper
-  const isMobile = window.innerWidth <= 1200;
   const swiper = new window.Swiper(salesGalleryMain, {
-    slidesPerView: isMobile ? 1 : "auto",
-    spaceBetween: isMobile ? 0 : 30,
+    slidesPerView: "auto",
+    spaceBetween: 30,
     speed: 1100,
     loop: false,
-    centeredSlides: isMobile,
-    slidesOffsetAfter: isMobile ? 0 : 100,
+    centeredSlides: false,
+    slidesOffsetAfter: 100,
     allowTouchMove: true,
     grabCursor: true,
     resistance: true,
@@ -93,6 +92,20 @@ function initSalesSlider() {
     watchOverflow: true,
     effect: "slide",
     followFinger: true,
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        centeredSlides: true,
+        slidesOffsetAfter: 0,
+      },
+      1201: {
+        slidesPerView: "auto",
+        spaceBetween: 30,
+        centeredSlides: false,
+        slidesOffsetAfter: 100,
+      }
+    },
     navigation: {
       prevEl: salesNavPrev,
       nextEl: salesNavNext,
@@ -131,4 +144,158 @@ if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initSalesSlider);
 } else {
   initSalesSlider();
+}
+
+
+// Interview Section Logic
+function setInterviewInfo(title, subtitle) {
+  const interviewInfoCard = document.getElementById("interviewInfoCard");
+  const interviewInfoTitle = document.getElementById("interviewInfoTitle");
+  const interviewInfoSubtitle = document.getElementById("interviewInfoSubtitle");
+  
+  if (!interviewInfoCard || !interviewInfoTitle || !interviewInfoSubtitle) return;
+  const nextTitle = title?.trim();
+  const nextSubtitle = subtitle?.trim();
+  if (!nextTitle || !nextSubtitle) return;
+  if (interviewInfoTitle.textContent === nextTitle && interviewInfoSubtitle.textContent === nextSubtitle) return;
+  
+  interviewInfoCard.classList.add("is-fading");
+  window.setTimeout(() => {
+    interviewInfoTitle.textContent = nextTitle;
+    interviewInfoSubtitle.textContent = nextSubtitle;
+    interviewInfoCard.classList.remove("is-fading");
+  }, 120);
+}
+
+function initInterviewInteractions() {
+  const interviewInteractiveItems = [...document.querySelectorAll(".interview-dot, .interview-node[data-interview-title]")];
+  
+  interviewInteractiveItems.forEach((item) => {
+    item.addEventListener("mouseenter", () => {
+      const title = item.dataset.interviewTitle;
+      const subtitle = item.dataset.interviewSubtitle;
+      if (title && subtitle) {
+        setInterviewInfo(title, subtitle);
+      }
+    });
+  });
+}
+
+function initInterviewDots() {
+  const interviewScreen = document.querySelector(".interview");
+  const interviewRevealItems = [...document.querySelectorAll(".interview-reveal")];
+  
+  if (!interviewScreen || !interviewRevealItems.length) return;
+  
+  // Логика для эллипсов
+  const ellipses = document.querySelectorAll('.interview-ellipse');
+  
+  if (ellipses.length > 0 && 'IntersectionObserver' in window) {
+    const ellipseObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          requestAnimationFrame(() => {
+            entry.target.classList.add('in-view');
+          });
+          ellipseObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '-15% 0px -15% 0px',
+      threshold: 0.3
+    });
+
+    ellipses.forEach(ellipse => {
+      ellipseObserver.observe(ellipse);
+    });
+  }
+
+  // Логика для остальных элементов (кнопки и точки)
+  const otherRevealItems = [...interviewRevealItems].filter(item => 
+    !item.classList.contains('interview-ellipse')
+  );
+  
+  if (otherRevealItems.length > 0) {
+    const revealItems = otherRevealItems
+      .sort((a, b) => Number(a.dataset.revealOrder || 0) - Number(b.dataset.revealOrder || 0));
+
+    const revealDots = () => {
+      revealItems.forEach((item, index) => {
+        window.setTimeout(() => item.classList.add("is-visible"), index * 200);
+      });
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      revealDots();
+      return;
+    }
+
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        revealDots();
+        obs.unobserve(entry.target);
+      });
+    }, { threshold: 0.28 });
+    io.observe(interviewScreen);
+  }
+}
+
+function initInterviewPeriods() {
+  const interviewPeriodPrev = document.getElementById("interviewPeriodPrev");
+  const interviewPeriodNext = document.getElementById("interviewPeriodNext");
+  const interviewYearTrailLeft = document.getElementById("interviewYearTrailLeft");
+  const interviewYearTrailRight = document.getElementById("interviewYearTrailRight");
+  const interviewYearTrailNextLeft = document.getElementById("interviewYearTrailNextLeft");
+  const interviewYearTrailNextRight = document.getElementById("interviewYearTrailNextRight");
+  
+  const hideButtons = () => {
+    if (interviewPeriodPrev) interviewPeriodPrev.classList.add("is-hidden");
+    if (interviewPeriodNext) interviewPeriodNext.classList.add("is-hidden");
+  };
+
+  const closeTrail = (trail) => {
+    if (!trail) return;
+    trail.classList.remove("is-open");
+    trail.setAttribute("aria-hidden", "true");
+  };
+
+  const openTrail = (trail) => {
+    if (!trail) return;
+    trail.classList.add("is-open");
+    trail.setAttribute("aria-hidden", "false");
+  };
+
+  const openPrevPeriods = () => {
+    hideButtons();
+    openTrail(interviewYearTrailLeft);
+    openTrail(interviewYearTrailRight);
+    closeTrail(interviewYearTrailNextLeft);
+    closeTrail(interviewYearTrailNextRight);
+  };
+
+  const openNextPeriods = () => {
+    hideButtons();
+    closeTrail(interviewYearTrailLeft);
+    closeTrail(interviewYearTrailRight);
+    openTrail(interviewYearTrailNextLeft);
+    openTrail(interviewYearTrailNextRight);
+  };
+
+  interviewPeriodPrev?.addEventListener("click", openPrevPeriods);
+  interviewPeriodNext?.addEventListener("click", openNextPeriods);
+}
+
+// Initialize interview on page load
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    initInterviewInteractions();
+    initInterviewDots();
+    initInterviewPeriods();
+  });
+} else {
+  initInterviewInteractions();
+  initInterviewDots();
+  initInterviewPeriods();
 }
