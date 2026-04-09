@@ -3082,23 +3082,20 @@ left: 0;
     .interview-year-trail.is-open .interview-mini-year-2021 { transform: translateY(12px) scale(0.7) !important; }
     .interview-year-trail.is-open .interview-mini-year-2022 { transform: translateY(-15px) scale(0.7) !important; }
 
-    .interview-mini-year-2010 { left: calc(50% - 550px) !important; top: 840px !important; }
-    .interview-mini-year-2011a { left: calc(50% - 470px) !important; top: 840px !important; }
-    .interview-mini-year-2011b { left: calc(50% - 370px) !important; top: 840px !important; }
-    .interview-mini-year-2012 { left: calc(50% - 260px) !important; top: 840px !important; }
+    .interview-mini-year-2010 { left: calc(50% - 470px) !important; top: 840px !important; }
+    .interview-mini-year-2011a { left: calc(50% - 395px) !important; top: 840px !important; }
+    .interview-mini-year-2011b { left: calc(50% - 320px) !important; top: 840px !important; }
+    .interview-mini-year-2012 { left: calc(50% - 245px) !important; top: 840px !important; }
     .interview-mini-year-2013 { left: calc(50% + 180px) !important; top: 840px !important; }
-    .interview-mini-year-2014 { left: calc(50% + 290px) !important; top: 840px !important; }
-    .interview-mini-year-2015 { left: calc(50% + 390px) !important; top: 840px !important; }
-    .interview-mini-year-2016 { left: calc(50% + 470px) !important; top: 840px !important; }
+    .interview-mini-year-2014 { left: calc(50% + 255px) !important; top: 840px !important; }
+    .interview-mini-year-2015 { left: calc(50% + 330px) !important; top: 840px !important; }
+    .interview-mini-year-2016 { left: calc(50% + 405px) !important; top: 840px !important; }
     .interview-mini-year-2017 { left: calc(50% - 460px) !important; top: 840px !important; }
     .interview-mini-year-2018 { left: calc(50% - 360px) !important; top: 840px !important; }
     .interview-mini-year-2019 { left: calc(50% - 250px) !important; top: 840px !important; }
     .interview-mini-year-2020 { left: calc(50% + 180px) !important; top: 840px !important; }
     .interview-mini-year-2021 { left: calc(50% + 290px) !important; top: 840px !important; }
     .interview-mini-year-2022 { left: calc(50% + 390px) !important; top: 840px !important; }
-    .interview-mini-year-2020 { left: calc(50% + 180px) !important; top: 880px !important; }
-    .interview-mini-year-2021 { left: calc(50% + 290px) !important; top: 880px !important; }
-    .interview-mini-year-2022 { left: calc(50% + 390px) !important; top: 880px !important; }
 
     .interview-dot-1 { left: calc(50% - 310px); }
     .interview-dot-2 { left: calc(50% - 70px); }
