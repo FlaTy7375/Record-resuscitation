@@ -526,3 +526,143 @@ document.addEventListener("DOMContentLoaded", () => {
   initInterviewDots();
   initInterviewPeriods();
 });
+
+// ============================================
+// MEDIA LIBRARY 3D CAROUSEL
+// ============================================
+
+function initMediaLibCarousel() {
+  const carousel = document.getElementById('mediaLibCarousel');
+  if (!carousel) return;
+
+  const rings = [
+    document.getElementById('mediaLibRing0'),
+    document.getElementById('mediaLibRing1'),
+    document.getElementById('mediaLibRing2'),
+  ].filter(Boolean);
+  if (!rings.length) return;
+
+  let currentAngle = 0;
+
+  function getSlideParams() {
+    const vw = window.innerWidth;
+    const isMobile = vw <= 1200;
+    return {
+      slideWidth: Math.round(vw * (isMobile ? 0.58 : 0.35)),
+      gap: Math.round(vw * (isMobile ? 0.16 : 0.02)),
+    };
+  }
+
+  function initRing(ring, rowIndex) {
+    const slides = [...ring.querySelectorAll('.media-lib-slide')];
+    const n = slides.length;
+    const { slideWidth, gap } = getSlideParams();
+    const slideHeight = Math.round(window.innerHeight * 0.25);
+    const theta = 360 / n;
+    const radius = Math.round(((slideWidth + gap) / 2) / Math.tan(Math.PI / n));
+    const phaseOffset = rowIndex === 1 ? theta / 2 : 0;
+
+    slides.forEach((slide, i) => {
+      slide.style.width = slideWidth + 'px';
+      slide.style.marginLeft = `-${slideWidth / 2}px`;
+      slide.style.marginTop = `-${slideHeight / 2}px`;
+      slide.style.transform = `rotateY(${theta * i + phaseOffset}deg) translateZ(${radius}px)`;
+    });
+
+    return { slides, n, theta, radius, phaseOffset };
+  }
+
+  const ringData = rings.map((ring, i) => initRing(ring, i));
+
+  function updateAll() {
+    rings.forEach((ring, ri) => {
+      const { slides, n, theta, radius, phaseOffset } = ringData[ri];
+      ring.style.transform = `rotateY(${currentAngle}deg)`;
+
+      let activeIndex = Math.round((currentAngle + phaseOffset) / theta) * -1;
+      activeIndex = ((activeIndex % n) + n) % n;
+
+      slides.forEach((slide, i) => {
+        let dist = Math.abs(i - activeIndex);
+        dist = Math.min(dist, n - dist);
+        const base = `rotateY(${theta * i + phaseOffset}deg) translateZ(${radius}px)`;
+        const maxDist = Math.floor(n / 2);
+        const isFar = dist > maxDist / 2;
+        const opacity = isFar ? Math.max(0.45, 1 - (dist / maxDist) * 0.55) : Math.max(0.75, 1 - (dist / maxDist) * 0.25);
+        slide.style.opacity = opacity.toFixed(2);
+        slide.style.transform = base;
+      });
+    });
+  }
+
+  updateAll();
+
+  let velocity = 0;
+  let isDragging = false;
+  let lastX = 0;
+  let lastTime = 0;
+  let rafId = 0;
+
+  const AUTO_SPEED = 0.08;
+
+  function spin() {
+    if (isDragging) return;
+    if (Math.abs(velocity) > 0.01) {
+      currentAngle += velocity;
+      velocity *= 0.94;
+    } else {
+      velocity = 0;
+      currentAngle += AUTO_SPEED;
+    }
+    updateAll();
+    rafId = requestAnimationFrame(spin);
+  }
+
+  carousel.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    lastX = e.clientX;
+    lastTime = performance.now();
+    velocity = 0;
+    cancelAnimationFrame(rafId);
+    carousel.setPointerCapture(e.pointerId);
+  });
+
+  carousel.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const now = performance.now();
+    const dx = e.clientX - lastX;
+    const dt = now - lastTime || 1;
+    const { theta } = ringData[0];
+    const { slideWidth, gap } = getSlideParams();
+    const degPerPx = theta / (slideWidth + gap);
+    currentAngle += dx * degPerPx;
+    velocity = dx * degPerPx * (16 / dt);
+    lastX = e.clientX;
+    lastTime = now;
+    updateAll();
+  });
+
+  carousel.addEventListener('pointerup', () => {
+    isDragging = false;
+    rafId = requestAnimationFrame(spin);
+  });
+
+  carousel.addEventListener('pointercancel', () => {
+    isDragging = false;
+    rafId = requestAnimationFrame(spin);
+  });
+
+  rafId = requestAnimationFrame(spin);
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      rings.forEach((ring, i) => { ringData[i] = initRing(ring, i); });
+      updateAll();
+    }, 200);
+  });
+}
+
+// Initialize media library carousel
+initMediaLibCarousel();

@@ -5990,6 +5990,21 @@ left: 0;
         transform-origin: center;
         top: 858px !important;
     }
+
+    .reviews-media-library {
+        font-size: 145px !important;
+        line-height: 145px !important;
+        letter-spacing: -6% !important;
+        margin-bottom: 80px;
+    }
+
+    .media-lib-scene {
+        height: 22vh;
+    }
+
+    .media-lib-slide img {
+        height: 22vh;
+    }
 }
 
 @media(max-width: 1370px) {
@@ -7111,5 +7126,288 @@ left: 0;
         line-height: 1;
         letter-spacing: -0.3px;
         text-transform: uppercase;
+    }
+}
+
+/* ============================================
+   MEDIA LIBRARY SECTION
+   ============================================ */
+
+.screen-media-library {
+    position: relative;
+    background: #0f0f0f;
+    overflow: hidden;
+    z-index: 7;
+    padding: 0px 0 550px;
+}
+
+.reviews-media-library-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+    background: #0f0f0f;
+}
+
+.reviews-media-library {
+    margin: 0 0 100px;
+    text-align: center;
+    font-size: 264.17px;
+    line-height: 264.17px;
+    letter-spacing: -15.85px;
+    color: #f1f1f1;
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+}
+
+.reviews-media-arc {
+    position: absolute;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+}
+
+.reviews-media-arc-top {
+    left: 50%;
+    transform: translate(-50%, 0);
+    top: 239px;
+    width: 2793.02px;
+    height: 1316px;
+    opacity: 0.32;
+    z-index: 1;
+}
+
+.reviews-media-arc-bottom {
+    left: 50%;
+    transform: translate(-50%, 0) scaleY(-1);
+    top: 239px;
+    width: 2793.02px;
+    height: 1316px;
+    opacity: 0.28;
+    z-index: 1;
+}
+
+/* 3D Carousel */
+.media-lib-carousel {
+    position: relative;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    padding: 40px 0 100px;
+    cursor: pointer;
+    user-select: none;
+    z-index: 6;
+}
+
+.media-lib-row {
+    width: 100%;
+    overflow: visible;
+}
+
+.media-lib-scene {
+    width: 100%;
+    height: 25vh;
+    perspective: 4000px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.media-lib-ring {
+    width: 0;
+    height: 0;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.1s linear;
+}
+
+.media-lib-slide {
+    position: absolute;
+    overflow: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.media-lib-slide img {
+    display: block;
+    width: auto;
+    height: 25vh;
+    max-height: 400px;
+    object-fit: cover;
+    pointer-events: none;
+    border-radius: 5px;
+}
+
+/* Film decoration */
+.reviews-media-film {
+    position: absolute;
+    left: 50%;
+    bottom: -390px;
+    transform: translateX(-50%);
+    width: 1920px;
+    height: auto;
+    overflow: hidden;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.reviews-media-film-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Ticker */
+.reviews-media-dates,
+.reviews-media-ticker {
+    position: absolute;
+    left: 50%;
+    bottom: -430px;
+    transform: translateX(-50%) rotate(-4.85deg);
+    width: 2256px;
+    height: 450px;
+    overflow: hidden;
+    z-index: 6;
+}
+
+.reviews-media-ticker-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    min-width: max-content;
+    height: 100%;
+    animation: reviewsTickerLoop 26s linear infinite;
+    will-change: transform;
+}
+
+.reviews-media-ticker-set {
+    display: flex;
+    align-items: center;
+    gap: 70px;
+    padding-right: 70px;
+    flex: 0 0 auto;
+    min-width: max-content;
+}
+
+.reviews-media-ticker-chip {
+    height: 78px;
+    min-width: 206px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 55px;
+    background: rgba(11, 11, 11, 0.96);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 22px;
+    font: 500 26px/1 "Manrope", sans-serif;
+    white-space: nowrap;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+    flex: 0 0 auto;
+}
+
+.reviews-media-ticker-chip img {
+    width: 9px;
+    height: 14px;
+}
+
+.reviews-media-ticker-chip:hover {
+    background: #dc1924;
+    border-color: #dc1924;
+    box-shadow: 0 0 20px rgba(220, 25, 36, 0.28);
+}
+
+.reviews-media-ticker-chip:hover img {
+    filter: brightness(1.1);
+}
+
+.reviews-media-dates:hover .reviews-media-ticker-track,
+.reviews-media-ticker:hover .reviews-media-ticker-track {
+    animation-play-state: paused;
+}
+
+@keyframes reviewsTickerLoop {
+    from {
+        transform: translate3d(-50%, 0, 0);
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 1200px) {
+    .screen-media-library {
+        padding: 80px 20px 280px;
+    }
+
+    .reviews-media-library {
+        font-size: 120px;
+        line-height: 120px;
+        letter-spacing: -7px;
+        margin-bottom: 60px;
+    }
+
+    .reviews-media-arc-top,
+    .reviews-media-arc-bottom {
+        width: 100%;
+        height: auto;
+    }
+
+    .media-lib-carousel {
+        gap: 40px;
+        padding: 20px 0 60px;
+    }
+
+    .media-lib-scene {
+        height: 25vh;
+    }
+
+    .media-lib-slide img {
+        height: 25vh;
+    }
+
+    .reviews-media-dates,
+    .reviews-media-ticker {
+        width: 100%;
+        bottom: -330px;
+    }
+
+    .reviews-media-film {
+        bottom: -250px;
+        width: 1400px;
+    }
+
+    .reviews-media-ticker-chip {
+        height: 60px;
+        min-width: 160px;
+        font-size: 20px;
+        padding: 0 16px;
+    }
+
+    .screen-media-library {
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 900px) {
+    .screen-media-library {
+        padding-top: 60px;
+    }
+
+    .reviews-media-library {
+        font-size: 80px;
+        line-height: 80px;
+        letter-spacing: -4px;
     }
 }
