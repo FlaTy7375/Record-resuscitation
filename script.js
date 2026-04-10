@@ -74,13 +74,14 @@ function initSalesSlider() {
   };
 
   // Initialize Swiper
+  const isMobile = window.innerWidth <= 1200;
   const swiper = new window.Swiper(salesGalleryMain, {
-    slidesPerView: "auto",
-    spaceBetween: 30,
+    slidesPerView: isMobile ? 1 : "auto",
+    spaceBetween: isMobile ? 0 : 30,
     speed: 1100,
     loop: false,
-    centeredSlides: false,
-    slidesOffsetAfter: 100,
+    centeredSlides: isMobile,
+    slidesOffsetAfter: isMobile ? 0 : 100,
     allowTouchMove: true,
     grabCursor: true,
     resistance: true,
@@ -92,20 +93,6 @@ function initSalesSlider() {
     watchOverflow: true,
     effect: "slide",
     followFinger: true,
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
-        spaceBetween: 0,
-        centeredSlides: true,
-        slidesOffsetAfter: 0,
-      },
-      1201: {
-        slidesPerView: "auto",
-        spaceBetween: 30,
-        centeredSlides: false,
-        slidesOffsetAfter: 100,
-      }
-    },
     navigation: {
       prevEl: salesNavPrev,
       nextEl: salesNavNext,
@@ -145,6 +132,252 @@ if (document.readyState === "loading") {
 } else {
   initSalesSlider();
 }
+
+
+
+
+
+
+
+
+
+
+// LENIS
+// ==========================================
+// ИНИЦИАЛИЗАЦИЯ ПЛАВНОГО СКРОЛЛА (LENIS)
+// ==========================================
+const lenis = new Lenis({
+  duration: 5.2, // Длительность скролла (чем больше, тем плавнее и медленнее)
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Кривая замедления
+  direction: 'vertical', 
+  gestureDirection: 'vertical',
+  smooth: true,
+  mouseMultiplier: 1,
+  smoothTouch: false, // На мобильных устройствах лучше оставлять нативный скролл для удобства
+  touchMultiplier: 2,
+  infinite: false,
+});
+
+// Функция для синхронизации скролла с частотой обновления экрана
+function raf(time) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
+
+requestAnimationFrame(raf);
+
+// ==========================================
+// ПЛАВНЫЙ СКРОЛЛ ДЛЯ ЯКОРНЫХ ССЫЛОК
+// ==========================================
+// Делает так, чтобы при клике на кнопки (например, href="#heroScreen") 
+// страница плавно ехала к блоку, а не прыгала резко.
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const targetId = this.getAttribute('href');
+    
+    // Пропускаем ссылки, которые открывают попапы (например, #salesPopup), 
+    // если у вас для них написана своя логика
+    if (targetId === '#salesPopup') return; 
+
+    const targetElement = document.querySelector(targetId);
+    
+    if (targetElement) {
+      e.preventDefault();
+      lenis.scrollTo(targetElement, {
+        offset: 0, // Можно задать отступ сверху, если есть фиксированная шапка
+        duration: 1.5 // Время полета до блока
+      });
+    }
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+// ==========================================
+// ADVERT 3D SLIDER
+// ==========================================
+function initAdvertSlider() {
+  const ring = document.getElementById('advertRing');
+  const caption = document.getElementById('advertCaption');
+  if (!ring) return;
+
+  const slides = ring.querySelectorAll('.slide');
+  const container = ring.closest('.advert-3d-slider');
+
+  const numSlides = slides.length;
+  let currentAngle = 0;
+
+  function getSlideParams() {
+    const width = window.innerWidth;
+    if (width <= 480) {
+      return { slideWidth: 380, gap: 20 };
+    } else if (width <= 768) {
+      return { slideWidth: 220, gap: 18 };
+    } else if (width <= 1200) {
+      return { slideWidth: 277, gap: 15 };
+    } else {
+      return { slideWidth: 431, gap: 39 };
+    }
+  }
+
+  function initSlides() {
+    const { slideWidth, gap } = getSlideParams();
+    const theta = 360 / numSlides;
+    const radius = Math.round(((slideWidth + gap) / 2) / Math.tan(Math.PI / numSlides));
+
+    slides.forEach((slide, index) => {
+      slide.style.transform = `rotateY(${theta * index}deg) translateZ(${-radius}px)`;
+    });
+
+    return { theta, radius };
+  }
+
+  function updateRing(instant = false) {
+    const { theta, radius } = initSlides();
+    ring.style.transform = `rotateY(${currentAngle}deg)`;
+
+    let activeIndex = Math.round(currentAngle / theta) * -1;
+    activeIndex = ((activeIndex % numSlides) + numSlides) % numSlides;
+
+    const isMobile = window.innerWidth <= 1200;
+
+    slides.forEach((slide, index) => {
+      let dist = Math.abs(index - activeIndex);
+      dist = Math.min(dist, numSlides - dist);
+      const base = `rotateY(${theta * index}deg) translateZ(${-radius}px)`;
+      const slideCaption = slide.querySelector('.slide-caption');
+      
+      if (isMobile) {
+        // На мобильных: активный слайд 100%, остальные 95% и без текста
+        if (index === activeIndex) {
+          slide.style.opacity = '1';
+          slide.style.transform = base + ' scale(1)';
+          if (slideCaption) slideCaption.style.opacity = '1';
+        } else if (dist <= 2) {
+          slide.style.opacity = '1';
+          slide.style.transform = base + ' scale(0.95)';
+          if (slideCaption) slideCaption.style.opacity = '0';
+        } else {
+          slide.style.opacity = '0';
+          slide.style.transform = base + ' scale(0.8)';
+          if (slideCaption) slideCaption.style.opacity = '0';
+        }
+      } else {
+        // На десктопе: оригинальная логика
+        if (dist <= 2) {
+          slide.style.opacity = '1';
+          slide.style.transform = base + ' scale(1)';
+          if (slideCaption) slideCaption.style.opacity = dist <= 1 ? '1' : '0';
+        } else {
+          slide.style.opacity = '0';
+          slide.style.transform = base + ' scale(0.8)';
+          if (slideCaption) slideCaption.style.opacity = '0';
+        }
+      }
+    });
+  }
+
+  // Click on left/right side of screen
+  container.addEventListener('click', (e) => {
+    const { theta } = initSlides();
+    const rect = container.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const halfWidth = rect.width / 2;
+    
+    if (clickX < halfWidth) {
+      currentAngle += theta; // prev
+    } else {
+      currentAngle -= theta; // next
+    }
+    updateRing();
+  });
+
+  // Touch swipe support
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  container.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  container.addEventListener('touchend', (e) => {
+    const { theta } = initSlides();
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        currentAngle -= theta; // swipe left = next
+      } else {
+        currentAngle += theta; // swipe right = prev
+      }
+      updateRing();
+    }
+  }, { passive: true });
+
+  // Initialize on load
+  updateRing(true);
+
+  // Resize handler
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(updateRing, 200);
+  });
+
+  updateRing(true);
+}
+
+// Initialize Advert Slider when DOM is ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAdvertSlider);
+} else {
+  initAdvertSlider();
+}
+
+// Reveal text animation on scroll
+function initRevealText() {
+    const targets = [...document.querySelectorAll(".reveal-text")];
+    
+    // Set reveal delays
+    targets.forEach((el, i) => {
+        el.style.setProperty("--reveal-delay", `${(i % 8) * 55}ms`);
+    });
+    
+    // Special delay for letter-o elements
+    targets
+        .filter((el) => el.matches(".letter-o, .count-letter-o, .promo-letter-o, .promo-word-o, .radio-title-o"))
+        .forEach((el) => {
+            el.style.setProperty("--reveal-delay", "220ms");
+        });
+    
+    // Intersection Observer for scroll-based reveal
+    const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("in-view");
+            obs.unobserve(entry.target);
+        });
+    }, { 
+        threshold: 0.2, 
+        rootMargin: "0px 0px -8% 0px" 
+    });
+    
+    targets.forEach((el) => io.observe(el));
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    initRevealText();
+});
 
 
 // Interview Section Logic
@@ -288,14 +521,8 @@ function initInterviewPeriods() {
 }
 
 // Initialize interview on page load
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    initInterviewInteractions();
-    initInterviewDots();
-    initInterviewPeriods();
-  });
-} else {
+document.addEventListener("DOMContentLoaded", () => {
   initInterviewInteractions();
   initInterviewDots();
   initInterviewPeriods();
-}
+});
