@@ -848,3 +848,54 @@ function initVideotekaTabs() {
 if (document.querySelector('.videoteka-tabs')) {
   initVideotekaTabs();
 }
+
+// ============================================
+// FOOTER ACCORDION
+// ============================================
+
+function initFooterAccordion() {
+  const footerColumns = document.querySelectorAll('.footer-column');
+  
+  if (!footerColumns.length) return;
+
+  footerColumns.forEach((column) => {
+    const title = column.querySelector('.footer-column-title');
+    if (!title) return;
+
+    title.setAttribute('tabindex', '0');
+    title.setAttribute('role', 'button');
+    title.setAttribute('aria-expanded', 'false');
+    column.classList.remove('is-open');
+
+    const toggle = () => {
+      if (window.innerWidth > 1200) return;
+      
+      const isOpen = column.classList.contains('is-open');
+      
+      // Close all columns
+      footerColumns.forEach((item) => {
+        item.classList.remove('is-open');
+        const itemTitle = item.querySelector('.footer-column-title');
+        if (itemTitle) itemTitle.setAttribute('aria-expanded', 'false');
+      });
+
+      // Open clicked column if it was closed
+      if (!isOpen) {
+        column.classList.add('is-open');
+        title.setAttribute('aria-expanded', 'true');
+      }
+    };
+
+    title.addEventListener('click', toggle);
+    title.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      toggle();
+    });
+  });
+}
+
+// Initialize footer accordion
+if (document.querySelector('.footer-column')) {
+  initFooterAccordion();
+}
