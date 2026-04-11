@@ -9041,3 +9041,270 @@ left: 0;
         display: none;
     }
 }
+
+/* ============================================
+   SUBSCRIBE NEWS SECTION
+   ============================================ */
+
+.subscribe-news {
+    position: relative;
+    background: #f9f0e8;
+    padding: 129px 40px 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    z-index: 8;
+}
+
+.subscribe-news-title {
+    margin: 0 0 335px;
+    margin-bottom: 60px;
+    width: 100%;
+    max-width: 1608px;
+    color: #523a25;
+    font: 300 87px/93.8px "Roboto", sans-serif;
+    letter-spacing: -8.1px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.subscribe-news-title-o {
+    display: inline-block;
+    margin: 0 10px;
+    font-family: Druzhok;
+    font-size: 95px;
+    line-height: 0.9;
+    transform: translateY(-17px) scaleY(-1);
+}
+
+.subscribe-news-subtitle {
+    margin: 0 0 75px;
+    color: #523a25;
+    font: 300 42px/1 "Manrope", sans-serif;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.subscribe-news-form {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 37px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.subscribe-news-field {
+    position: relative;
+    display: block;
+}
+
+.subscribe-news-field-email {
+    width: 468px;
+}
+
+.subscribe-news-field-phone {
+    width: 468px;
+}
+
+.subscribe-news-input {
+    width: 100%;
+    height: 132px;
+    border: 0;
+    border-radius: 5px;
+    background: #e7ddd3;
+    color: #523a25;
+    padding: 0 30px;
+    font: 300 30px/1 "Manrope", sans-serif;
+    outline: none;
+    transition: box-shadow 180ms ease, background 180ms ease;
+}
+
+.subscribe-news-input::placeholder {
+    color: #868686;
+}
+
+.subscribe-news-input:hover,
+.subscribe-news-input:focus {
+    background: #eadfd5;
+    box-shadow: inset 0 0 0 1px rgba(82, 58, 37, 0.14);
+}
+
+.subscribe-news-submit {
+    width: 436px;
+    height: 132px;
+    border: 0;
+    border-radius: 10px;
+    background: #dc1924;
+    color: #ffffff;
+    font: 400 28px/49.683px "Roboto", sans-serif;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.subscribe-news-submit:hover,
+.subscribe-news-submit:focus-visible {
+    background: #cb1320;
+    box-shadow: 0 12px 32px rgba(220, 25, 36, 0.22);
+    transform: translateY(-1px);
+}
+
+.subscribe-news-consent {
+    width: 100%;
+    max-width: 772px;
+    min-height: 40px;
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+}
+
+.subscribe-news-check {
+    flex-shrink: 0;
+    width: 31px;
+    height: 30px;
+    border: 1px solid #523a25;
+    border-radius: 1.467px;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.subscribe-news-check:hover,
+.subscribe-news-check:focus-visible {
+    background: rgba(82, 58, 37, 0.06);
+    box-shadow: 0 0 0 3px rgba(82, 58, 37, 0.08);
+}
+
+.subscribe-news-check-icon {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 22px;
+    height: 22px;
+    opacity: 0;
+    transition: opacity 140ms ease;
+}
+
+.subscribe-news-check.is-checked .subscribe-news-check-icon {
+    opacity: 1;
+}
+
+.subscribe-news-consent-text {
+    margin: 9px 0 0 0;
+    color: rgba(82, 58, 37, 0.59);
+    font: 400 18px/1.15 "Manrope", sans-serif;
+}
+
+.subscribe-news-consent-text span {
+    color: #523a25;
+    text-decoration: underline;
+    text-decoration-skip-ink: none;
+    cursor: pointer;
+}
+
+@media (max-width: 1520px) {
+    .subscribe-news-field-email, .subscribe-news-field-phone {
+        width: 350px;
+        height: 100px;
+    }
+
+    .subscribe-news-submit {
+        width: 300px;
+        height: 100px;
+        font-size: 25px;
+    }
+
+    .subscribe-news-input {
+        height: 100px;
+        font-size: 25px;
+    }
+
+    .subscribe-news-subtitle {
+        font-size: 32px;
+    }
+
+    .subscribe-news-title, .subscribe-news-title-o {
+        font-size: 70px;
+        letter-spacing: -6%;
+    }
+
+    .subscribe-news-consent-text {
+        margin-top: 0;
+        font-size: 16px;
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 1200px) {
+    .subscribe-news {
+        padding: 72px 20px 60px;
+    }
+
+    .subscribe-news-title {
+        margin: 0 0 85px;
+        margin-bottom: 16px;
+        width: 100%;
+        max-width: 388px;
+        font-size: 35px;
+        line-height: 35px;
+        letter-spacing: -2.1px;
+    }
+
+    .subscribe-news-title-o {
+        margin: 0 6px;
+        font-size: 37px;
+        transform: translateY(-6px) scaleY(-1);
+    }
+
+    .subscribe-news-subtitle {
+        margin: 0 0 31px;
+        font-size: 16px;
+    }
+
+    .subscribe-news-form {
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+        width: 100%;
+        max-width: 335px;
+    }
+
+    .subscribe-news-field,
+    .subscribe-news-field-email,
+    .subscribe-news-field-phone {
+        width: 100%;
+    }
+
+    .subscribe-news-input {
+        height: 70px;
+        padding: 0 20px;
+        font-size: 16px;
+    }
+
+    .subscribe-news-submit {
+        width: 100%;
+        height: 70px;
+        margin-top: 10px;
+        font-size: 16px;
+        line-height: 34.644px;
+    }
+
+    .subscribe-news-consent {
+        max-width: 335px;
+        gap: 8px;
+    }
+
+    .subscribe-news-check {
+        margin-top: 8px;
+    }
+
+    .subscribe-news-consent-text {
+        margin: 8px 0 0 0;
+        font-size: 11px;
+    }
+}
