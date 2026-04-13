@@ -18,6 +18,19 @@
     />
 
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three/three.module.js"
+        }
+      }
+    </script>
+    <link rel="modulepreload" href="./vendor/three/three.module.js" />
+    <link rel="modulepreload" href="./vendor/three/loaders/GLTFLoader.js" />
+    <link rel="modulepreload" href="./vendor/three/loaders/DRACOLoader.js" />
+    <link rel="modulepreload" href="./vendor/three/loaders/RGBELoader.js" />
+    <link rel="modulepreload" href="./oscarViewerShared.js" />
+    <link rel="modulepreload" href="./hero3d.js" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
@@ -26,7 +39,121 @@
 </head>
 <body>
     <main class="page">
-        <section class="hero">
+        <button
+          type="button"
+          class="page-menu-btn"
+          id="pageMenuToggle"
+          aria-label="Открыть меню"
+          aria-controls="siteMenuPanel"
+          aria-expanded="false"
+        >
+            <span class="page-menu-btn__ripple" aria-hidden="true"></span>
+            <img src="./assets/menu.svg" alt="" width="33" height="33" decoding="async" />
+        </button>
+        <aside class="site-menu" id="siteMenuPanel" aria-hidden="true">
+          <div class="site-menu__backdrop" data-site-menu-close></div>
+          <div class="site-menu__shell">
+            <div class="site-menu__desktop-tab">
+              <button class="site-menu__close-btn" aria-label="Закрыть меню" data-site-menu-close>
+                <img src="./assets/site-menu-close.svg" alt="" />
+              </button>
+            </div>
+            <div class="site-menu__panel">
+              <div class="site-menu__content">
+                <button class="site-menu__mobile-close-btn" aria-label="Закрыть меню" data-site-menu-close>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+
+                <div class="site-menu__logo">
+                  <img src="./assets/n1_bg.gif" alt="Рекорды №1" class="site-menu__logo-mark" />
+                  <img src="./assets/logo.svg" alt="Рекорды рынка недвижимости" class="site-menu__logo-text" />
+                </div>
+
+                <div class="site-menu__actions">
+                  <a href="#" class="site-menu__btn site-menu__btn--primary">
+                    Принять участие
+                    <img src="./assets/site-menu-arrow-menu.svg" alt="" />
+                  </a>
+                  <a href="#" class="site-menu__btn site-menu__btn--outline">
+                    Победители 2026
+                    <img src="./assets/site-menu-arrow-menu.svg" alt="" />
+                  </a>
+                </div>
+
+                <nav class="site-menu__nav">
+                  <div class="site-menu__group is-expanded" id="site-menu-group-about">
+                    <button class="site-menu__nav-item" data-site-menu-group="site-menu-group-about">
+                      О ПРЕМИИ
+                      <img src="./assets/site-menu-arrow-dropdown.svg" alt="" />
+                    </button>
+                    <div class="site-menu__submenu">
+                      <a href="#" class="site-menu__submenu-link">Что о нас говорят?</a>
+                      <a href="#" class="site-menu__submenu-link">Реклама премии</a>
+                      <a href="#" class="site-menu__submenu-link">Что вам дает участие?</a>
+                      <a href="#" class="site-menu__submenu-link">СМИ о премии</a>
+                      <a href="#" class="site-menu__submenu-link">Пост-релиз Премии</a>
+                      <a href="#" class="site-menu__submenu-link">Требования к номинациям</a>
+                    </div>
+                  </div>
+
+                  <div class="site-menu__group" id="site-menu-group-award">
+                    <button class="site-menu__nav-item" data-site-menu-group="site-menu-group-award">
+                      ПРЕМИЯ 2026
+                      <img src="./assets/site-menu-arrow-dropdown.svg" alt="" />
+                    </button>
+                    <div class="site-menu__submenu">
+                      <a href="#" class="site-menu__submenu-link">Номинации</a>
+                      <a href="#" class="site-menu__submenu-link">Этапы проведения</a>
+                      <a href="#" class="site-menu__submenu-link">Жюри</a>
+                      <a href="#" class="site-menu__submenu-link">Участники</a>
+                    </div>
+                  </div>
+
+                  <div class="site-menu__group" id="site-menu-group-materials">
+                    <button class="site-menu__nav-item" data-site-menu-group="site-menu-group-materials">
+                      МАТЕРИАЛЫ
+                      <img src="./assets/site-menu-arrow-dropdown.svg" alt="" />
+                    </button>
+                    <div class="site-menu__submenu">
+                      <a href="#" class="site-menu__submenu-link">Фотогалерея</a>
+                      <a href="#" class="site-menu__submenu-link">Видеоотчеты</a>
+                      <a href="#" class="site-menu__submenu-link">Логотипы и брендбук</a>
+                      <a href="#" class="site-menu__submenu-link">Презентации</a>
+                    </div>
+                  </div>
+                </nav>
+
+                <div class="site-menu__socials">
+                  <a href="#" class="site-menu__social-link">Dzen</a>
+                  <a href="#" class="site-menu__social-link">Telegram</a>
+                  <a href="#" class="site-menu__social-link">RuTube</a>
+                  <a href="#" class="site-menu__social-link">Telegram-канал</a>
+                  <a href="#" class="site-menu__social-link">Max</a>
+                  <a href="#" class="site-menu__social-link">Вконтакте</a>
+                </div>
+
+                <div class="site-menu__subscribe">
+                  <span class="site-menu__subscribe-label">Подписаться на рассылку:</span>
+                  <div class="site-menu__subscribe-row">
+                    <input type="email" class="site-menu__subscribe-input" placeholder="Введите Email" />
+                    <button class="site-menu__subscribe-submit">
+                      <img src="./assets/site-menu-submit.svg" alt="" />
+                    </button>
+                  </div>
+                </div>
+
+                <div class="site-menu__footer">
+                  <a href="#">Политика конфиденциальности</a>
+                  <a href="#">Отказ от ответственности</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+        <section class="hero" id="heroScreen">
+        <div id="hero3dScene" class="hero-3d-scene" aria-hidden="true">
+          <img id="heroOscarImg" class="hero-oscar-img" src="./assets/oscar-hq.png" alt="" aria-hidden="true" />
+        </div>
         <header class="header">
             <a href="#salesPopup" class="badge badge-left">Принять участие <span><img src="./assets/vector5.svg" alt="" width="9" height="14"/></span></a>
             <img
@@ -84,48 +211,53 @@
         </div>
         
         </section>
-        <section class="countdown-section">
-            <div class="countdown-container">
+        <section class="countdown-section" id="countScreen">
+            <div class="countdown-pin">
+                <canvas class="count-orbit-canvas" id="countOrbitCanvas" aria-hidden="true"></canvas>
+                <img class="count-clock-image" src="./assets/hero-bg.png" alt="" aria-hidden="true" />
+                <div class="countdown-container">
+                    
+                    <div class="titles-wrapper">
+                        <h2 class="title-white">ДО ПРЕМИИ</h2>
+                        <h2 class="title-gold">ОСТАЛОСЬ:</h2>
+                    </div>
+
+                    <div class="cards-group">
+                    <div class="timer-group">
+                        <div class="cards-row">
+                            <div class="timer-card">
+                                <span class="number">10</span>
+                                <span class="label">ДНЕЙ</span>
+                            </div>
+                            <div class="timer-card">
+                                <span class="number">45</span>
+                                <span class="label">ЧАСОВ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tower-spacer"></div>
                 
-                <div class="titles-wrapper">
-                    <h2 class="title-white">ДО ПРЕМИИ</h2>
-                    <h2 class="title-gold">ОСТАЛОСЬ:</h2>
-                </div>
-
-                <div class="cards-group">
-                <div class="timer-group">
-                    <div class="cards-row">
+                    <div class="cards-row second">
                         <div class="timer-card">
-                            <span class="number">10</span>
-                            <span class="label">ДНЕЙ</span>
+                            <span class="number">25</span>
+                            <span class="label">МИНУТ</span>
                         </div>
                         <div class="timer-card">
-                            <span class="number">45</span>
-                            <span class="label">ЧАСОВ</span>
+                            <div class="number flip">
+                                <span class="current">45</span>
+                            </div>
+                            <span class="label">СЕКУНД</span>
                         </div>
-                    </div>
-                </div>
-
-                <div class="tower-spacer"></div>
-            
-                <div class="cards-row second">
-                    <div class="timer-card">
-                        <span class="number">25</span>
-                        <span class="label">МИНУТ</span>
-                    </div>
-                    <div class="timer-card">
-                        <div class="number flip">
-                            <span class="current">45</span>
-                        </div>
-                        <span class="label">СЕКУНД</span>
                     </div>
                 </div>
             </div>
             </div>
         </section>
-        <section class="status" aria-label="Status">
+        <div class="status-pin-spacer">
+        <section class="status" id="statusScreen" aria-label="Status">
 
-          <h2 class="status-title-main reveal-text">Статус</h2>
+          <h2 class="status-title-main reveal-text is-active">Статус</h2>
           <p class="status-title-sub status-title-sub-1 reveal-text">масштаб</p>
           <p class="status-title-sub status-title-sub-2 reveal-text">
             Достижения
@@ -205,9 +337,10 @@
             </div>
           </div>
         </section>
+        </div>
 
         <section class="screen screen-promo" id="promoScreen" aria-labelledby="promoTitle">
-            
+            <div class="promo-pin">
             <header class="promo-header">
             <p class="promo-author reveal-text">Анна Маркина</p>
             <p class="promo-role reveal-text">Руководитель премии «Рекорды Рынка Недвижимости»</p>
@@ -266,6 +399,7 @@
                 
             </article>
 
+            </div>
             </div>
         </section>
 
@@ -497,7 +631,10 @@
             class="media-book-interaction-layer"
             id="mediaBookInteractionLayer"
             aria-hidden="true"
-          ></div>
+          >
+            <div class="media-book-hit-area media-book-hit-area-prev" id="mediaBookHitPrev"></div>
+            <div class="media-book-hit-area media-book-hit-area-next" id="mediaBookHitNext"></div>
+          </div>
           <div
             class="media-book-scroll-shim"
             id="mediaBookScrollShim"
@@ -1464,26 +1601,50 @@
                       <p>Должность и описание второго человека</p>
                     </header>
                   </article>
+                  <article class="reviews-slide" data-slide="2">
+                    <div class="reviews-portrait-wrapper">
+                      <img class="reviews-portrait-img" src="./assets/images/reviews/reviews_portrait.webp" alt="Портрет 3" />
+                    </div>
+                    <div class="reviews-letter-wrapper">
+                      <img class="reviews-letter-frame" src="./assets/reviews_gratitude_frames.png" alt="" />
+                      <img class="reviews-letter-img" src="./assets/images/reviews/reviews_letter.webp" alt="Письмо 3" />
+                    </div>
+                    <header class="reviews-person-info">
+                      <h3>Имя Фамилия</h3>
+                      <p>Должность и описание третьего человека</p>
+                    </header>
+                  </article>
                 </div>
               </div>
         
               <div 
                 class="reviews-media-stage reviews-media-stage-gratitude" 
-                id="reviewsGratitudeGallery" 
                 role="tabpanel" 
                 aria-labelledby="tab-gratitude" 
                 hidden
               >
-                <div class="reviews-gratitude-gallery" aria-label="Галерея благодарностей">
-                  <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="0">
+                <div class="reviews-gratitude-gallery" id="reviewsGratitudeGallery" aria-label="Галерея благодарностей">
+                  <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="0" aria-hidden="false">
                     <img class="reviews-gratitude-card-frame" src="./assets/images/reviews/reviews_gratitude_frame.webp" alt="" aria-hidden="true" />
-                    <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_1.webp" alt="Благодарственное письмо от организации" />
+                    <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_1.webp" alt="Благодарственное письмо 1" />
                   </figure>
-                  </div>
+                  <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="1" aria-hidden="true">
+                    <img class="reviews-gratitude-card-frame" src="./assets/images/reviews/reviews_gratitude_frame.webp" alt="" aria-hidden="true" />
+                    <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_2.webp" alt="" />
+                  </figure>
+                  <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="2" aria-hidden="true">
+                    <img class="reviews-gratitude-card-frame" src="./assets/images/reviews/reviews_gratitude_frame.webp" alt="" aria-hidden="true" />
+                    <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_3.webp" alt="" />
+                  </figure>
+                  <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="3" aria-hidden="true">
+                    <img class="reviews-gratitude-card-frame" src="./assets/images/reviews/reviews_gratitude_frame.webp" alt="" aria-hidden="true" />
+                    <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_4.webp" alt="" />
+                  </figure>
         
-                <div class="reviews-gratitude-cursor" id="reviewsGratitudeCursor" aria-hidden="true">
-                  <img class="reviews-gratitude-cursor-ring" src="./assets/reviews_gratitude_cursor_circle.svg" alt="" />
-                  <img class="reviews-gratitude-cursor-arrow" src="./assets/reviews_gratitude_cursor_arrow.svg" alt="" />
+                  <div class="reviews-gratitude-cursor" id="reviewsGratitudeCursor" aria-hidden="true">
+                    <img class="reviews-gratitude-cursor-ring" src="./assets/reviews_gratitude_cursor_circle.svg" alt="" />
+                    <img class="reviews-gratitude-cursor-arrow" src="./assets/reviews_gratitude_cursor_arrow.svg" alt="" />
+                  </div>
                 </div>
               </div>
         
@@ -1495,17 +1656,27 @@
                 hidden
               >
                 <div class="reviews-feedback-list" role="region" aria-live="polite">
-                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_center.webp" alt="Отзыв Ольги Галагиной" data-feedback-card data-feedback-index="0" />
-                  </div>
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_center.webp" alt="Отзыв Ольги Галагиной" data-feedback-card data-feedback-label="Отзыв Ольги Галагиной" data-feedback-index="0" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_right_1.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 2" data-feedback-index="1" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_right_2.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 3" data-feedback-index="2" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_right_3.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 4" data-feedback-index="3" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_right_2.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 5" data-feedback-index="4" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_left_3.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 6" data-feedback-index="5" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_left_1.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 7" data-feedback-index="6" />
+                </div>
         
                 <nav class="reviews-feedback-controls">
                   <button class="reviews-feedback-nav reviews-feedback-nav-left" type="button" aria-label="Предыдущий отзыв">
-                    <img class="reviews-feedback-nav-ring" src="./assets/4febf0c3e3c37be3e5c904c66b5a026ba72cc5ae.svg" alt="" aria-hidden="true" />
-                    <img class="reviews-feedback-nav-icon" src="./assets/17830c88a928c3e47f6f6900ace88431311bda0c.svg" alt="" aria-hidden="true" />
+                    <span class="reviews-feedback-nav-visual" aria-hidden="true">
+                      <img class="reviews-feedback-nav-layer reviews-feedback-nav-layer--default reviews-feedback-nav-layer--prev" src="./assets/17830c88a928c3e47f6f6900ace88431311bda0c.svg" alt="" />
+                      <img class="reviews-feedback-nav-layer reviews-feedback-nav-layer--gold reviews-feedback-nav-layer--prev" src="./assets/goldarrow.svg" alt="" />
+                    </span>
                   </button>
                   <button class="reviews-feedback-nav reviews-feedback-nav-right" type="button" aria-label="Следующий отзыв">
-                    <img class="reviews-feedback-nav-ring" src="./assets/64ea3491d70e751b0b4d9e607d15505bb3c1b766.svg" alt="" aria-hidden="true" />
-                    <img class="reviews-feedback-nav-icon" src="./assets/a0e06579757b5f495cfec4ac59b801a9e6411816.svg" alt="" aria-hidden="true" />
+                    <span class="reviews-feedback-nav-visual" aria-hidden="true">
+                      <img class="reviews-feedback-nav-layer reviews-feedback-nav-layer--default" src="./assets/a0e06579757b5f495cfec4ac59b801a9e6411816.svg" alt="" />
+                      <img class="reviews-feedback-nav-layer reviews-feedback-nav-layer--gold" src="./assets/goldarrow.svg" alt="" />
+                    </span>
                   </button>
                 </nav>
               </div>
@@ -2380,6 +2551,7 @@
     </main>
     
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="./hero3d.js"></script>
     <script src="./script.js"></script>
 </body>
 </html>
