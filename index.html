@@ -39,17 +39,6 @@
 </head>
 <body>
     <main class="page">
-        <button
-          type="button"
-          class="page-menu-btn"
-          id="pageMenuToggle"
-          aria-label="Открыть меню"
-          aria-controls="siteMenuPanel"
-          aria-expanded="false"
-        >
-            <span class="page-menu-btn__ripple" aria-hidden="true"></span>
-            <img src="./assets/menu.svg" alt="" width="33" height="33" decoding="async" />
-        </button>
         <aside class="site-menu" id="siteMenuPanel" aria-hidden="true">
           <div class="site-menu__backdrop" data-site-menu-close></div>
           <div class="site-menu__shell">
@@ -65,8 +54,7 @@
                 </button>
 
                 <div class="site-menu__logo">
-                  <img src="./assets/n1_bg.gif" alt="Рекорды №1" class="site-menu__logo-mark" />
-                  <img src="./assets/logo.svg" alt="Рекорды рынка недвижимости" class="site-menu__logo-text" />
+                 
                 </div>
 
                 <div class="site-menu__actions">
@@ -150,10 +138,21 @@
             </div>
           </div>
         </aside>
+        <button
+          type="button"
+          class="page-menu-btn"
+          id="pageMenuToggle"
+          aria-label="Открыть меню"
+          aria-controls="siteMenuPanel"
+          aria-expanded="false"
+        >
+            <span class="page-menu-btn__ripple" aria-hidden="true"></span>
+            <img src="./assets/menu.svg" alt="" width="33" height="33" decoding="async" />
+        </button>
+        <div class="hero-bleed">
+        <div id="hero3dScene" class="hero-3d-scene" aria-hidden="true"></div>
         <section class="hero" id="heroScreen">
-        <div id="hero3dScene" class="hero-3d-scene" aria-hidden="true">
-          <img id="heroOscarImg" class="hero-oscar-img" src="./assets/oscar-hq.png" alt="" aria-hidden="true" />
-        </div>
+        <img id="heroOscarImg" class="hero-oscar-img" src="./assets/oscar-hq.png" alt="" aria-hidden="true" />
         <header class="header">
             <a href="#salesPopup" class="badge badge-left">Принять участие <span><img src="./assets/vector5.svg" alt="" width="9" height="14"/></span></a>
             <img
@@ -211,6 +210,7 @@
         </div>
         
         </section>
+        </div>
         <section class="countdown-section" id="countScreen">
             <div class="countdown-pin">
                 <canvas class="count-orbit-canvas" id="countOrbitCanvas" aria-hidden="true"></canvas>

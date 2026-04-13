@@ -69,8 +69,8 @@ async function initHero3D() {
   const HALF_W = HALF_H * (1920 / 1080);
   const PX = HALF_H / 540;
   const isNarrowMobile = window.innerWidth < 400;
-  const backgroundModelScale = isMobileHero ? 0.54 : 1;
-  const mobileXOffset = isNarrowMobile ? -30 * PX : 0;
+  const backgroundModelScale = isMobileHero ? 0.36 : 1;
+  const mobileXOffset = isNarrowMobile ? -12 * PX : 0;
 
   function cssToWorld(l, t, w, h) {
     const cx = l + w * 0.5 - 960, cy = t + h * 0.5 - 540;
@@ -79,12 +79,17 @@ async function initHero3D() {
 
   const mainRect = { l: 657, t: 88, w: 605, h: 1016 };
   const mainXY = cssToWorld(mainRect.l, mainRect.t, mainRect.w, mainRect.h);
-  const springHomeXY = new THREE.Vector2(0, mainXY.y * 0.8 + (isMobileHero ? 0.18 : 0.08));
+  const mainXY_y = mainXY.y;
+  const mobClusterY = mainXY_y * 0.52;
+  const springHomeXY = isMobileHero
+    ? new THREE.Vector2(0, mobClusterY * 0.94)
+    : new THREE.Vector2(0, mainXY_y * 0.8 + 0.08);
+  const cameraLookY = isMobileHero ? mobClusterY * 0.88 : mainXY_y * 0.8;
 
   const camera = new THREE.PerspectiveCamera(CAM_FOV, 1920 / 1080, 0.1, 100);
   const CAM_Y = HALF_H * 1.25;
   camera.position.set(0, CAM_Y, CAM_Z);
-  camera.lookAt(0, mainXY.y * 0.8, 0);
+  camera.lookAt(0, cameraLookY, 0);
 
   // ─── Rapier ───────────────────────────────────────────────────────
   await RAPIER.init();
@@ -213,14 +218,13 @@ async function initHero3D() {
       return g;
     }
 
-    const mainXY_y = mainXY.y;
-    const backgroundSpawnConfig = isMobileHero
+  const backgroundSpawnConfig = isMobileHero
       ? [
-          [1, -0.84 + mobileXOffset,  -0.18,            0.10,  15,  1.0, null],
-          [2, -0.18 + mobileXOffset,  0.72,           -0.5,   10,  1.0, null],
-          [0,  0.04 + mobileXOffset,  0.92,           -1.80, -15,  0.7, 0.6],
-          [2,  0.14 + mobileXOffset,  0.50,            0.10, -15,  1.0, null],
-          [1,  -0.46 + mobileXOffset,  0.86,           -0.80, -30,  1.0, null],
+          [1, -0.38 + mobileXOffset, mobClusterY - 0.14, 0.10, 15, 1.0, null],
+          [2, -0.10 + mobileXOffset, mobClusterY + 0.06, -0.5, 10, 1.0, null],
+          [0, 0.10 + mobileXOffset, mobClusterY + 0.20, -1.80, -15, 0.7, 0.6],
+          [2, 0.22 + mobileXOffset, mobClusterY - 0.02, 0.10, -15, 1.0, null],
+          [1, 0.40 + mobileXOffset, mobClusterY + 0.12, -0.80, -30, 1.0, null],
         ]
       : [
           [1, -1.90, mainXY_y - 0.4,  0.20,  15,  1.0, null],
@@ -233,7 +237,7 @@ async function initHero3D() {
     backgroundSpawnConfig.forEach((args) => spawn(...args));
 
     // ─── Модели №1 (2 слева, 2 справа) ───────────────────────────────
-    const N1_H = isMobileHero ? 96 : 134;
+    const N1_H = isMobileHero ? 70 : 134;
     function spawnN1(gltfSrc, wx, wy, wz, tiltDeg, op, brighten, color) {
       const mesh = gltfSrc.scene.clone(true);
       prepareModelForViewer(mesh, renderer);
@@ -305,12 +309,13 @@ async function initHero3D() {
       });
     }
 
+    const n1MobY = mainXY_y * 0.50;
     const n1SpawnConfig = isMobileHero
       ? [
-          [gltfN1b, -1.10 + mobileXOffset,  0.90, -0.3, -165, 0.6, 0.9, '#7c2f25'],
-          [gltfN1s,   -0.82 + mobileXOffset, -1.32, -0.5, -194, 0.50, 1, '#e3e3e3'],
-          [gltfN1b,    1.00 + mobileXOffset,  0.98, -0.3, -165, 0.85, 0.9, '#424242'],
-          [gltfN1b,  0.96 + mobileXOffset, -1.32, -0.5, -194, 0.6, 0.9, '#7c2f25'],
+          [gltfN1b, -0.44 + mobileXOffset, n1MobY + 0.14, -0.3, -165, 0.6, 0.9, '#7c2f25'],
+          [gltfN1s, -0.14 + mobileXOffset, n1MobY - 0.20, -0.5, -194, 0.5, 1, '#e3e3e3'],
+          [gltfN1b, 0.18 + mobileXOffset, n1MobY + 0.16, -0.3, -165, 0.85, 0.9, '#424242'],
+          [gltfN1b, 0.44 + mobileXOffset, n1MobY - 0.20, -0.5, -194, 0.6, 0.9, '#7c2f25'],
         ]
       : [
           [gltfN1b, -3.00, mainXY.y + 0.4, -0.3, -165, 0.6, 0.9, '#7c2f25'],
@@ -460,7 +465,7 @@ async function initHero3D() {
       if (camDelta > 0.001) {
         camera.position.x = parallaxX;
         camera.position.y = CAM_Y + parallaxY;
-        camera.lookAt(0, mainXY.y * 0.8, 0);
+        camera.lookAt(0, cameraLookY, 0);
       }
 
       if (oscarImg) {

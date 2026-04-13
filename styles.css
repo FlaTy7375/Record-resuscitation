@@ -136,6 +136,7 @@ body.site-menu-open {
 .site-menu__backdrop {
     position: absolute;
     inset: 0;
+    z-index: 0;
     background: rgba(0, 0, 0, 0.45);
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -146,17 +147,36 @@ body.site-menu-open {
     top: 0;
     right: 0;
     bottom: 0;
+    z-index: 1;
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    overflow: hidden;
-    transform: translateX(100%);
+    overflow: visible;
+    /* 100% недостаточно: ::before с отрицательным left выступает влево и остаётся на экране */
+    transform: translateX(calc(100% + 56px));
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+}
+
+/* Фон вынесен в слой без filter: drop-shadow — иначе фон часто не рисуется вместе с transform */
+.site-menu__shell::before {
+    content: "";
+    position: absolute;
+    top: -52px;
+    bottom: -52px;
+    left: -32px;
+    right: -48px;
+    z-index: 0;
+    pointer-events: none;
     background-image: url("./assets/site-menu-background.svg");
     background-size: cover;
-    background-position: right center;
+    background-position: left center;
     background-repeat: no-repeat;
-    filter: drop-shadow(-1px 0px 0px rgba(255, 255, 255, 0.15));
+}
+
+.site-menu__shell > * {
+    position: relative;
+    z-index: 1;
 }
 
 .site-menu.is-open {
@@ -178,7 +198,7 @@ body.site-menu-open {
     align-items: center;
     justify-content: center;
     align-self: center;
-    transform: translateX(20px);
+    transform: translate(0px, 20px);
 }
 
 .site-menu__close-btn,
@@ -508,17 +528,37 @@ body.site-menu-open {
 
 @media (max-width: 1200px) {
     .page-menu-btn {
-        right: 20px;
-        top: 32px;
-        transform: none;
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        right: auto;
+        left: calc(50vw + min(187.5px, (100vw - 32px) * 0.5) - 16px - 40px);
+        width: 40px;
+        height: 40px;
+    }
+
+    .page-menu-btn::before,
+    .page-menu-btn::after,
+    .page-menu-btn__ripple {
+        width: 40px;
+        height: 40px;
+        margin: -20px 0 0 -20px;
+    }
+
+    .page-menu-btn img {
+        width: 20px;
+        max-height: 20px;
     }
 
     .site-menu__shell {
         width: 335px;
         max-width: 100%;
         background-color: #0f0f0f;
-        background-image: none;
-        filter: none;
+        box-shadow: none;
+    }
+
+    .site-menu__shell::before {
+        content: none;
     }
 
     .site-menu__desktop-tab {
@@ -1152,6 +1192,17 @@ body.site-menu-open {
 }
 
 
+.hero-bleed {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: visible;
+    background:
+        url('./assets/bg_circles_4004_112.svg') center/70% auto no-repeat,
+        radial-gradient(circle at 50% 42%, rgba(255, 212, 132, 0.08), transparent 20%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 18%),
+        linear-gradient(180deg, #0b0b0d 0%, #111113 56%, #09090a 100%);
+}
 
 .hero {
     box-sizing: border-box;
@@ -1169,15 +1220,10 @@ body.site-menu-open {
     height: 100vh;
     max-width: 1920px;
     margin: 0 auto;
-    background:
-    url('./assets/bg_circles_4004_112.svg') center/70% auto no-repeat,
-    radial-gradient(circle at 50% 42%, rgba(255, 212, 132, 0.08), transparent 20%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 18%),
-    linear-gradient(180deg, #0b0b0d 0%, #111113 56%, #09090a 100%);
-    overflow: hidden;
+    overflow: visible;
 }
 
-.hero-3d-scene {
+.hero-bleed > .hero-3d-scene {
     position: absolute;
     inset: 0;
     z-index: 0;
@@ -1198,19 +1244,19 @@ body.site-menu-open {
     will-change: transform;
     pointer-events: none;
     user-select: none;
-    z-index: 10;
+    z-index: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
 
-.hero-3d-scene > canvas {
+.hero-bleed > .hero-3d-scene > canvas {
     display: block;
     width: 100% !important;
     height: 100% !important;
     will-change: transform;
 }
 
-.hero > :not(.hero-3d-scene) {
+.hero > :not(.hero-oscar-img) {
     position: relative;
     z-index: 1;
 }
@@ -5890,15 +5936,32 @@ left: 0;
         margin-top: -40px;
     }
 
-    .hero {
-        width: 100%;
-        padding: 30px 10px;
+    .hero-bleed {
         background:
         linear-gradient(rgba(10, 10, 10, 0.6), rgba(10, 10, 10, 0.6)),
         url('./assets/bg_circles_4004_112.svg') center/140% auto no-repeat,
         radial-gradient(circle at 50% 42%, rgba(255, 212, 132, 0.08), transparent 20%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 18%),
         linear-gradient(180deg, #0b0b0d 0%, #111113 56%, #09090a 100%);
+    }
+
+    .hero {
+        width: 375px;
+        max-width: 100%;
+        margin-inline: auto;
+        padding: 30px 16px;
+        box-sizing: border-box;
+    }
+
+    .hero-oscar-img {
+        left: 50%;
+        width: min(300px, 82vw);
+        height: auto;
+        aspect-ratio: 680 / 1100;
+        margin-left: calc(min(300px, 82vw) * -0.5);
+        top: auto;
+        bottom: 0;
+        object-position: center bottom;
     }
 
 
@@ -8248,15 +8311,32 @@ left: 0;
 
 /* Планшет/Телефон */
 @media (max-width: 1200px) {
-    .hero {
-        width: 100%;
-        padding: 30px 10px;
+    .hero-bleed {
         background:
         linear-gradient(rgba(10, 10, 10, 0.6), rgba(10, 10, 10, 0.6)),
         url('./assets/bg_circles_4004_112.svg') center/140% auto no-repeat,
         radial-gradient(circle at 50% 42%, rgba(255, 212, 132, 0.08), transparent 20%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 18%),
         linear-gradient(180deg, #0b0b0d 0%, #111113 56%, #09090a 100%);
+    }
+
+    .hero {
+        width: 375px;
+        max-width: 100%;
+        margin-inline: auto;
+        padding: 30px 16px;
+        box-sizing: border-box;
+    }
+
+    .hero-oscar-img {
+        left: 50%;
+        width: min(300px, 82vw);
+        height: auto;
+        aspect-ratio: 680 / 1100;
+        margin-left: calc(min(300px, 82vw) * -0.5);
+        top: auto;
+        bottom: 0;
+        object-position: center bottom;
     }
 
     .sales-ceremony-title {
@@ -11521,5 +11601,28 @@ left: 0;
     .footer-copyright {
         margin-top: 25px;
         font-size: 16px;
+    }
+}
+
+/* Мобилка: высота от ~792px (включая выше 900px) — крупнее центральное фото Оскара */
+@media (max-width: 1200px) and (min-height: 792px) {
+    .hero-oscar-img {
+        width: min(340px, 90vw);
+        margin-left: calc(min(340px, 90vw) * -0.5);
+    }
+}
+
+/* Мобилка: низкая высота экрана (<700px) — меньше центральное фото Оскара */
+@media (max-width: 1200px) and (max-height: 699px) {
+    .hero-oscar-img {
+        width: min(258px, 72vw);
+        margin-left: calc(min(258px, 72vw) * -0.5);
+    }
+}
+
+@media (max-width: 1200px) and (max-height: 620px) {
+    .hero-oscar-img {
+        width: min(220px, 62vw);
+        margin-left: calc(min(220px, 62vw) * -0.5);
     }
 }
