@@ -536,7 +536,6 @@ body.site-menu-open {
         width: 40px;
         height: 40px;
     }
-
     .page-menu-btn::before,
     .page-menu-btn::after,
     .page-menu-btn__ripple {
@@ -6884,7 +6883,7 @@ left: 0;
     }
 
     .countdown-section {
-        height: 210vh;
+        height: 230vh;
     }
 
     .countdown-pin {
@@ -8818,7 +8817,7 @@ left: 0;
     }
 
     .countdown-section {
-        height: 210vh;
+        height: 230vh;
     }
 
     .countdown-pin {
@@ -11626,3 +11625,4 @@ left: 0;
         margin-left: calc(min(220px, 62vw) * -0.5);
     }
 }
+

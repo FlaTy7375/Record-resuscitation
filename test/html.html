@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Меню - Рекорды Рынка Недвижимости</title>
+<style>
+  /* --- БАЗОВЫЕ НАСТРОЙКИ --- */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(circle at center, #2a2a2a 0%, #0a0a0a 100%);
+    color: #ffffff;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .sidebar-tab {
+    position: relative;
+    transform: translate(20px, 20px);
+  }
+
+  /* --- ОБЩИЙ КОНТЕЙНЕР (ФОН-КАРТИНКА) --- */
+  .sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    z-index: 100;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Устанавливаем фоновую картинку для десктопа */
+    background-image: url('menu-background.svg'); 
+    background-size: cover; 
+    background-position: right center;
+    background-repeat: no-repeat;
+  }
+  .sidebar-wrapper.is-hidden {
+    transform: translateX(100%);
+  }
+
+  /* --- ВНУТРЕННИЙ БЛОК МЕНЮ --- */
+  .sidebar-main {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE */
+    background: transparent;
+  }
+  .sidebar-main::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  
+  .close-btn, .mobile-close-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* Логотип */
+  .logo-block {
+    display: flex;
+    align-items: center;
+    margin-bottom: 50px;
+  }
+
+  .action-buttons a {
+    width: 259px;
+    font-size: 22px;
+    height: 61px;
+  }
+
+  .logo-number-image {
+    height: 42px;
+    width: auto;
+    display: block;
+  }
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    line-height: 1.2;
+  }
+  .logo-text span:first-child, .logo-text span:last-child {
+    color: #888;
+  }
+
+  /* Кнопки действий */
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 44px;
+  }
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .btn-primary {
+    background-color: #d81424;
+    color: #fff;
+    border: 1px solid #d81424;
+  }
+  .btn-primary:hover { background-color: #f01628; }
+  .btn-outline {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  .btn-outline:hover { border-color: #fff; }
+
+  /* Навигация (СЕТКА В 2 КОЛОНКИ) */
+  .main-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 20px;
+    row-gap: 10px;
+    align-items: start;
+    margin-bottom: 50px;
+  }
+  
+  @media (max-width: 500px) {
+    .main-nav {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 245px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 26px;
+    font-weight: 500;
+    padding: 16px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+  .nav-item:hover { opacity: 0.7; }
+  
+  .nav-group.is-expanded .nav-item img {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+  }
+  .nav-group.is-expanded .submenu {
+    max-height: 500px;
+    padding-bottom: 20px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Подменю */
+  .submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+  }
+  
+  .submenu-link {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    color: #888;
+    text-decoration: none;
+    font-size: 22px;
+    margin-top: 10px;
+    padding-left: 35px;
+    border-left: 1px solid rgba(249, 240, 232, 0.71);
+    transition: all 0.3s;
+  }
+  .submenu-link:hover { 
+    color: #fff; 
+    border-left-color: #DC1924;
+  }
+  .submenu-link.active, .submenu-link:active {
+    color: #DC1924;
+    border-left-color: #DC1924;
+  }
+
+  /* Социальные ссылки */
+  .social-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 31px 30px;
+    margin-bottom: 50px;
+  }
+  .social-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 26px;
+    position: relative;
+    display: inline-block;
+    width: fit-content;
+  }
+  .social-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: background-color 0.3s;
+  }
+  .social-link:hover::after { background-color: #fff; }
+
+  /* Форма подписки */
+  .subscribe-block {
+    margin-bottom: auto;
+  }
+  .subscribe-label {
+    display: block;
+    opacity: 0.56;
+    color: #F1F1F1;
+    font-size: 22px;
+  }
+  
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: -11px;
+    left: 0;
+    width: 100%;
+    height: 1.2px;
+    background-color: rgba(255, 255, 255, 0.59);
+    transition: background-color 0.3s ease;
+    pointer-events: none;
+  }
+  .input-wrapper:focus-within::after {
+    background-color: #d81424;
+  }
+
+  .subscribe-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 10px 40px 0px 0;
+    color: #fff;
+    font-size: 24px;
+    outline: none;
+  }
+  .subscribe-input::placeholder { color: #fff; }
+  
+  .submit-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .submit-btn:hover {
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Футер */
+  .sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 60px;
+  }
+  .sidebar-footer a {
+    color: #666;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+    position: relative;
+    width: fit-content;
+  }
+  .sidebar-footer a:hover { color: #aaa; }
+  .sidebar-footer a::after {
+    content: '';
+    position: absolute;
+    bottom: 0px;
+    left: 1px;
+    width: 100%;
+    height: 1.2px;
+    background-color: rgba(255, 255, 255, 0.59);
+    transition: background-color 0.3s ease;
+    pointer-events: none;
+  }
+
+  .close-btn, .mobile-close-btn {
+    transition: color 0.3s ease;
+  }
+  .close-btn:hover, .mobile-close-btn:hover { color: #fff; }
+
+
+  /* --- ДЕСКТОП --- */
+  @media (min-width: 1200px) {
+    .sidebar-wrapper {
+      display: flex;
+      align-items: center;
+      filter: drop-shadow(-1px 0px 0px rgba(255, 255, 255, 0.15));
+    }
+    
+    .sidebar-main {
+      width: 1000px;
+      height: 100vh;
+      padding: 74px;
+    }
+    .sidebar-wrapp {
+      width: 555px;
+    }
+    
+    .sidebar-tab {
+      width: 60px;
+      height: 140px;
+      background: transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .mobile-close-btn { display: none; }
+    
+    .sidebar-footer {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+  }
+
+
+  /* --- МОБАЙЛ (АДАПТАЦИЯ, ФОН И СТИЛИ) --- */
+  @media (max-width: 1200px) {
+     .submenu-link {
+      font-size: 18px;
+     }
+     .submenu-link {
+      padding-left: 25px;
+     }
+     .logo-block {
+      margin-bottom: 25px;
+     }
+     
+    /* Главный контейнер (Черный фон на всю высоту экрана) */
+    .sidebar-wrapper {
+      width: 335px !important;
+      max-width: 100%;
+      background-color: #0F0F0F !important; 
+      background-image: none !important; 
+      border-left: none !important; 
+    }
+    
+    /* Контейнер скролла */
+    .sidebar-main {
+      width: 100%;
+      height: 100%;
+      padding: 0; 
+      overflow-x: hidden; 
+      background: transparent; /* Убрали фон отсюда */
+    }
+
+    /* Обертка контента (Фон теперь здесь!) */
+    .sidebar-wrapp {
+      position: relative;
+      padding: 40px 20px 40px 20px; 
+      
+      /* Заставляем обертку быть как минимум высотой с экран */
+      min-height: 100%; 
+      
+      /* Привязываем фон к контенту, чтобы он рос вместе с открытыми списками */
+      background-image: url('menu-mobile.svg'); 
+      background-size: 100% 100%; /* Растягивает картинку ровно от верха до низа контента */
+      background-position: top center; 
+      background-repeat: no-repeat;
+    }
+
+    .sidebar-tab { display: none; }
+
+    /* Кнопка закрытия меню */
+    .mobile-close-btn {
+      display: block;
+      background: none;
+      border: none;
+      color: #666;
+      position: absolute;
+      top: 40px;
+      right: 20px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    
+    /* Логотип */
+    .logo-block {
+      width: 100%;
+      justify-content: center;
+    }
+    .logo-text img{
+      width: 130px !important;
+      height: 46px;
+    }
+
+    /* Кнопки действий */
+    .action-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    .action-buttons a {
+      width: 100%;
+      height: 47px;
+      font-size: 16px;
+    }
+    
+    /* Навигация */
+    .main-nav {
+      display: flex;
+      flex-direction: column;
+    }
+    .nav-group {
+      width: 100%;
+    }
+    .nav-item {
+      font-size: 18px;
+      width: 100% !important;
+    }
+    .nav-item img {
+      width: 18px;
+    }
+    
+    /* Соцсети и Подписка */
+    .social-link {
+      font-size: 18px;
+    }
+    .subscribe-label {
+      font-size: 17px;
+    }
+    .subscribe-input {
+      font-size: 19px;
+    }
+    .submit-btn {
+      width: 48px;
+      height: 48px;
+    }
+    .submit-btn img{
+      width: 48px;
+      height: 48px;
+    }
+    .sidebar-footer a {
+      font-size: 16px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="sidebar-wrapper" id="sidebar">
+    
+    <div class="sidebar-tab">
+      <button class="close-btn" aria-label="Закрыть меню" onclick="toggleMenu()">
+        <img src="close-menu.svg" alt="">
+      </button>
+    </div>
+
+    <div class="sidebar-main">
+      
+      <div class="sidebar-wrapp">
+        
+        <button class="mobile-close-btn" aria-label="Закрыть меню" onclick="toggleMenu()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+
+        <div class="logo-block">
+          <img src="n1_bg.gif" alt="№1" class="logo-number-image">
+          <div class="logo-text">
+            <img src="text.png" alt="" height="76px" style="width: 170px;">
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <a href="#" class="btn btn-primary">
+            Принять участие
+            <img src="arrow-menu.svg" alt="">
+          </a>
+          <a href="#" class="btn btn-outline">
+            Победители 2026
+            <img src="arrow-menu.svg" alt="">
+          </a>
+        </div>
+
+        <nav class="main-nav">
+          
+          <div class="nav-group is-expanded" id="group-about"> 
+            <button class="nav-item" onclick="toggleAccordion('group-about')">
+              О ПРЕМИИ 
+              <img src="arrow-dropdown.svg" alt="" style="transition: transform 0.3s ease;">
+            </button>
+            
+            <div class="submenu">
+              <a href="#" class="submenu-link active">Что о нас говорят?</a>
+              <a href="#" class="submenu-link">Реклама премии</a>
+              <a href="#" class="submenu-link">Что вам дает участие?</a>
+              <a href="#" class="submenu-link">СМИ о премии</a>
+              <a href="#" class="submenu-link">Пост-релиз Премии</a>
+              <a href="#" class="submenu-link">Требования к номинациям</a>
+            </div>
+          </div>
+
+          <div class="nav-group" id="group-award">
+            <button class="nav-item" onclick="toggleAccordion('group-award')">
+              ПРЕМИЯ 2026 
+               <img src="arrow-dropdown.svg" alt="" style="transition: transform 0.3s ease;">
+            </button>
+            
+            <div class="submenu">
+              <a href="#" class="submenu-link">Номинации</a>
+              <a href="#" class="submenu-link">Этапы проведения</a>
+              <a href="#" class="submenu-link">Жюри</a>
+              <a href="#" class="submenu-link">Участники</a>
+            </div>
+          </div>
+
+          <div class="nav-group" id="group-materials">
+            <button class="nav-item" onclick="toggleAccordion('group-materials')">
+              МАТЕРИАЛЫ 
+              <img src="arrow-dropdown.svg" alt="" style="transition: transform 0.3s ease;">
+            </button>
+
+            <div class="submenu">
+              <a href="#" class="submenu-link">Фотогалерея</a>
+              <a href="#" class="submenu-link">Видеоотчеты</a>
+              <a href="#" class="submenu-link">Логотипы и брендбук</a>
+              <a href="#" class="submenu-link">Презентации</a>
+            </div>
+          </div>
+          
+        </nav>
+
+        <div class="social-links">
+          <a href="#" class="social-link">Dzen</a>
+          <a href="#" class="social-link">Telegram</a>
+          <a href="#" class="social-link">RuTube</a>
+          <a href="#" class="social-link">Telegram-канал</a>
+          <a href="#" class="social-link">Max</a>
+          <a href="#" class="social-link">Вконтакте</a>
+        </div>
+
+        <div class="subscribe-block">
+          <span class="subscribe-label">Подписаться на рассылку:</span>
+          <div class="input-wrapper">
+            <input type="email" class="subscribe-input" placeholder="Введите Email">
+            <button class="submit-btn">
+              <img src="submit-menu.svg" alt="">
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <a href="#">Политика конфиденциальности</a>
+          <a href="#">Отказ от ответственности</a>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('is-hidden');
+    }
+
+    function toggleAccordion(groupId) {
+      const allGroups = document.querySelectorAll('.nav-group');
+      const targetGroup = document.getElementById(groupId);
+      const isCurrentlyExpanded = targetGroup.classList.contains('is-expanded');
+
+      allGroups.forEach(group => {
+        group.classList.remove('is-expanded');
+      });
+
+      if (!isCurrentlyExpanded) {
+        targetGroup.classList.add('is-expanded');
+      }
+    }
+  </script>
+
+</body>
+</html>

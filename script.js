@@ -606,8 +606,11 @@ requestAnimationFrame(raf);
   const canvas = document.getElementById("countOrbitCanvas");
   if (!canvas) return;
 
+  /** С тем же брейкпоинтом, что мобильные стили (`max-width: 1200px`). */
+  const MOBILE_ORBIT_BREAKPOINT = 1200;
+
   const ctx = canvas.getContext("2d", { alpha: true });
-  let isMobileOrbit = window.innerWidth <= 768;
+  let isMobileOrbit = window.innerWidth <= MOBILE_ORBIT_BREAKPOINT;
   let W, H, cx, cy, rx, ry;
   let spiralPoints = [];
   let dpr = 1;
@@ -617,7 +620,7 @@ requestAnimationFrame(raf);
   const TURNS = 3;
   const STEPS = 300;
   const TAIL = 0.15;
-  const maxParticles = isMobileOrbit ? 0 : 25;
+  let maxParticles = isMobileOrbit ? 0 : 25;
 
   let phase = 0;
   let targetPhase = 0;
@@ -653,7 +656,8 @@ requestAnimationFrame(raf);
   }
 
   function resize() {
-    isMobileOrbit = window.innerWidth <= 768;
+    isMobileOrbit = window.innerWidth <= MOBILE_ORBIT_BREAKPOINT;
+    maxParticles = isMobileOrbit ? 0 : 25;
     const parent = canvas.parentElement;
     dpr = isMobileOrbit ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
     W = parent.offsetWidth || 1920;
@@ -670,9 +674,9 @@ requestAnimationFrame(raf);
 
     cx = W * 0.5;
     /* Верх спирали (cy − ry) чуть выше середины блока (~0.46H) */
-    cy = isMobileOrbit ? H * 0.71 : H * 0.7;
+    cy = isMobileOrbit ? H * 0.685 : H * 0.7;
     rx = isMobileOrbit ? W * 0.46 : W * 0.13;
-    ry = isMobileOrbit ? H * 0.25 : H * 0.24;
+    ry = isMobileOrbit ? H * 0.32 : H * 0.24;
 
     spiralPoints = buildSpiral(TURNS, STEPS);
 
@@ -689,8 +693,9 @@ requestAnimationFrame(raf);
 
   function buildSpiral(turns, steps) {
     const ptsArray = [];
-    const rxTop = isMobileOrbit ? W * 0.34 : W * 0.07;
-    const rxBot = isMobileOrbit ? W * 0.49 : W * 0.18;
+    const rxTop = isMobileOrbit ? W * 0.42 : W * 0.07;
+    /* Не больше ~0.48W: иначе при cos=1 точка уезжает за правый край canvas */
+    const rxBot = isMobileOrbit ? W * 0.48 : W * 0.18;
 
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
@@ -713,8 +718,10 @@ requestAnimationFrame(raf);
     const y0 = countScreenDocY > 0 ? countScreenDocY : countSectionDocumentTop(countEl);
 
     /* В pinned-секции спираль должна пройти во время дополнительного прокрута блока. */
-    const startScroll = y0 + vh * 0.02;
-    const span = vh * 1.45;
+    const narrow = window.innerWidth <= MOBILE_ORBIT_BREAKPOINT;
+    /* Мобилка: секция ~210vh, sticky ~1.1·vh скролла — span укладываем в этот запас */
+    const startScroll = y0 + vh * (narrow ? 0.14 : 0.02);
+    const span = vh * (narrow ? 0.82 : 1.45);
     let raw = (scrollY - startScroll) / Math.max(1, span);
     raw = Math.max(0, Math.min(1, raw));
 
@@ -807,8 +814,10 @@ requestAnimationFrame(raf);
         for (let i = 1; i <= baseEnd; i++) {
           ctx.lineTo(spiralPoints[i][0], spiralPoints[i][1]);
         }
-        ctx.strokeStyle = "rgba(255, 220, 180, 0.6)";
-        ctx.lineWidth = 3;
+        ctx.strokeStyle = isMobileOrbit
+          ? "rgba(255, 220, 180, 0.75)"
+          : "rgba(255, 220, 180, 0.6)";
+        ctx.lineWidth = isMobileOrbit ? 4.5 : 3;
         ctx.shadowBlur = 0;
         ctx.stroke();
       }
@@ -828,8 +837,8 @@ requestAnimationFrame(raf);
               p1[1] + (p2[1] - p1[1]) * headFrac
             );
           }
-          ctx.strokeStyle = "rgba(255, 220, 180, 0.9)";
-          ctx.lineWidth = 3.5;
+          ctx.strokeStyle = "rgba(255, 230, 200, 0.95)";
+          ctx.lineWidth = 6;
           ctx.stroke();
         } else {
           for (let i = baseEnd; i <= headIdx; i++) {
