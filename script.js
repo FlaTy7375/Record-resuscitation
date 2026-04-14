@@ -1437,7 +1437,16 @@ function initNewsGallery() {
     newsStepUnlockTimer = window.setTimeout(() => {
       newsStepLocked = false;
     }, STEP_LOCK_MS);
-    setNewsActiveIndex(newsActiveIndex + direction);
+    
+    if (window.innerWidth <= NEWS_DROPDOWN_BREAKPOINT) {
+      // На мобилке - циклический скролл
+      const total = newsCards.length;
+      newsActiveIndex = ((newsActiveIndex + direction) % total + total) % total;
+      renderNewsGallery();
+    } else {
+      // На десктопе - с границами
+      setNewsActiveIndex(newsActiveIndex + direction);
+    }
     return true;
   };
 
@@ -1485,7 +1494,7 @@ function initNewsGallery() {
   const swipeClickSuppressMs = 420;
 
   newsGallery.addEventListener("pointerdown", (event) => {
-    if (window.innerWidth > 480 || event.pointerType === "mouse") return;
+    if (window.innerWidth > NEWS_DROPDOWN_BREAKPOINT) return;
     pointerActive = true;
     pointerStartX = event.clientX;
     pointerStartY = event.clientY;
@@ -1496,9 +1505,9 @@ function initNewsGallery() {
     const dx = event.clientX - pointerStartX;
     const dy = event.clientY - pointerStartY;
     if (Math.abs(dx) >= swipeThresholdPx && Math.abs(dx) > Math.abs(dy)) {
-      if (stepNewsGallery(dx < 0 ? 1 : -1)) {
-        lastSwipeAt = Date.now();
-      }
+      const direction = dx < 0 ? 1 : -1;
+      stepNewsGallery(direction);
+      lastSwipeAt = Date.now();
     }
     pointerActive = false;
   });
@@ -1508,7 +1517,10 @@ function initNewsGallery() {
   });
 
   newsGallery.addEventListener("click", (event) => {
-    if (window.innerWidth <= 480 && Date.now() - lastSwipeAt < swipeClickSuppressMs) return;
+    if (window.innerWidth <= NEWS_DROPDOWN_BREAKPOINT) {
+      event.preventDefault();
+      return;
+    }
     const rect = newsGallery.getBoundingClientRect();
     const localX = event.clientX - rect.left;
     stepNewsGallery(localX < rect.width * 0.5 ? -1 : 1);
