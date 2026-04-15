@@ -19,16 +19,18 @@ async function initHero3D() {
     if (!probe.getContext('webgl2') && !probe.getContext('webgl')) return;
   } catch (_) { return; }
 
+  const isMobileHero = window.matchMedia('(max-width: 1200px)').matches;
+
   // ─── Renderer ────────────────────────────────────────────────────
   const renderer = new THREE.WebGLRenderer({
-    antialias: window.devicePixelRatio < 2,
+    antialias: isMobileHero ? false : window.devicePixelRatio < 2, // Отключено на мобильных
     alpha: true,
     powerPreference: 'high-performance',
-    precision: 'mediump',
+    precision: isMobileHero ? 'lowp' : 'mediump', // Снижена точность для мобильных
     stencil: false,
     depth: true,
   });
-  const isMobileHero = window.matchMedia('(max-width: 1200px)').matches;
+  
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobileHero ? 1.0 : 1.25));
   if (isMobileHero) {
     container.style.pointerEvents = 'none';
@@ -42,19 +44,30 @@ async function initHero3D() {
   canvas3d.style.cssText = 'display:block;width:100%;height:100%;opacity:0;transition:opacity 0.4s ease;';
   container.appendChild(canvas3d);
 
-  // ─── Scene ───────────────────────────────────────────────────────
+  // ─── Scene & Lights ──────────────────────────────────────────────
   const scene = new THREE.Scene();
   const dirLight = new THREE.DirectionalLight(0xffffff, 5.0);
   dirLight.position.set(0, 5, 5);
   scene.add(dirLight);
-  const dirLight2 = new THREE.DirectionalLight(0xccddff, 3.0);
-  dirLight2.position.set(-3, 2, -2);
-  scene.add(dirLight2);
-  const dirLight3 = new THREE.DirectionalLight(0xffffff, 2.0);
-  dirLight3.position.set(3, 1, 2);
-  scene.add(dirLight3);
+  
+  if (!isMobileHero) {
+    // Полное освещение для десктопа
+    const dirLight2 = new THREE.DirectionalLight(0xccddff, 3.0);
+    dirLight2.position.set(-3, 2, -2);
+    scene.add(dirLight2);
+    const dirLight3 = new THREE.DirectionalLight(0xffffff, 2.0);
+    dirLight3.position.set(3, 1, 2);
+    scene.add(dirLight3);
+  } else {
+    // Упрощенное освещение для мобилки (снижение draw calls)
+    const dirLightMobile = new THREE.DirectionalLight(0xccddff, 2.5);
+    dirLightMobile.position.set(-2, 2, 0);
+    scene.add(dirLightMobile);
+  }
+  
   const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
   scene.add(ambientLight);
+  
   const rgbeLoader = new RGBELoader();
   const hdriPromise = new Promise((resolve, reject) => {
     rgbeLoader.load('./models/pillars.hdr', (texture) => {
@@ -83,7 +96,6 @@ async function initHero3D() {
   const mainRect = { l: 657, t: 88, w: 605, h: 1016 };
   const mainXY = cssToWorld(mainRect.l, mainRect.t, mainRect.w, mainRect.h);
   const mainXY_y = mainXY.y;
-  /* Мобилка: точка взгляда камеры; фон больше не тянется к одной точке — каждый homePos как на десктопе */
   const mobClusterY = isMobileHero ? mainXY_y * 0.50 : mainXY_y * 0.52;
   const springHomeXY = new THREE.Vector2(0, mainXY_y * 0.8 + 0.08);
   const cameraLookY = isMobileHero ? mobClusterY * 0.92 : mainXY_y * 0.8;
@@ -96,10 +108,10 @@ async function initHero3D() {
   // ─── Rapier ───────────────────────────────────────────────────────
   await RAPIER.init();
   const world = new RAPIER.World({ x: 0, y: 0, z: 0 });
-  world.numSolverIterations = 8;
-  world.numInternalPgsIterations = 2;
+  // Облегченные настройки солвера для мобилок
+  world.numSolverIterations = isMobileHero ? 2 : 8; 
+  world.numInternalPgsIterations = isMobileHero ? 1 : 2;
 
-  // ─── Вспомогательная функция для случайного кругового вектора ──────
   function getRandomScatterDir() {
     const angle = Math.random() * Math.PI * 2;
     return new THREE.Vector2(Math.cos(angle), Math.sin(angle));
@@ -166,9 +178,7 @@ async function initHero3D() {
 
       _box.setFromObject(mesh); _box.getSize(_size); _box.getCenter(_center);
       let scale = (BG_H * PX) / refDim * (0.9 + 0.14 * wz) * backgroundModelScale;
-      /* Центральная золотая статуэтка (m === 0): чуть крупнее центр на мобилке */
       if (isMobileHero && m === 0) scale *= 1.05;
-      /* Справа серебро (m=2, wx>0): раньше wz>0 раздувало масштаб — вылет за край; на мобилке уравниваем с левой парой */
       if (isMobileHero && m === 2 && wx > 0) scale *= 0.88;
 
       mesh.scale.set(scale, scale, scale);
@@ -225,22 +235,21 @@ async function initHero3D() {
         isBackground: true,
         visPos: new THREE.Vector3(wx, wy, wz),
         visQuat: homeQuat.clone(),
-        // Используем 360-градусный вектор разлета
         scatterDir: getRandomScatterDir(),
       });
       return g;
     }
 
-  /* Мобилка: 4 фоновые статуэтки; разлёт по скроллу — см. mobileScatterDirs (индекс в bodies) */
-  const mobBgLayoutX = 0.49;
-  const mobBgLayoutY = 0.66;
-  const mobBgYRef = mainXY_y * 0.52;
-  const mobBgShiftX = 0;
-  const mobBgWx = (wx) => wx * mobBgLayoutX + mobileXOffset + mobBgShiftX;
-  const mobBgWy = (wy) => mobBgYRef + (wy - mobBgYRef) * mobBgLayoutY;
-  const mobBgRowWorldY = mobClusterY;
-  const mobBgRowZ = -0.56;
-  const backgroundSpawnConfig = isMobileHero
+    const mobBgLayoutX = 0.49;
+    const mobBgLayoutY = 0.66;
+    const mobBgYRef = mainXY_y * 0.52;
+    const mobBgShiftX = 0;
+    const mobBgWx = (wx) => wx * mobBgLayoutX + mobileXOffset + mobBgShiftX;
+    const mobBgWy = (wy) => mobBgYRef + (wy - mobBgYRef) * mobBgLayoutY;
+    const mobBgRowWorldY = mobClusterY;
+    const mobBgRowZ = -0.56;
+    
+    const backgroundSpawnConfig = isMobileHero
       ? [
           [1, mobBgWx(-0.82), -1.2, mobBgRowZ,  -100,  1.0, null],
           [2, mobBgWx(-0.8), -1.1, mobBgRowZ,  100,  1.0, null],
@@ -257,7 +266,7 @@ async function initHero3D() {
 
     backgroundSpawnConfig.forEach((args) => spawn(...args));
 
-    // ─── Модели №1 (2 слева, 2 справа) ───────────────────────────────
+    // ─── Модели №1 ───────────────────────────────
     const N1_H = isMobileHero ? 88 : 134;
     function spawnN1(gltfSrc, wx, wy, wz, tiltDeg, op, brighten, color) {
       const mesh = gltfSrc.scene.clone(true);
@@ -348,7 +357,6 @@ async function initHero3D() {
         isBackground: false,
         visPos: new THREE.Vector3(wx, wy, wz),
         visQuat: homeQuat.clone(),
-        // 360-градусный вектор разлета для цифр 1
         scatterDir: getRandomScatterDir(),
       });
     }
@@ -374,7 +382,6 @@ async function initHero3D() {
 
     n1SpawnConfig.forEach((args) => spawnN1(...args));
 
-    /* Мобилка: фиксированные направления по порядку в bodies (4 статуэтки, затем 4 N1): 0→↘, 1→↙, 2→↖, 3→↗ (+Y вверх по миру) */
     if (isMobileHero) {
       const mobileScatterDirs = [
         new THREE.Vector2(1, -1),
@@ -430,7 +437,6 @@ async function initHero3D() {
     const IDLE_FREE_DIST = isMobileHero ? 0.26 : 0.68;
     const IDLE_MAX_DIST = isMobileHero ? 1.4 : 2.4;
     
-    // Настройки отталкивания от курсора
     const REPULSION_RADIUS = isMobileHero ? 2.0 : 2.5;     
     const REPULSION_FORCE = isMobileHero ? 25.0 : 35.0;    
     const REPULSION_MIN_DIST = isMobileHero ? 0.18 : 0.14;
@@ -442,7 +448,6 @@ async function initHero3D() {
     const N1_REACTION_MUL = isMobileHero ? 0.55 : 0.55;
     const N1_REPULSION_MUL = 1.0; 
     
-    // Одна дистанция по X и Y — круговой разлёт, без вытянутого эллипса влево-вправо
     const SCATTER_DISTANCE = isMobileHero ? 6.1 : 11.2;
     
     const _force = new THREE.Vector3();
@@ -476,8 +481,9 @@ async function initHero3D() {
     let lastFrameTime = 0;
     let physicsAccumulator = 0;
     const FIXED_STEP_ACTIVE = 1 / 90;
-    const FIXED_STEP_IDLE = 1 / 90;
-    const MAX_STEPS_PER_FRAME = 6;
+    // Оптимизация: на мобилках реже считаем физику в фоне
+    const FIXED_STEP_IDLE = isMobileHero ? 1 / 30 : 1 / 90; 
+    const MAX_STEPS_PER_FRAME = isMobileHero ? 2 : 6;
 
     function tick(now) {
       animId = requestAnimationFrame(tick);
@@ -487,12 +493,9 @@ async function initHero3D() {
       
       const livePointer = pointerActive;
       
-      // ─── ЛОГИКА СКРОЛЛА (Новый расчет разлета) ─────────────────────────
       const rect = container.getBoundingClientRect();
       const windowHeight = window.innerHeight || 1080;
       
-      // Вычисляем, насколько глубоко мы проскроллили. 
-      // 0 = мы на самом верху. 1 = контейнер ушел вверх на высоту экрана.
       let scrollRaw = -rect.top / windowHeight; 
       const scatterScrollMul = isMobileHero ? 1.55 : 2.45;
       let targetScatter = Math.max(0, Math.min(1, scrollRaw * scatterScrollMul));
@@ -512,6 +515,7 @@ async function initHero3D() {
         physicsAccumulator -= fixedStep;
         steps++;
       }
+      
       if (livePointer) {
         if (mouseNDCFiltered.x < -1000 || mouseNDCFiltered.y < -1000) {
           mouseNDCFiltered.copy(mouseNDC);
@@ -572,18 +576,13 @@ async function initHero3D() {
 
       for (let bi = 0; bi < bodies.length; bi++) {
         const body = bodies[bi];
-        const { group, rb, homePos, spawnAnchor, homeQuat, homeZ, isBackground, visPos, visQuat, scatterDir } = body;
+        const { group, rb, homePos, homeQuat, homeZ, isBackground, visPos, visQuat, scatterDir } = body;
         const t = rb.translation();
 
-        // ─── ПРИМЕНЕНИЕ РАЗЛЕТА И ПРУЖИН ─────────────────────────
-        const baseTargetPos =
-          isBackground && !isMobileHero ? springHomeXY : homePos;
-
+        const baseTargetPos = isBackground && !isMobileHero ? springHomeXY : homePos;
         const scatterX = scatterDir.x * SCATTER_DISTANCE * scatterProgress;
         const scatterY = scatterDir.y * SCATTER_DISTANCE * scatterProgress;
 
-        /* Мобилка без курсора: позиция строго на луче home→разлёт от scatterProgress — при скролле вверх
-           тот же путь в обратную сторону, без пружин и перескоков */
         if (isMobileHero && !livePointer) {
           let mx = homePos.x + scatterX;
           let my = homePos.y + scatterY;
@@ -593,20 +592,15 @@ async function initHero3D() {
             const ph = bi * 1.21;
             const ax = isBackground ? 0.0062 : 0.0045;
             const ay = isBackground ? 0.0052 : 0.0038;
-            mx +=
-              (Math.sin(tf * 0.32 + ph) * ax +
-                Math.sin(tf * 0.11 + ph * 2.0) * (ax * 0.32)) *
-              swayK;
-            my +=
-              (Math.cos(tf * 0.29 + ph * 1.03) * ay +
-                Math.cos(tf * 0.10 + ph * 0.88) * (ay * 0.3)) *
-              swayK;
+            mx += (Math.sin(tf * 0.32 + ph) * ax + Math.sin(tf * 0.11 + ph * 2.0) * (ax * 0.32)) * swayK;
+            my += (Math.cos(tf * 0.29 + ph * 1.03) * ay + Math.cos(tf * 0.10 + ph * 0.88) * (ay * 0.3)) * swayK;
           }
           rb.setTranslation({ x: mx, y: my, z: 0 }, true);
           rb.setLinvel({ x: 0, y: 0, z: 0 }, true);
           rb.resetForces(true);
           rb.setAngvel({ x: 0, y: 0, z: 0 }, true);
           rb.setRotation({ w: 1, x: 0, y: 0, z: 0 }, true);
+          
           visPos.set(mx, my, homeZ);
           group.position.copy(visPos);
           const qF = rb.rotation();
@@ -618,20 +612,13 @@ async function initHero3D() {
           continue;
         }
 
-        const targetPos = new THREE.Vector2(
-          baseTargetPos.x + scatterX,
-          baseTargetPos.y + scatterY
-        );
-
+        const targetPos = new THREE.Vector2(baseTargetPos.x + scatterX, baseTargetPos.y + scatterY);
         const reactionMul = isBackground ? 1 : N1_REACTION_MUL;
         const springK = (livePointer ? SPRING_K : IDLE_SPRING_K) * reactionMul;
         
         _force.set(targetPos.x - t.x, targetPos.y - t.y, 0);
         const d = _force.length();
-        const idleFarT = Math.max(
-          0,
-          Math.min(1, (d - IDLE_FREE_DIST) / Math.max(1e-5, IDLE_MAX_DIST - IDLE_FREE_DIST))
-        );
+        const idleFarT = Math.max(0, Math.min(1, (d - IDLE_FREE_DIST) / Math.max(1e-5, IDLE_MAX_DIST - IDLE_FREE_DIST)));
         const idleSpeedFactor = IDLE_SPEED_FACTOR + (0.85 - IDLE_SPEED_FACTOR) * idleFarT;
         const idleForceFactor = IDLE_FORCE_FACTOR + (0.9 - IDLE_FORCE_FACTOR) * idleFarT;
         const idleVelDamp = IDLE_VEL_DAMP + (0.97 - IDLE_VEL_DAMP) * idleFarT;
@@ -668,14 +655,8 @@ async function initHero3D() {
             const tNorm = Math.max(0, 1 - safeDist / REPULSION_RADIUS);
             const smoothFalloff = tNorm * tNorm * (3 - 2 * tNorm);
             const repulsionMul = isBackground ? 1 : N1_REPULSION_MUL;
-            const push = Math.min(
-              REPULSION_FORCE * smoothFalloff * repulsionMul,
-              REPULSION_FORCE_CAP * repulsionMul
-            );
-            rb.addForce(
-              { x: (dx / safeDist) * push, y: (dy / safeDist) * push, z: 0 },
-              true
-            );
+            const push = Math.min(REPULSION_FORCE * smoothFalloff * repulsionMul, REPULSION_FORCE_CAP * repulsionMul);
+            rb.addForce({ x: (dx / safeDist) * push, y: (dy / safeDist) * push, z: 0 }, true);
           }
         }
 
