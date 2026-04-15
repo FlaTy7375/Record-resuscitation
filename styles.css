@@ -2145,11 +2145,12 @@ body.site-menu-open {
     padding: 100px 60px 80px;
     text-align: center;
     z-index: 2;
-    transition: margin-top 2.5s cubic-bezier(0.16, 0.84, 0.44, 1);
+    transition: transform 2.5s cubic-bezier(0.16, 0.84, 0.44, 1);
+    will-change: transform;
 }
 
 .promo-header.promo-header--nudge-center {
-    margin-top: var(--promo-header-shift, 0px);
+    transform: translateY(var(--promo-header-shift, 0px));
 }
 
 .promo-author {
@@ -13158,8 +13159,12 @@ body.modal-open {
 /* Mobile: smoother promo header transition */
 @media (max-width: 1200px) {
     .promo-header {
-        transition: margin-top 3.5s cubic-bezier(0.12, 0.88, 0.38, 1) !important;
-        will-change: margin-top;
+        transition: transform 3.5s cubic-bezier(0.12, 0.88, 0.38, 1) !important;
+        will-change: transform;
         transform: translateZ(0);
+    }
+    
+    .promo-header.promo-header--nudge-center {
+        transform: translateY(var(--promo-header-shift, 0px)) translateZ(0);
     }
 }

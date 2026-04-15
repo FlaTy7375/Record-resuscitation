@@ -428,7 +428,8 @@ requestAnimationFrame(raf);
   }
 
   function onPromoHeaderTransitionEnd(ev) {
-    if (ev.target !== promoHeader || ev.propertyName !== 'margin-top') return;
+    if (ev.target !== promoHeader) return;
+    if (ev.propertyName !== 'margin-top' && ev.propertyName !== 'transform') return;
     if (promoHeader.classList.contains('promo-header--nudge-center')) {
       textCenterComplete = true;
       const r = promoStage.getBoundingClientRect();
