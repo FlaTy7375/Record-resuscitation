@@ -301,8 +301,7 @@ if (document.readyState === "loading") {
 
 // LENIS
 // ==========================================
-// ПК: длинная инерция колеса. <1200: syncTouch с низкой инерцией — нельзя «вылететь»
-// лентой на полэкрана за один флик, скролл-сцены и анимации успевают отрисоваться.
+// ПК: длинная инерция колеса. <1200: syncTouch, инерция умеренно ограничена (не «рваный» натив).
 // Оверлеи с data-lenis-prevent — нативный скролл внутри (меню, попапы).
 // ==========================================
 const LENIS_LAYOUT_BREAKPOINT = 1200;
@@ -335,13 +334,12 @@ function createMobileLenisOptions() {
     easing,
     smoothWheel: true,
     syncTouch: true,
-    /* Короткий хвост после отрыва пальца — меньше «пролистать всё за раз» */
-    syncTouchLerp: 0.1,
-    touchInertiaMultiplier: 14,
-    touchMultiplier: 0.86,
-    wheelMultiplier: 0.52,
-    lerp: 0.11,
-    duration: 1.65,
+    syncTouchLerp: 0.12,
+    touchInertiaMultiplier: 22,
+    touchMultiplier: 1.02,
+    wheelMultiplier: 0.64,
+    lerp: 0.14,
+    duration: 1.35,
   };
 }
 
