@@ -11611,7 +11611,6 @@ left: 0;
 
 .contacts-cards {
     display: flex;
-    flex-wrap: wrap;
     gap: 25px;
     flex-direction: row;
 }
