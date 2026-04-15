@@ -547,7 +547,7 @@ requestAnimationFrame(raf);
       resetItemRise();
     } else {
       const baseSpan = Math.max(1, overlapZone - scrolledAtCardsPhase);
-      const span = narrow ? baseSpan * 60 : baseSpan;
+      const span = narrow ? Math.max(baseSpan * 200, vh() * 10) : baseSpan;
       const t = Math.max(0, Math.min(1, (scrolled - scrolledAtCardsPhase) / span));
       /* Ниже степень — движение ближе к скроллу, плавнее без «рваного» конца */
       const pCards = 1 - Math.pow(1 - t, 1.45);
