@@ -2140,9 +2140,9 @@ function initReviewsOfficialScrollEffect() {
 
     if (narrow) {
       // Mobile: Simple fade animation for entire slides
-      // Map actual scroll to virtual scroll (2x range)
-      const virtualScroll = (currentScroll / maxScroll) * (maxScroll * 2);
-      const totalScrollRange = maxScroll * 2;
+      // Map actual scroll to virtual scroll (6x range for slower animation)
+      const virtualScroll = (currentScroll / maxScroll) * (maxScroll * 6);
+      const totalScrollRange = maxScroll * 6;
       const slideScrollSpace = totalScrollRange / totalSlides;
       let activeSlideIndex = 0;
       let fadeProgress = 0;
@@ -2203,10 +2203,10 @@ function initReviewsOfficialScrollEffect() {
       } else {
         const animatedScroll = currentScroll - maxScroll * 0.1;
         const animatedMaxScroll = maxScroll * 0.9;
-        scrollProgress = Math.min(3, (animatedScroll / animatedMaxScroll) * 2 + 1);
+        scrollProgress = (animatedScroll / animatedMaxScroll) * (totalSlides - 1) + 1;
       }
 
-      const textScrollProgress = Math.min(3, (currentScroll / maxScroll) * 3);
+      const textScrollProgress = (currentScroll / maxScroll) * totalSlides;
       const textSlide = Math.min(Math.floor(textScrollProgress), totalSlides - 1);
       const textLocalProgress = Math.min(1, textScrollProgress - textSlide);
 
