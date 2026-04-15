@@ -304,138 +304,44 @@ if (document.readyState === "loading") {
 // Только ПК (≥1200): плавный скролл колесом. На мобилке Lenis выключен — нативный скролл +
 // отдельный потолок шага (см. initMobileDocumentScrollCap), без «липкой» интерполяции.
 // ==========================================
-const LENIS_LAYOUT_BREAKPOINT = 1200;
 
-function createDesktopLenisOptions() {
-  const easing = (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
-  return {
+
+
+
+
+
+
+
+
+
+
+
+
+const LENIS_LAYOUT_BREAKPOINT = 1200;
+let lenis = null;
+
+// Инициализируем Lenis только для десктопа (>= 1200px)
+if (typeof Lenis === "function" && window.innerWidth >= LENIS_LAYOUT_BREAKPOINT) {
+  lenis = new Lenis({
     wrapper: window,
     content: document.documentElement,
     orientation: "vertical",
     gestureOrientation: "vertical",
     infinite: false,
-    easing,
     smoothWheel: true,
     syncTouch: false,
-    wheelMultiplier: 0.62,
-    touchMultiplier: 1,
-    duration: 8.8,
-  };
+    wheelMultiplier: 0.8, 
+    duration: 1.2,        
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  });
 }
 
-let lenis = null;
-if (typeof Lenis === "function" && window.innerWidth >= LENIS_LAYOUT_BREAKPOINT) {
-  lenis = new Lenis(createDesktopLenisOptions());
-}
-
-// ==========================================
-// Мобилка: без Lenis — ограничение «рывка» за один touchmove / wheel (не улететь за кадр).
-// ==========================================
-(function initMobileDocumentScrollCap() {
-  const BP = LENIS_LAYOUT_BREAKPOINT;
-  const mq = window.matchMedia(`(max-width: ${BP - 1}px)`);
-  /** px за одно touchmove; больше = быстрее верхняя скорость свайпа */
-  const MAX_TOUCH_STEP = 92;
-  /** px за одно wheel (планшет/мышь) */
-  const MAX_WHEEL_STEP = 140;
-
-  let attached = false;
-  let prevTouchY = null;
-  let prevTouchX = null;
-
-  function scrollCapExcluded(el) {
-    if (!(el instanceof Element)) return true;
-    if (el.closest("[data-lenis-prevent]")) return true;
-    const tag = el.tagName;
-    if (tag === "TEXTAREA" || tag === "SELECT") return true;
-    if (tag === "INPUT") {
-      const type = (el.getAttribute("type") || "text").toLowerCase();
-      if (!["checkbox", "radio", "button", "submit", "file", "hidden"].includes(type)) return true;
-    }
-    return false;
-  }
-
-  function onTouchStart(e) {
-    if (e.touches.length !== 1) return;
-    prevTouchY = e.touches[0].clientY;
-    prevTouchX = e.touches[0].clientX;
-  }
-
-  function onTouchMove(e) {
-    if (e.touches.length !== 1) return;
-    const target = e.target;
-    if (!(target instanceof Element) || scrollCapExcluded(target)) return;
-    if (prevTouchY === null) return;
-
-    const touch = e.touches[0];
-    const y = touch.clientY;
-    const x = touch.clientX;
-    const dy = prevTouchY - y;
-    const ady = Math.abs(dy);
-    const adx = Math.abs(x - (prevTouchX ?? x));
-    if (adx > ady * 1.2) {
-      prevTouchX = x;
-      prevTouchY = y;
-      return;
-    }
-    if (ady <= MAX_TOUCH_STEP) {
-      prevTouchX = x;
-      prevTouchY = y;
-      return;
-    }
-    e.preventDefault();
-    window.scrollBy(0, Math.sign(dy) * MAX_TOUCH_STEP);
-    prevTouchX = x;
-    prevTouchY = y;
-  }
-
-  function onTouchEnd() {
-    prevTouchY = null;
-    prevTouchX = null;
-  }
-
-  function onWheel(e) {
-    const target = e.target;
-    if (!(target instanceof Element) || scrollCapExcluded(target)) return;
-    const ay = Math.abs(e.deltaY);
-    const ax = Math.abs(e.deltaX);
-    if (ax > ay) return;
-    if (ay <= MAX_WHEEL_STEP) return;
-    e.preventDefault();
-    window.scrollBy(0, Math.sign(e.deltaY) * MAX_WHEEL_STEP);
-  }
-
-  function sync() {
-    const want = mq.matches;
-    if (want === attached) return;
-    if (want) {
-      window.addEventListener("touchstart", onTouchStart, { passive: true });
-      window.addEventListener("touchmove", onTouchMove, { passive: false });
-      window.addEventListener("touchend", onTouchEnd, { passive: true });
-      window.addEventListener("touchcancel", onTouchEnd, { passive: true });
-      window.addEventListener("wheel", onWheel, { passive: false });
-      attached = true;
-    } else {
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("touchcancel", onTouchEnd);
-      window.removeEventListener("wheel", onWheel);
-      attached = false;
-      prevTouchY = null;
-      prevTouchX = null;
-    }
-  }
-
-  mq.addEventListener("change", sync);
-  sync();
-})();
-
-// Функция для синхронизации скролла с частотой обновления экрана
+// Единый цикл отрисовки (RequestAnimationFrame)
 function raf(time) {
   if (lenis) {
     lenis.raf(time);
   }
+  // Сохраняем вызов твоей функции, так как она была в оригинальном коде
   if (typeof window._updateOrbitPhase === "function") {
     window._updateOrbitPhase();
   }
@@ -443,6 +349,17 @@ function raf(time) {
 }
 
 requestAnimationFrame(raf);
+
+
+
+
+
+
+
+
+
+
+
 
 // ==========================================
 // PROMO: липкий блок → ещё ~1 скролл — margin-top + CSS transition к центру → затем карточки.
@@ -783,14 +700,26 @@ requestAnimationFrame(raf);
 })();
 
 // ── Спираль-змея вокруг башни (перенос из Record-main) ─────────────
+
+
+
+
+
+
+
+
+
+
+
+
 (function initOrbitSnake() {
   const canvas = document.getElementById("countOrbitCanvas");
-  if (!canvas) return;
+  const countEl = document.getElementById("countScreen"); // Кэшируем DOM-элемент
+  if (!canvas || !countEl) return;
 
-  /** С тем же брейкпоинтом, что мобильные стили (`max-width: 1200px`). */
   const MOBILE_ORBIT_BREAKPOINT = 1200;
-
   const ctx = canvas.getContext("2d", { alpha: true });
+  
   let isMobileOrbit = window.innerWidth <= MOBILE_ORBIT_BREAKPOINT;
   let W, H, cx, cy, rx, ry;
   let spiralPoints = [];
@@ -799,15 +728,18 @@ requestAnimationFrame(raf);
   let orbitDrawQueued = false;
 
   const TURNS = 3;
-  const STEPS = 300;
+  // Оптимизация: 150 точек для мобилок достаточно для плавной кривой
+  let STEPS = isMobileOrbit ? 150 : 300; 
   const TAIL = 0.15;
   let maxParticles = isMobileOrbit ? 0 : 25;
 
   let phase = 0;
   let targetPhase = 0;
   const particles = [];
-  /** Документная Y верха #countScreen (обновляется, пока блок не sticky). */
-  let countScreenDocY = 0;
+
+  // Кэшируем переменные для скролла, чтобы избежать Layout Thrashing
+  let cachedStartScroll = 0;
+  let cachedSpan = 1;
 
   function countSectionDocumentTop(el) {
     let y = 0;
@@ -820,25 +752,17 @@ requestAnimationFrame(raf);
   }
 
   function readScrollY() {
-    if (typeof lenis !== "undefined" && lenis) {
-      try {
-        const ls = lenis.scroll;
-        if (typeof ls === "number" && !Number.isNaN(ls)) return ls;
-      } catch (_) {
-        /* ignore */
-      }
+    if (typeof lenis !== "undefined" && lenis && lenis.scroll !== undefined) {
+      return lenis.scroll;
     }
-    return (
-      window.scrollY ||
-      document.documentElement.scrollTop ||
-      document.scrollingElement?.scrollTop ||
-      0
-    );
+    return window.scrollY || document.documentElement.scrollTop || 0;
   }
 
   function resize() {
     isMobileOrbit = window.innerWidth <= MOBILE_ORBIT_BREAKPOINT;
     maxParticles = isMobileOrbit ? 0 : 25;
+    STEPS = isMobileOrbit ? 150 : 300;
+
     const parent = canvas.parentElement;
     dpr = isMobileOrbit ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
     W = parent.offsetWidth || 1920;
@@ -854,20 +778,19 @@ requestAnimationFrame(raf);
     ctx.lineJoin = "round";
 
     cx = W * 0.5;
-    /* Верх спирали (cy − ry) чуть выше середины блока (~0.46H) */
     cy = isMobileOrbit ? H * 0.685 : H * 0.7;
     rx = isMobileOrbit ? W * 0.46 : W * 0.13;
     ry = isMobileOrbit ? H * 0.32 : H * 0.24;
 
     spiralPoints = buildSpiral(TURNS, STEPS);
 
-    const cs = document.getElementById("countScreen");
-    if (cs) {
-      const sy = readScrollY();
-      const rtt = cs.getBoundingClientRect().top;
-      if (rtt > 64) countScreenDocY = rtt + sy;
-      else if (!countScreenDocY) countScreenDocY = countSectionDocumentTop(cs);
-    }
+    // Вычисляем пороги скролла один раз при ресайзе
+    const vh = window.innerHeight || 1;
+    const y0 = countSectionDocumentTop(countEl);
+    const narrow = isMobileOrbit;
+    
+    cachedStartScroll = y0 + vh * (narrow ? 0.14 : 0.02);
+    cachedSpan = vh * (narrow ? 0.82 : 1.45);
 
     requestOrbitDraw();
   }
@@ -877,7 +800,6 @@ requestAnimationFrame(raf);
     let rxTop;
     let rxBot;
     if (isMobileOrbit) {
-      /* Шире по X, в пределах половины ширины холста (cx = 0.5W), чтобы не обрезать обводку */
       rxTop = W * 0.31;
       rxBot = W * 0.485;
     } else {
@@ -888,7 +810,6 @@ requestAnimationFrame(raf);
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
       const angle = t * turns * Math.PI * 2 - Math.PI / 2;
-      /* Мобилка: ширина растёт по пути сильнее во второй половине (квадратичный прогресс) */
       const radialT = isMobileOrbit ? t * t : t;
       const rxT = rxTop + (rxBot - rxTop) * radialT;
       ptsArray.push([cx + Math.cos(angle) * rxT, cy - ry + t * ry * 2]);
@@ -897,30 +818,17 @@ requestAnimationFrame(raf);
   }
 
   window._updateOrbitPhase = function () {
-    const countEl = document.getElementById("countScreen");
-    if (!countEl) return;
-    const vh = window.innerHeight || 1;
-    const scrollY = readScrollY();
-    const rt = countEl.getBoundingClientRect().top;
-    if (rt > 64) {
-      countScreenDocY = rt + scrollY;
-    }
-    const y0 = countScreenDocY > 0 ? countScreenDocY : countSectionDocumentTop(countEl);
+    // Оптимизация: если секция не видна, не считаем скролл
+    if (!orbitVisible) return; 
 
-    /* В pinned-секции спираль должна пройти во время дополнительного прокрута блока. */
-    const narrow = window.innerWidth <= MOBILE_ORBIT_BREAKPOINT;
-    /* Мобилка: секция ~210vh, sticky ~1.1·vh скролла — span укладываем в этот запас */
-    const startScroll = y0 + vh * (narrow ? 0.14 : 0.02);
-    const span = vh * (narrow ? 0.82 : 1.45);
-    let raw = (scrollY - startScroll) / Math.max(1, span);
+    const scrollY = readScrollY();
+    let raw = (scrollY - cachedStartScroll) / Math.max(1, cachedSpan);
     raw = Math.max(0, Math.min(1, raw));
 
-    const cr = canvas.getBoundingClientRect();
-    const h = Math.max(1, cr.height);
-    const visibleH = Math.min(cr.bottom, vh) - Math.max(cr.top, 0);
-    const spiralInView = visibleH > h * 0.08 || visibleH > vh * 0.12;
-    targetPhase = spiralInView ? raw : 0;
-    requestOrbitDraw();
+    if (Math.abs(targetPhase - raw) > 0.0001) {
+      targetPhase = raw;
+      requestOrbitDraw();
+    }
   };
 
   function spawnParticle(x, y) {
@@ -940,7 +848,6 @@ requestAnimationFrame(raf);
 
   function draw() {
     orbitDrawQueued = false;
-
     let needsAnimationFrame = false;
 
     if (Math.abs(targetPhase - phase) > 0.001) {
@@ -1079,7 +986,7 @@ requestAnimationFrame(raf);
   }).observe(canvas.parentElement);
 
   if (typeof IntersectionObserver === "function") {
-    const observedTarget = document.getElementById("countScreen") || canvas.parentElement;
+    const observedTarget = countEl || canvas.parentElement;
     new IntersectionObserver((entries) => {
       orbitVisible = entries.some((entry) => entry.isIntersecting);
       if (orbitVisible) requestOrbitDraw();
@@ -1088,6 +995,18 @@ requestAnimationFrame(raf);
 
   window._updateOrbitPhase();
 })();
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ==========================================
 // ПЛАВНЫЙ СКРОЛЛ ДЛЯ ЯКОРНЫХ ССЫЛОК
