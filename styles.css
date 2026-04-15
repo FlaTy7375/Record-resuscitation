@@ -13578,6 +13578,10 @@ body.modal-open {
     .ceremonia-host-desc {
         font-size: 16px;
     }
+
+        .partners-features-wrapper {
+        max-width: none;
+    }
 }
 
 @media (max-width: 1200px) {
