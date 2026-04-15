@@ -301,9 +301,9 @@ if (document.readyState === "loading") {
 
 // LENIS
 // ==========================================
-// Только ≥1200: Lenis даёт плавное колесо на ПК. На мобилке Lenis отключён —
-// syncTouch/virtual scroll жрёт CPU, даёт лаги и ощущение «тяжёлого» скролла;
-// нативный тач (iOS/Android) и так оптимизирован системой.
+// ПК: длинная инерция колеса. <1200: syncTouch с низкой инерцией — нельзя «вылететь»
+// лентой на полэкрана за один флик, скролл-сцены и анимации успевают отрисоваться.
+// Оверлеи с data-lenis-prevent — нативный скролл внутри (меню, попапы).
 // ==========================================
 const LENIS_LAYOUT_BREAKPOINT = 1200;
 
@@ -324,9 +324,34 @@ function createDesktopLenisOptions() {
   };
 }
 
+function createMobileLenisOptions() {
+  const easing = (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
+  return {
+    wrapper: window,
+    content: document.documentElement,
+    orientation: "vertical",
+    gestureOrientation: "vertical",
+    infinite: false,
+    easing,
+    smoothWheel: true,
+    syncTouch: true,
+    /* Короткий хвост после отрыва пальца — меньше «пролистать всё за раз» */
+    syncTouchLerp: 0.1,
+    touchInertiaMultiplier: 14,
+    touchMultiplier: 0.86,
+    wheelMultiplier: 0.52,
+    lerp: 0.11,
+    duration: 1.65,
+  };
+}
+
 let lenis = null;
-if (typeof Lenis === "function" && window.innerWidth >= LENIS_LAYOUT_BREAKPOINT) {
-  lenis = new Lenis(createDesktopLenisOptions());
+if (typeof Lenis === "function") {
+  lenis = new Lenis(
+    window.innerWidth >= LENIS_LAYOUT_BREAKPOINT
+      ? createDesktopLenisOptions()
+      : createMobileLenisOptions()
+  );
 }
 
 // Функция для синхронизации скролла с частотой обновления экрана
