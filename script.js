@@ -331,11 +331,11 @@ function createLenisOptions() {
     ...base,
     smoothWheel: true,
     syncTouch: true,
-    syncTouchLerp: 0.042,
-    touchInertiaMultiplier: 18,
-    touchMultiplier: 0.62,
-    wheelMultiplier: 0.48,
-    duration: 2.85,
+    syncTouchLerp: 0.12,
+    touchInertiaMultiplier: 38,
+    touchMultiplier: 1.12,
+    wheelMultiplier: 0.68,
+    duration: 1.55,
   };
 }
 
