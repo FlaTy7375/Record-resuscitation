@@ -731,16 +731,12 @@ body.site-menu-open {
         bottom: auto;
         width: 375px;
         max-width: 100%;
-        /* Без фиксированной высоты блок растягивался под контент — overflow-y: auto не давал скролл */
-        height: 100dvh;
         max-height: 100dvh;
-        min-height: 0;
         align-items: flex-start;
         overflow-x: hidden;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
-        touch-action: pan-y;
         background-color: #0f0f0f;
         box-shadow: none;
         transform: translateY(-100%);
