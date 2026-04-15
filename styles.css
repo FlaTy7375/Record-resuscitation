@@ -3840,6 +3840,12 @@ left: 0;
         align-items:  center;
         gap: 30px;
     }
+
+    /* Слайдер перед .screen-sales: на мобилке поднять кадр внутри слайда */
+    .sales-top-layout-wrapp--before-sales .sales-gallery-image {
+        object-position: 50% 16%;
+        transform: translateY(-106px);
+    }
 }
 
 .headliners-wrapp {
