@@ -448,6 +448,7 @@ requestAnimationFrame(raf);
   let promoRaf = 0;
 
   function resetItemRise() {
+    promoContent.style.removeProperty('--promo-item-rise');
     promoItems.forEach((el) => el.style.removeProperty('--promo-item-rise'));
   }
 
@@ -465,7 +466,7 @@ requestAnimationFrame(raf);
     if (scrolled < -2 || rect.top > vh() + 4) {
       resetPromoHeaderState({});
       resetItemRise();
-      promoContent.style.transform = `translate(-50%, ${startY()}px)`;
+      promoContent.style.transform = `translate3d(-50%, ${startY()}px, 0)`;
       return;
     }
 
@@ -511,7 +512,7 @@ requestAnimationFrame(raf);
     }
 
     if (!textCenterComplete) {
-      promoContent.style.transform = `translate(-50%, ${startY()}px)`;
+      promoContent.style.transform = `translate3d(-50%, ${startY()}px, 0)`;
       resetItemRise();
     } else {
       const span = Math.max(1, overlapZone - scrolledAtCardsPhase);
@@ -524,13 +525,19 @@ requestAnimationFrame(raf);
         ? vh() * (0.12 * p + 0.16 * p * p)
         : vh() * (0.09 * p + 0.14 * p * p);
       const offset = y0 * (1 - pCards) - overshoot;
-      promoContent.style.transform = `translate(-50%, ${offset}px)`;
+      promoContent.style.transform = `translate3d(-50%, ${offset}px, 0)`;
       const riseCap = narrow ? Math.min(vh() * 1.28, 1100) : Math.min(vh() * 0.55, 480);
       const riseBase = pCards * riseCap;
-      promoItems.forEach((el, i) => {
-        const rise = narrow ? riseBase : riseBase * (1 + i * 0.52);
-        el.style.setProperty('--promo-item-rise', `${rise}px`);
-      });
+      if (narrow) {
+        promoItems.forEach((el) => el.style.removeProperty('--promo-item-rise'));
+        promoContent.style.setProperty('--promo-item-rise', `${riseBase}px`);
+      } else {
+        promoContent.style.removeProperty('--promo-item-rise');
+        promoItems.forEach((el, i) => {
+          const rise = riseBase * (1 + i * 0.52);
+          el.style.setProperty('--promo-item-rise', `${rise}px`);
+        });
+      }
     }
   }
 
