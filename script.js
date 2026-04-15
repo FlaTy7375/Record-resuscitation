@@ -773,9 +773,12 @@ requestAnimationFrame(raf);
   if (!canvas || !countEl) return;
 
   const MOBILE_ORBIT_BREAKPOINT = 1200;
+  const WIDE_ORBIT_BREAKPOINT = 1500;
   const ctx = canvas.getContext("2d", { alpha: true });
   
   let isMobileOrbit = window.innerWidth <= MOBILE_ORBIT_BREAKPOINT;
+  let isNarrowDesktopOrbit =
+    window.innerWidth > MOBILE_ORBIT_BREAKPOINT && window.innerWidth < WIDE_ORBIT_BREAKPOINT;
   let W, H, cx, cy, rx, ry;
   let spiralPoints = [];
   let dpr = 1;
@@ -815,6 +818,8 @@ requestAnimationFrame(raf);
 
   function resize() {
     isMobileOrbit = window.innerWidth <= MOBILE_ORBIT_BREAKPOINT;
+    isNarrowDesktopOrbit =
+      window.innerWidth > MOBILE_ORBIT_BREAKPOINT && window.innerWidth < WIDE_ORBIT_BREAKPOINT;
     maxParticles = isMobileOrbit ? 0 : 25;
     STEPS = isMobileOrbit ? 150 : 300;
 
@@ -833,9 +838,9 @@ requestAnimationFrame(raf);
     ctx.lineJoin = "round";
 
     cx = W * 0.5;
-    cy = isMobileOrbit ? H * 0.685 : H * 0.7;
-    rx = isMobileOrbit ? W * 0.46 : W * 0.13;
-    ry = isMobileOrbit ? H * 0.32 : H * 0.24;
+    cy = isMobileOrbit ? H * 0.685 : isNarrowDesktopOrbit ? H * 0.695 : H * 0.7;
+    rx = isMobileOrbit ? W * 0.46 : isNarrowDesktopOrbit ? W * 0.22 : W * 0.13;
+    ry = isMobileOrbit ? H * 0.32 : isNarrowDesktopOrbit ? H * 0.25 : H * 0.24;
 
     spiralPoints = buildSpiral(TURNS, STEPS);
 
@@ -855,8 +860,11 @@ requestAnimationFrame(raf);
     let rxTop;
     let rxBot;
     if (isMobileOrbit) {
-      rxTop = W * 0.31;
-      rxBot = W * 0.485;
+      rxTop = W * 0.34;
+      rxBot = W * 0.52;
+    } else if (isNarrowDesktopOrbit) {
+      rxTop = W * 0.11;
+      rxBot = W * 0.3;
     } else {
       rxTop = W * 0.07;
       rxBot = W * 0.18;
