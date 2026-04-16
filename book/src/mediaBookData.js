@@ -1,9 +1,10 @@
 export const SOURCE_PAGE_WIDTH = 876;
 export const SOURCE_PAGE_HEIGHT = 1187;
+
 const mediaSrc = (file) =>
   new URL(`../../assets/images/media/${file}.webp`, import.meta.url).href;
 
-export const MEDIA_BOOK_PAGES = [
+const DEFAULT_PAGES = [
   { src: mediaSrc("85f45f37e206ae9bb824ed72e9b6b5c4d607f920"), width: "292.98%", height: "100%", left: "0.05%", top: "0.02%" },
   { src: mediaSrc("85f45f37e206ae9bb824ed72e9b6b5c4d607f920"), width: "292.98%", height: "100%", left: "-99.91%", top: "0%" },
   { src: mediaSrc("85f45f37e206ae9bb824ed72e9b6b5c4d607f920"), width: "292.98%", height: "100%", left: "-193.02%", top: "0.03%" },
@@ -32,3 +33,27 @@ export const MEDIA_BOOK_PAGES = [
   { src: mediaSrc("dbc02484b4d51d102e5511811cbe8c81ee3d95aa"), width: "303.34%", height: "100%", left: "-97.68%", top: "0%" },
   { src: mediaSrc("dbc02484b4d51d102e5511811cbe8c81ee3d95aa"), width: "303.34%", height: "100%", left: "-200.05%", top: "0%" },
 ];
+
+const getPagesData = () => {
+  try {
+    const queryParams = new URLSearchParams(window.location.search);
+    const imagesParam = queryParams.get("images");
+
+    if (imagesParam) {
+      const dynamicUrls = imagesParam.split(",");
+      return dynamicUrls.map((url) => ({
+        src: url.trim(),
+        width: "100%",
+        height: "100%",
+        left: "0%",
+        top: "0%"
+      }));
+    }
+  } catch (e) {
+    console.error("URL error", e);
+  }
+
+  return DEFAULT_PAGES;
+};
+
+export const MEDIA_BOOK_PAGES = getPagesData();

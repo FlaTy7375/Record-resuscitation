@@ -170,9 +170,9 @@
         </header>
 
         <div class="main-content">
-            <h1 class="title-top">РЕК<span class="decor-letter">О</span>РДЫ</h1>
-            <h1 class="title-bottom">
-            РЫНКА <span class="gradient-text">НЕДВИЖИМОСТИ</span>
+            <h1 class="hero-page-title" id="heroMainHeading">
+            <span class="title-top">РЕК<span class="decor-letter">О</span>РДЫ</span>
+            <span class="title-bottom">РЫНКА <span class="gradient-text">НЕДВИЖИМОСТИ</span></span>
             </h1>
         </div>
 
@@ -2120,26 +2120,28 @@
               ВИДЕ<span class="videoteka-title-o">O</span>ТЕКА
             </h2>
             <button
-              class="videoteka-tab is-active"
+              class="videoteka-tab"
               type="button"
-              aria-selected="true"
+              role="tab"
+              data-videoteka-cat="ceremony"
+              aria-selected="false"
             >
               <span>Церемония</span>
               <img src="./assets/videoteka_tab_arrow.svg" alt="" />
             </button>
-            <button class="videoteka-tab" type="button" aria-selected="false">
+            <button class="videoteka-tab" type="button" role="tab" data-videoteka-cat="promo-premium" aria-selected="false">
               <span>Реклама премии</span>
               <img src="./assets/videoteka_tab_arrow.svg" alt="" />
             </button>
-            <button class="videoteka-tab" type="button" aria-selected="false">
+            <button class="videoteka-tab" type="button" role="tab" data-videoteka-cat="promo-winners" aria-selected="false">
               <span>Реклама победителей</span>
               <img src="./assets/videoteka_tab_arrow.svg" alt="" />
             </button>
-            <button class="videoteka-tab" type="button" aria-selected="false">
+            <button class="videoteka-tab" type="button" role="tab" data-videoteka-cat="tv" aria-selected="false">
               <span>ТВ - репортажи</span>
               <img src="./assets/videoteka_tab_arrow.svg" alt="" />
             </button>
-            <button class="videoteba-tab-btn" type="button">
+            <button class="videoteba-tab-btn is-active" type="button" data-videoteka-cat="all" aria-pressed="true">
               <span>Смотреть все видео</span>
               <img src="./assets/videoteka_tab_arrow.svg" alt="" />
             </button>
@@ -2196,10 +2198,7 @@
               <a class="videoteka-item-link" href="https://rutube.ru/video/cabb0faea08bcc580b4d8f726aec6ed2/?r=wd" target="_blank" aria-label="Открыть видео 4"><img src="./assets/videoteka_link_arrow.svg" alt="" aria-hidden="true"/></a>
             </article>
           </div>
-              </div>
-            </article>
-          </div>
-          <button type="button" class="videoteka-all-videos-btn">
+          <button type="button" class="videoteka-all-videos-btn is-active" data-videoteka-cat="all" aria-pressed="true">
             Смотреть все видео
             <img src="./assets/arrow-btn.svg" width="11" height="15" alt="" aria-hidden="true" />
           </button>

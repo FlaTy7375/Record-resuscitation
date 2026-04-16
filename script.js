@@ -795,9 +795,16 @@ requestAnimationFrame(raf);
   let targetPhase = 0;
   const particles = [];
 
-  // Кэшируем переменные для скролла, чтобы избежать Layout Thrashing
-  let cachedStartScroll = 0;
-  let cachedSpan = 1;
+  /** Высота секции #countScreen: фаза 0→1 за проход по секции (минус 1vh). */
+  let cachedSectionTop = 0;
+  let cachedSectionPhaseRange = 1;
+  /**
+   * true после того, как блок с часами полностью ушёл с экрана (sticky-pin не виден)
+   * и скролл ниже секции; следующий показ — заход снизу: фаза при скролле вверх + спираль в обратную сторону.
+   */
+  let orbitReentryFromBottom = false;
+  /** Копия точек в обратном порядке — пересобирается в resize вместе со spiralPoints. */
+  let spiralPtsReversed = [];
 
   function countSectionDocumentTop(el) {
     let y = 0;
@@ -845,14 +852,16 @@ requestAnimationFrame(raf);
     ry = isMobileOrbit ? H * 0.36 : isNarrowDesktopOrbit ? H * 0.28 : H * 0.27;
 
     spiralPoints = buildSpiral(TURNS, STEPS);
+    spiralPtsReversed = [...spiralPoints].reverse();
 
-    // Вычисляем пороги скролла один раз при ресайзе
     const vh = window.innerHeight || 1;
-    const y0 = countSectionDocumentTop(countEl);
-    const narrow = isMobileOrbit;
-    
-    cachedStartScroll = y0 + vh * (narrow ? 0.14 : 0.02);
-    cachedSpan = vh * (narrow ? 0.82 : 1.45);
+    cachedSectionTop = countSectionDocumentTop(countEl);
+    const sectionH = countEl.offsetHeight || vh * 2;
+    cachedSectionPhaseRange = Math.max(1, sectionH - vh);
+
+    const y1 = cachedSectionTop + cachedSectionPhaseRange;
+    const sy = readScrollY();
+    orbitReentryFromBottom = sy > y1;
 
     requestOrbitDraw();
   }
@@ -880,15 +889,40 @@ requestAnimationFrame(raf);
       const rxT = rxTop + (rxBot - rxTop) * radialT;
       ptsArray.push([cx + Math.cos(angle) * rxT, cy - ry + t * ry * 2]);
     }
-    return ptsArray.reverse();
+    /* Без reverse: при скролле спираль «растёт» с противоположного конца кривой (было ptsArray.reverse()). */
+    return ptsArray;
   }
 
   window._updateOrbitPhase = function () {
-    // Оптимизация: если секция не видна, не считаем скролл
-    if (!orbitVisible) return; 
-
     const scrollY = readScrollY();
-    let raw = (scrollY - cachedStartScroll) / Math.max(1, cachedSpan);
+    const y0 = cachedSectionTop;
+    const r = cachedSectionPhaseRange;
+    const y1 = y0 + r;
+
+    const snapPhaseZero = () => {
+      if (phase !== 0 || targetPhase !== 0) {
+        phase = 0;
+        targetPhase = 0;
+        requestOrbitDraw();
+      }
+    };
+
+    /* Блок с часами не на экране — спираль полностью убрана; ниже секции запоминаем заход «снизу». */
+    if (!orbitVisible) {
+      phase = 0;
+      targetPhase = 0;
+      if (scrollY > y1) orbitReentryFromBottom = true;
+      if (scrollY < y0) orbitReentryFromBottom = false;
+      requestOrbitDraw();
+      return;
+    }
+
+    let raw;
+    if (orbitReentryFromBottom) {
+      raw = (y1 - scrollY) / r;
+    } else {
+      raw = (scrollY - y0) / r;
+    }
     raw = Math.max(0, Math.min(1, raw));
 
     if (Math.abs(targetPhase - raw) > 0.0001) {
@@ -923,22 +957,22 @@ requestAnimationFrame(raf);
       phase = targetPhase;
     }
 
+    ctx.clearRect(0, 0, W, H);
     if (!orbitVisible) {
       if (needsAnimationFrame) requestOrbitDraw();
       return;
     }
 
-    ctx.clearRect(0, 0, W, H);
-
-    const total = spiralPoints.length;
+    const pts = orbitReentryFromBottom ? spiralPtsReversed : spiralPoints;
+    const total = pts.length;
     const headFloat = phase * (total - 1);
     const headIdx = headFloat | 0;
     const headFrac = headFloat - headIdx;
     const tailLen = (total * TAIL) | 0;
 
     if (headIdx >= 0 && headIdx < total - 1) {
-      const p1 = spiralPoints[headIdx];
-      const p2 = spiralPoints[headIdx + 1];
+      const p1 = pts[headIdx];
+      const p2 = pts[headIdx + 1];
       const headX = p1[0] + (p2[0] - p1[0]) * headFrac;
       const headY = p1[1] + (p2[1] - p1[1]) * headFrac;
 
@@ -973,9 +1007,9 @@ requestAnimationFrame(raf);
 
       if (baseEnd > 0) {
         ctx.beginPath();
-        ctx.moveTo(spiralPoints[0][0], spiralPoints[0][1]);
+        ctx.moveTo(pts[0][0], pts[0][1]);
         for (let i = 1; i <= baseEnd; i++) {
-          ctx.lineTo(spiralPoints[i][0], spiralPoints[i][1]);
+          ctx.lineTo(pts[i][0], pts[i][1]);
         }
         ctx.strokeStyle = isMobileOrbit
           ? "rgba(255, 220, 180, 0.75)"
@@ -988,13 +1022,13 @@ requestAnimationFrame(raf);
       if (headIdx > baseEnd || (headIdx === baseEnd && headFrac > 1e-6)) {
         if (isMobileOrbit) {
           ctx.beginPath();
-          ctx.moveTo(spiralPoints[baseEnd][0], spiralPoints[baseEnd][1]);
+          ctx.moveTo(pts[baseEnd][0], pts[baseEnd][1]);
           for (let i = baseEnd + 1; i <= headIdx; i++) {
-            ctx.lineTo(spiralPoints[i][0], spiralPoints[i][1]);
+            ctx.lineTo(pts[i][0], pts[i][1]);
           }
           if (headIdx < total - 1) {
-            const p1 = spiralPoints[headIdx];
-            const p2 = spiralPoints[headIdx + 1];
+            const p1 = pts[headIdx];
+            const p2 = pts[headIdx + 1];
             ctx.lineTo(
               p1[0] + (p2[0] - p1[0]) * headFrac,
               p1[1] + (p2[1] - p1[1]) * headFrac
@@ -1007,8 +1041,8 @@ requestAnimationFrame(raf);
           for (let i = baseEnd; i <= headIdx; i++) {
             if (i + 1 >= total) break;
             const isLast = i === headIdx;
-            const p1 = spiralPoints[i];
-            const p2 = spiralPoints[i + 1];
+            const p1 = pts[i];
+            const p2 = pts[i + 1];
 
             const x1 = p1[0];
             const y1 = p1[1];
@@ -1046,17 +1080,20 @@ requestAnimationFrame(raf);
   }
 
   resize();
-  new ResizeObserver(() => {
+  const orbitLayoutObserver = new ResizeObserver(() => {
     resize();
     requestOrbitDraw();
-  }).observe(canvas.parentElement);
+  });
+  orbitLayoutObserver.observe(canvas.parentElement);
+  orbitLayoutObserver.observe(countEl);
 
   if (typeof IntersectionObserver === "function") {
-    const observedTarget = countEl || canvas.parentElement;
+    /* Видимость именно sticky-блока с часами, а не всей 260vh секции */
+    const pinEl = countEl.querySelector(".countdown-pin") || countEl;
     new IntersectionObserver((entries) => {
       orbitVisible = entries.some((entry) => entry.isIntersecting);
       if (orbitVisible) requestOrbitDraw();
-    }, { threshold: 0.01 }).observe(observedTarget);
+    }, { threshold: 0.01 }).observe(pinEl);
   }
 
   window._updateOrbitPhase();
@@ -2346,6 +2383,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initReviewsTabs();
   initReviewsOfficialScrollEffect();
   initReviewsStickyAlign();
+  if (document.querySelector(".videoteka-tabs")) {
+    initVideotekaTabs();
+    initVideotekaCategoryFilter();
+  }
 });
 
 // ============================================
@@ -2489,8 +2530,94 @@ function initMediaLibCarousel() {
 initMediaLibCarousel();
 
 // ============================================
-// VIDEOTEKA TABS WRAPPER
+// VIDEOTEKA: категории + мобильный dropdown
 // ============================================
+
+const VIDEOTEKA_CAT_LABELS = {
+  ceremony: "Церемония",
+  "promo-premium": "Реклама премии",
+  "promo-winners": "Реклама победителей",
+  tv: "ТВ - репортажи",
+  all: "Смотреть все видео",
+};
+
+function shuffleInPlace(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function initVideotekaCategoryFilter() {
+  const section = document.getElementById("videotekaScreen");
+  if (!section) return;
+
+  const list = section.querySelector(".videoteka-list");
+  const items = list ? [...list.querySelectorAll(".videoteka-item")] : [];
+  const cats = ["ceremony", "promo-premium", "promo-winners", "tv"];
+  const assign = shuffleInPlace([...cats]);
+  items.forEach((item, i) => {
+    item.setAttribute("data-videoteka-category", assign[i % assign.length]);
+  });
+
+  const tabsRoot = section.querySelector(".videoteka-tabs");
+  const allTopBtn = section.querySelector(".videoteba-tab-btn");
+  const allBottomBtn = section.querySelector(".videoteka-all-videos-btn");
+
+  function applyVideotekaCategory(cat) {
+    if (cat == null || cat === "") return;
+    const tabSelectors = [
+      ...section.querySelectorAll(".videoteka-tabs-wrapper .videoteka-tab[data-videoteka-cat]"),
+      ...section.querySelectorAll(".videoteka-tabs-dropdown-list .videoteka-tab[data-videoteka-cat]"),
+    ];
+    tabSelectors.forEach((btn) => {
+      const on = btn.getAttribute("data-videoteka-cat") === cat;
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    if (allTopBtn) {
+      const on = cat === "all";
+      allTopBtn.classList.toggle("is-active", on);
+      allTopBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    if (allBottomBtn) {
+      const on = cat === "all";
+      allBottomBtn.classList.toggle("is-active", on);
+      allBottomBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    items.forEach((item) => {
+      const itemCat = item.getAttribute("data-videoteka-category");
+      const show = cat === "all" || itemCat === cat;
+      if (show) {
+        item.removeAttribute("hidden");
+        item.classList.remove("videoteka-item--filtered-out");
+        item.style.removeProperty("display");
+      } else {
+        item.setAttribute("hidden", "");
+        item.classList.add("videoteka-item--filtered-out");
+        item.style.display = "none";
+      }
+    });
+    const triggerSpan = tabsRoot?.querySelector(".videoteka-tabs-trigger span");
+    if (triggerSpan && window.innerWidth <= 1200) {
+      triggerSpan.textContent = VIDEOTEKA_CAT_LABELS[cat] || cat;
+    }
+  }
+
+  window.__videotekaApplyCategory = applyVideotekaCategory;
+
+  section.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-videoteka-cat]");
+    if (!btn || !section.contains(btn)) return;
+    if (btn.closest(".videoteka-item")) return;
+    const cat = btn.getAttribute("data-videoteka-cat");
+    if (cat == null) return;
+    applyVideotekaCategory(cat);
+  });
+
+  applyVideotekaCategory("all");
+}
 
 function initVideotekaTabs() {
   const BREAKPOINT = 1200;
@@ -2501,13 +2628,21 @@ function initVideotekaTabs() {
   const buttons = Array.from(tabs.querySelectorAll('.videoteka-tab'));
   if (!title || !buttons.length) return;
 
-  const firstActive = buttons.find(b => b.classList.contains('is-active')) || buttons[0];
+  const allBtn = tabs.querySelector(".videoteba-tab-btn");
+  const firstActive =
+    buttons.find((b) => b.classList.contains("is-active")) ||
+    (allBtn && allBtn.classList.contains("is-active") ? allBtn : null) ||
+    buttons[0];
+  const firstLabel =
+    firstActive === allBtn
+      ? allBtn.querySelector("span")?.textContent || VIDEOTEKA_CAT_LABELS.all
+      : firstActive.querySelector("span")?.textContent || "";
 
   const trigger = document.createElement('button');
   trigger.className = 'videoteka-tabs-trigger';
   trigger.type = 'button';
   trigger.setAttribute('aria-expanded', 'false');
-  trigger.innerHTML = `<span>${firstActive.querySelector("span").textContent}</span><img src="./assets/doun.svg" alt="" aria-hidden="true" />`;
+  trigger.innerHTML = `<span>${firstLabel}</span><img src="./assets/doun.svg" alt="" aria-hidden="true" />`;
 
   const dropdown = document.createElement('div');
   dropdown.className = 'videoteka-tabs-dropdown';
@@ -2546,14 +2681,9 @@ function initVideotekaTabs() {
       const label = btn.querySelector('span')?.textContent || '';
       trigger.querySelector('span').textContent = label;
 
-      allDropdownBtns.forEach(b => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
-
-      buttons.forEach(b => b.classList.remove('is-active'));
-      const matchIdx = allDropdownBtns.indexOf(btn);
-      if (buttons[matchIdx]) {
-        buttons[matchIdx].classList.add('is-active');
-        buttons[matchIdx].click();
+      const cat = btn.getAttribute('data-videoteka-cat');
+      if (typeof window.__videotekaApplyCategory === 'function') {
+        window.__videotekaApplyCategory(cat);
       }
 
       tabs.classList.remove('is-expanded');
@@ -2567,10 +2697,6 @@ function initVideotekaTabs() {
       trigger.setAttribute('aria-expanded', 'false');
     }
   });
-}
-
-if (document.querySelector('.videoteka-tabs')) {
-  initVideotekaTabs();
 }
 
 // ============================================
