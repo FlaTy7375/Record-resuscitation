@@ -5228,6 +5228,8 @@ left: 0;
     margin-inline: auto;
     left: 0;
     right: 0;
+    padding-left: 0;
+    padding-right: 0;
     /* 50px под строкой заголовка «ЧТО О НАС / ГОВОРЯТ» (top шапки + cap-height + отступ) */
     padding-top: calc(191px + 145px + 50px);
     box-sizing: border-box;
@@ -13661,7 +13663,7 @@ body.modal-open {
         position: relative;
         height: auto;
         min-height: 600px;
-        padding: 40px 16px;
+        padding: 40px 0;
     }
     
     .reviews-gratitude-gallery {

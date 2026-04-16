@@ -2373,6 +2373,59 @@ function initReviewsOfficialScrollEffect() {
   setTimeout(() => handleScroll(), 250);
 }
 
+/** Safari: фоновое видео внизу страницы часто не стартует только по autoplay — нужен muted + play() и при появлении в кадре. */
+function initAwardSceneBackgroundVideo() {
+  const video = document.querySelector(".award-scene-video");
+  if (!video || video.tagName !== "VIDEO") return;
+
+  const root = video.closest(".award-scene") || video;
+
+  const armForAutoplay = () => {
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute("muted", "");
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+  };
+
+  const tryPlay = () => {
+    armForAutoplay();
+    const p = video.play();
+    if (p !== undefined && typeof p.catch === "function") {
+      p.catch(() => {});
+    }
+  };
+
+  armForAutoplay();
+  if (video.readyState >= 2) {
+    tryPlay();
+  } else {
+    video.addEventListener("loadeddata", tryPlay, { once: true });
+    video.addEventListener("canplay", tryPlay, { once: true });
+  }
+
+  if (typeof IntersectionObserver !== "undefined") {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) tryPlay();
+          else video.pause();
+        });
+      },
+      { root: null, rootMargin: "80px 0px", threshold: 0.01 }
+    );
+    io.observe(root);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) tryPlay();
+  });
+
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) tryPlay();
+  });
+}
+
 // Initialize interview on page load
 document.addEventListener("DOMContentLoaded", () => {
   initInterviewInteractions();
@@ -2383,6 +2436,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initReviewsTabs();
   initReviewsOfficialScrollEffect();
   initReviewsStickyAlign();
+  initAwardSceneBackgroundVideo();
   if (document.querySelector(".videoteka-tabs")) {
     initVideotekaTabs();
     initVideotekaCategoryFilter();
