@@ -2650,7 +2650,7 @@ body.site-menu-open {
     width: 1300px;
     height: 100%;
     margin: 0 auto;
-    z-index: 200;
+    z-index: 0;
     pointer-events: none;
 }
 
@@ -3100,7 +3100,7 @@ body.site-menu-open {
     align-items: flex-start;
     flex: 0 0 auto;
     width: 45%;
-    max-width: 640px;
+    max-width: 840px;
     min-width: 380px;
 }
 
@@ -4219,7 +4219,6 @@ left: 0;
     overflow: hidden;
     z-index: 6;
     padding: 140px 0 150px;
-    padding-left: 114px;
 }
 
 .partners {
@@ -4262,12 +4261,14 @@ left: 0;
 .partners-header {
     position: relative;
     margin-bottom: 88px;
+    margin-left: 114px;
 }
 
 .partners-features-wrapper {
     display: flex;
     justify-content: left;
     align-items: center;
+    margin-left: 114px;
 }
 
 .partners-features-wrapper  article {
@@ -4405,12 +4406,12 @@ left: 0;
     position: relative;
     width: 100%;
     max-width: 1920px;
-    margin: 0 auto 40px;
+    margin: 0px auto;
     overflow: hidden;
 }
 
 .partners-row-light {
-    max-width: 1818px;
+    max-width: 1920px;
 }
 
 .partners-row-dark {
@@ -4601,6 +4602,7 @@ left: 0;
     font-weight: 300;
     line-height: 1.55;
     letter-spacing: -1.1px;
+    margin-left: 114px;
 }
 
 .partners-caption::before {
@@ -4907,7 +4909,7 @@ left: 0;
     transform: translateY(-2px);
     padding-top: 0;
     padding-left: 100px;
-    padding-bottom: clamp(72px, 9vh, 160px);
+    padding-bottom: clamp(402px, 9vh, 160px);
   }
   
   .reviews-sticky-wrapper {
@@ -7737,8 +7739,8 @@ a.interview-node {
 }
 
 .interview-reveal {
-    opacity: 1;
-    transform: scale(1);
+    opacity: 0;
+    transform: scale(0.5);
     transition:
         opacity 420ms ease,
         transform 420ms ease;
@@ -9349,7 +9351,7 @@ a.interview-node {
 }
 
 .reviews-media-library {
-    margin: 0 0 100px;
+    margin: 0 0 40px;
     text-align: center;
     font-size: 264.17px;
     line-height: 264.17px;
@@ -12122,3 +12124,33 @@ body.modal-open {
  * (min-height:781px) не пересекается с блоком ≤780px. Конец файла + #statusScreen + !important — перебить каскад.
  */
 
+
+@media (min-width: 1200px) and (max-width: 1520px) {
+    .media-lib-carousel {
+        transform: scale(1.2);
+        transform-origin: top center;
+    }
+    .reviews-media-dates,
+.reviews-media-ticker {
+    position: absolute;
+    left: 50%;
+    bottom: -540px;
+    transform: translateX(-50%) rotate(-4.85deg);
+    width: 2256px;
+    height: 450px;
+    overflow: hidden;
+    z-index: 6;
+}
+
+.reviews-media-film {
+    position: absolute;
+    left: 50%;
+    bottom: -500px;
+    transform: translateX(-50%);
+    width: 1920px;
+    height: auto;
+    overflow: hidden;
+    z-index: 3;
+    pointer-events: none;
+}
+}

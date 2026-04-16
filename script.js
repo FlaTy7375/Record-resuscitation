@@ -1443,25 +1443,22 @@ function initInterviewDots() {
     const revealItems = otherRevealItems
       .sort((a, b) => Number(a.dataset.revealOrder || 0) - Number(b.dataset.revealOrder || 0));
 
-    const revealDots = () => {
-      revealItems.forEach((item, index) => {
-        window.setTimeout(() => item.classList.add("is-visible"), index * 200);
-      });
-    };
-
     if (!("IntersectionObserver" in window)) {
-      revealDots();
+      revealItems.forEach(item => item.classList.add("is-visible"));
       return;
     }
 
-    const io = new IntersectionObserver((entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        revealDots();
-        obs.unobserve(entry.target);
-      });
-    }, { threshold: 0.28 });
-    io.observe(interviewScreen);
+    // Каждый элемент появляется отдельно при скролле
+    revealItems.forEach((item, index) => {
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          window.setTimeout(() => item.classList.add("is-visible"), index * 150);
+          obs.unobserve(entry.target);
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
+      io.observe(item);
+    });
   }
 }
 
