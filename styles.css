@@ -1697,11 +1697,11 @@ body.site-menu-open {
 
 @media (max-width: 1200px) {
     .count-clock-video {
-        clip-path: circle(7% at 52.1% 74.9%);
+        clip-path: circle(7% at 52.1% 73.9%);
     }
 
     .count-clock-video {
-        bottom: -5px;
+        bottom: -15px;
     }
 }
 
@@ -7076,7 +7076,7 @@ left: 0;
 
         .radio-map-shell {
         height: 706px;
-        width: 580px;
+        width: 380px;
         margin-left: auto;
         margin-right: auto;
         overflow: hidden;
@@ -7085,7 +7085,7 @@ left: 0;
         .radio-stat {
             position: relative;
             top: 190px;
-            left: 440px;
+            left: 340px;
         }
         .radio-stat span {
             width: 100px;
