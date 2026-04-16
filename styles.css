@@ -7860,6 +7860,12 @@ left: 0;
         height: auto;
     }
 
+    /* .title-top absolute — в потоке только .title-bottom; без этого space-between + flex:1 тянет h1 и строка уезжает вверх */
+    .main-content > .hero-page-title {
+        justify-content: flex-end;
+        flex: 0 0 auto;
+    }
+
     /* «РЕКОРДЫ» — ~60px от верха hero; .hero уже position: sticky (контекст позиционирования) */
     .hero .title-top {
         position: absolute;
@@ -9953,6 +9959,12 @@ a.interview-node {
         padding-top: 0;
         padding-bottom: 20px;
         height: auto;
+    }
+
+    /* .title-top absolute — в потоке только .title-bottom; без этого space-between + flex:1 тянет h1 и строка уезжает вверх */
+    .main-content > .hero-page-title {
+        justify-content: flex-end;
+        flex: 0 0 auto;
     }
 
     /* «РЕКОРДЫ» — ~60px от верха hero; .hero уже position: sticky (контекст позиционирования) */
