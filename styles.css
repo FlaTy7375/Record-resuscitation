@@ -5065,6 +5065,23 @@ left: 0;
     overflow: visible;
     z-index: 1;
   }
+
+  /* Липкий блок и длинная секция (720vh) нужны только для скролла «Официальные письма» */
+  .screen-reviews[data-reviews-tab="gratitude"] .reviews-sticky-wrapper,
+  .screen-reviews[data-reviews-tab="feedback"] .reviews-sticky-wrapper {
+    position: relative;
+    top: auto;
+    height: auto;
+    overflow: visible;
+  }
+
+  @media (min-width: 1201px) {
+    .screen-reviews[data-reviews-tab="gratitude"],
+    .screen-reviews[data-reviews-tab="feedback"] {
+      height: auto;
+      min-height: 100vh;
+    }
+  }
   
   .reviews-media {
     background: #0f0f0f;
@@ -5854,6 +5871,13 @@ left: 0;
     height: var(--rg-card-h);
     transition: left 0.65s cubic-bezier(0.23, 1, 0.32, 1);
     box-sizing: border-box;
+    /* Рамка assets/reviews_gratitude_frames.png 199×261; белое «окно» внутри ~164×224, по центру */
+    --rg-frame-asset-w: 199;
+    --rg-frame-asset-h: 261;
+    --rg-frame-hole-w: 164;
+    --rg-frame-hole-h: 224;
+    --rg-frame-w: min(var(--rg-card-w), calc(var(--rg-card-h) * var(--rg-frame-asset-w) / var(--rg-frame-asset-h)));
+    --rg-frame-h: calc(var(--rg-frame-w) * var(--rg-frame-asset-h) / var(--rg-frame-asset-w));
   }
 
   /* Позиции относительно центра контейнера (не вылезают за max-width 1920) */
@@ -5874,24 +5898,28 @@ left: 0;
     z-index: 11;
   }
   
-  /* Рамка — задний план */
+  /* Рамка — задний план, без растягивания по карточке (иначе «окно» не совпадает с грамотой) */
   .reviews-gratitude-card-frame {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--rg-frame-w);
+    height: var(--rg-frame-h);
+    object-fit: contain;
     z-index: 0;
     pointer-events: none;
     user-select: none;
   }
 
-  /* Грамота поверх, по центру слайда */
+  /* Грамота в области белого окна рамки */
   .reviews-gratitude-card-image {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--rg-frame-w) * var(--rg-frame-hole-w) / var(--rg-frame-asset-w));
+    height: calc(var(--rg-frame-h) * var(--rg-frame-hole-h) / var(--rg-frame-asset-h));
     object-fit: contain;
     object-position: center center;
     border-radius: 0;
@@ -13673,27 +13701,10 @@ body.modal-open {
     
     .reviews-gratitude-card-frame {
         display: block;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 95%;
-        height: 95%;
-        max-width: none;
-        max-height: none;
-        z-index: 0;
     }
-    
+
     .reviews-gratitude-card-image {
         display: block;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 87%;
-        height: 88%;
-        object-fit: fill;
-        z-index: 1;
     }
     
     .reviews-gratitude-cursor {
