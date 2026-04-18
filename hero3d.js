@@ -546,19 +546,24 @@ async function initHero3D() {
       if (oscarImg) {
         if (isMobileHero) {
           const tf = mobileFloatTime;
-          oscarTargetX = Math.sin(tf * 0.38) * 2.2 + Math.sin(tf * 0.15) * 0.9;
-          oscarTargetY = Math.cos(tf * 0.34) * 1.8 + Math.cos(tf * 0.17) * 0.7;
+          /* Слабее смещение — фоновый дрейф без акцента */
+          oscarTargetX = Math.sin(tf * 0.32) * 1.1 + Math.sin(tf * 0.12) * 0.45;
+          oscarTargetY = Math.cos(tf * 0.28) * 0.95 + Math.cos(tf * 0.13) * 0.38;
         }
         const oscarDelta = Math.abs(oscarParallaxX - oscarTargetX) + Math.abs(oscarParallaxY - oscarTargetY);
-        if (oscarDelta > 0.1) {
+        /* На мобилке кадр всегда пересчитываем — нужно непрерывное покачивание (rockDeg). */
+        if (isMobileHero || oscarDelta > 0.1) {
           const oscarLerp = 1 - Math.exp(-7 * dt);
           oscarParallaxX += (oscarTargetX - oscarParallaxX) * oscarLerp;
           oscarParallaxY += (oscarTargetY - oscarParallaxY) * oscarLerp;
-          const tiltDeg = oscarParallaxX * 0.25;
+          const tiltDeg = isMobileHero ? oscarParallaxX * 0.12 : oscarParallaxX * 0.25;
           const tx = oscarParallaxX;
           const ty = oscarParallaxY;
-          const td = tiltDeg;
+          /* Лёгкое покачивание: малая амплитуда, низкая частота */
+          const rockDeg = isMobileHero ? Math.sin(mobileFloatTime * 0.95) * 0.55 : 0;
+          const td = tiltDeg + rockDeg;
           if (
+            isMobileHero ||
             Math.abs((oscarImg._lastTx ?? 0) - tx) > 0.02 ||
             Math.abs((oscarImg._lastTy ?? 0) - ty) > 0.02 ||
             Math.abs((oscarImg._lastTd ?? 0) - td) > 0.01

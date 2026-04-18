@@ -17,6 +17,17 @@
   window.addEventListener('resize', updateScale, { passive: true });
 })();
 
+// Глобальная функция получения текущего scale для JS-расчетов
+// Глобальная функция получения текущего scale для JS-расчетов
+function getPageScale() {
+  const zoomVal = document.documentElement.style.zoom;
+  if (zoomVal) {
+    const scale = parseFloat(zoomVal);
+    if (!isNaN(scale) && scale > 0) return scale;
+  }
+  return 1;
+}
+
 function escapeHtml(text) {
   return String(text)
     .replace(/&/g, "&amp;")
@@ -145,7 +156,7 @@ function initSalesSlider() {
         alt="Слайд ${index + 1}"
         loading="${index === 0 ? "eager" : "lazy"}"
         decoding="async"
-        style="${isCeremonia ? (index === 0 ? 'transform: scale(1.5); transform-origin: top center; object-position: 50% 35%;' : index === 1 ? 'transform: scale(2); transform-origin: top left; object-position: 0% 0%;' : '') : ''}"
+        style="${isCeremonia ? (index === 0 ? 'transform: scale(1.5); transform-origin: top center; object-position: 50% 35%;' : index === 1 ? 'transform: scale(1.75) translateY(-4%); transform-origin: top left; object-position: left 8%;' : '') : ''}"
       />
     </div>
   `).join("");
@@ -324,32 +335,11 @@ if (document.readyState === "loading") {
   initCountdownTimer();
 }
 
-
-
-
-
-
-
-
-
-
 // LENIS
 // ==========================================
 // Только ПК (≥1200): плавный скролл колесом. На мобилке Lenis выключен — нативный скролл +
 // отдельный потолок шага (см. initMobileDocumentScrollCap), без «липкой» интерполяции.
 // ==========================================
-
-
-
-
-
-
-
-
-
-
-
-
 
 const LENIS_LAYOUT_BREAKPOINT = 1200;
 let lenis = null;
@@ -370,6 +360,44 @@ if (typeof Lenis === "function" && window.innerWidth >= LENIS_LAYOUT_BREAKPOINT)
   });
 }
 
+/**
+ * Один источник правды для вертикального скролла (Lenis или window).
+ * При zoom на documentElement нельзя опираться на getBoundingClientRect для progress —
+ * смешение с rect ломает «виртуальный» скролл и пошаговые анимации.
+ */
+function getDocumentScrollY() {
+  let sy = 0;
+  if (typeof lenis !== "undefined" && lenis && lenis.scroll !== undefined) {
+    sy = lenis.scroll;
+  } else {
+    sy = window.scrollY || document.documentElement.scrollTop || 0;
+  }
+  // Конвертируем физический скролл в координаты Layout'а
+  return sy / getPageScale(); 
+}
+
+function getElementDocumentOffsetTop(el) {
+  let y = 0;
+  let n = el;
+  while (n) {
+    y += n.offsetTop;
+    n = n.offsetParent;
+  }
+  return y;
+}
+
+/**
+ * Высота вьюпорта в координатах скролла документа (как для scrollY + «один экран»).
+ */
+function getScrollViewportHeight() {
+  let vh = window.innerHeight || document.documentElement.clientHeight || 1;
+  if (window.visualViewport && Number.isFinite(window.visualViewport.height)) {
+    vh = Math.max(1, window.visualViewport.height);
+  }
+  // Конвертируем физическую высоту окна в координаты Layout'а
+  return vh / getPageScale(); 
+}
+
 // Единый цикл отрисовки (RequestAnimationFrame)
 function raf(time) {
   if (lenis) {
@@ -384,223 +412,115 @@ function raf(time) {
 
 requestAnimationFrame(raf);
 
-
-
-
-
-
-
-
-
-
-
-
 // ==========================================
 // PROMO: липкий блок → ещё ~1 скролл — margin-top + CSS transition к центру → затем карточки.
+// ==========================================
+// ==========================================
+// PROMO: липкий блок → ещё ~1 скролл — margin-top + CSS transition к центру → затем карточки.
+// ==========================================
+// ==========================================
+// PROMO: липкий блок → ещё ~1 скролл — margin-top + CSS transition к центру → затем карточки.
+// ==========================================
+// ==========================================
+// PROMO: жесткая привязка анимации к прогрессу скролла.
+// Фаза 1: Текст смещается в центр.
+// Фаза 2: Карточки поднимаются снизу вверх через весь блок.
 // ==========================================
 (function initPromoSection() {
   const promoStage = document.getElementById('promoStage');
   const promoSection = document.getElementById('promoScreen');
   if (!promoStage || !promoSection) return;
+
   const promoContent = promoStage.querySelector('.promo-content');
   const promoHeader = promoSection.querySelector('.promo-header');
   const promoItems = [...promoStage.querySelectorAll('.promo-item')];
-  if (!promoContent) return;
 
-  const vh = () => window.innerHeight;
-  const isPromoNarrow = () => window.innerWidth <= 1200;
-  const PROMO_HIDE_BELOW_VH = 0.82;
-  const startY = () => vh() * (1 + PROMO_HIDE_BELOW_VH);
-  /** Скролл по секции после фикса, при котором запускается опускание текста (один «шаг»). */
-  const ONE_SCROLL_COMMIT_PX = 44;
-  const UNDO_COMMIT_SCROLL_PX = 10;
-  /** <1 — финальная позиция чуть выше геом. центра. */
-  const PROMO_HEADER_SHIFT_SCALE = 0.72;
-
-  let textScrollCommitted = false;
-  let textCenterComplete = false;
-  let scrolledAtCardsPhase = 0;
-  /** Первый кадр после load: шрифты/высота #promoStage ещё «плывут» — не коммитим центрирование, иначе рывок и мгновенный переход к карточкам. */
-  let promoMetricsReady = false;
-  /** После выхода из фазы карточек скроллом вверх — не коммитить заголовок в том же жесте, пока не пойдём заметно вниз */
-  let promoPostCardsUpExit = false;
-  let lastPromoScrolled = Number.NaN;
-
-  /** Базовая позиция скролла для фазы карточек: всегда ≤ текущего скролла, иначе при скролле вниз t > 0 с первого кадра — визуальный скачок снизу вверх. */
-  function promoCardsPhaseBaseline(scrollY, overlapZone) {
-    const y = Math.max(0, scrollY);
-    const cap = Math.max(0, overlapZone - 1);
-    return Math.min(y, cap);
-  }
-
-  function measureHeaderShiftToCenter() {
-    if (!promoHeader) return 0;
-    const h = promoHeader.getBoundingClientRect();
-    const mid = vh() / 2;
-    return mid - (h.top + h.height / 2);
-  }
-
-  /** @param {{ instant?: boolean }} [opts] */
-  function resetPromoHeaderState(opts = {}) {
-    const instant = opts.instant === true;
-    textScrollCommitted = false;
-    textCenterComplete = false;
-    scrolledAtCardsPhase = 0;
-    promoPostCardsUpExit = false;
-    lastPromoScrolled = Number.NaN;
-    if (!promoHeader) return;
-    if (instant) {
-      promoHeader.style.setProperty('transition', 'none');
-    }
-    promoHeader.classList.remove('promo-header--nudge-center');
-    promoHeader.style.removeProperty('--promo-header-shift');
-    if (instant) {
-      requestAnimationFrame(() => {
-        promoHeader.style.removeProperty('transition');
-      });
-    }
-  }
-
-  function onPromoHeaderTransitionEnd(ev) {
-    if (ev.target !== promoHeader) return;
-    if (ev.propertyName !== 'margin-top' && ev.propertyName !== 'transform') return;
-    if (promoHeader.classList.contains('promo-header--nudge-center')) {
-      textCenterComplete = true;
-      const r = promoStage.getBoundingClientRect();
-      const overlapZone = Math.max(1, promoStage.offsetHeight - vh());
-      scrolledAtCardsPhase = promoCardsPhaseBaseline(-r.top, overlapZone);
-      requestPromoTick();
-      return;
-    }
-    if (textCenterComplete) {
-      textCenterComplete = false;
-      textScrollCommitted = false;
-      scrolledAtCardsPhase = 0;
-      promoHeader.style.removeProperty('--promo-header-shift');
-      requestPromoTick();
-    }
-  }
-
+  // КРИТИЧЕСКИ ВАЖНО: отключаем CSS-переходы для заголовка. 
+  // Мы управляем позицией напрямую через JS-скролл, transition будет только вызывать лаги.
   if (promoHeader) {
-    promoHeader.addEventListener('transitionend', onPromoHeaderTransitionEnd);
+    promoHeader.style.transition = 'none';
   }
 
-  let promoRaf = 0;
+  let maxHeaderShiftLayout = 0;
 
-  function resetItemRise() {
-    promoContent.style.removeProperty('--promo-item-rise');
-    promoItems.forEach((el) => el.style.removeProperty('--promo-item-rise'));
+  // Вычисляем статичные метрики один раз (и при ресайзе), чтобы избежать дерганий
+  function updateMetrics() {
+    if (!promoHeader) return;
+    const scale = getPageScale();
+    const layoutVh = window.innerHeight / scale;
+    // Находим центр заголовка относительно верха секции
+    const headerCenterY = promoHeader.offsetTop + (promoHeader.offsetHeight / 2);
+    // Центр заголовка — ровно на середине экрана (50% высоты вьюпорта)
+    const targetY = layoutVh * 0.5;
+    // Считаем, на сколько пикселей нужно сдвинуть заголовок вниз (translateY)
+    maxHeaderShiftLayout = Math.max(0, targetY - headerCenterY);
   }
 
   function applyPromoScroll() {
+    const physicalVh = window.innerHeight;
+    const scale = getPageScale();
+    const layoutVh = physicalVh / scale;
+
     const rect = promoStage.getBoundingClientRect();
-    const sectionH = promoStage.offsetHeight;
-    const overlapZone = sectionH - vh();
-    if (overlapZone <= 0) {
-      return;
-    }
+    // Сколько пикселей мы проскроллили от начала блока promoStage
+    const scrolledLayout = -rect.top / scale;
+    // Общая дистанция "липкого" пути (высота трека минус один экран)
+    const trackHeightLayout = promoStage.offsetHeight - layoutVh;
 
-    const scrolled = -rect.top;
-    const narrow = isPromoNarrow();
-    const scrollDelta =
-      Number.isFinite(lastPromoScrolled) ? scrolled - lastPromoScrolled : 0;
-    lastPromoScrolled = scrolled;
+    if (trackHeightLayout <= 0) return;
 
-    if (scrolled < -2 || rect.top > vh() + 4) {
-      resetPromoHeaderState({});
-      resetItemRise();
-      promoContent.style.transform = `translate3d(-50%, ${startY()}px, 0)`;
-      return;
-    }
+    // Строгий прогресс скролла внутри секции: от 0.0 до 1.0
+    const progress = Math.max(0, Math.min(1, scrolledLayout / trackHeightLayout));
 
-    /* Скролл вверх раньше точки старта таймлайна карточек: без transitionend состояние «залипало», текст перекрывался / прыгал */
-    if (textCenterComplete && scrolled < scrolledAtCardsPhase) {
-      textCenterComplete = false;
-      scrolledAtCardsPhase = 0;
-      textScrollCommitted = false;
-      promoPostCardsUpExit = true;
-      resetItemRise();
-      if (promoHeader) {
-        promoHeader.classList.remove('promo-header--nudge-center');
-        promoHeader.style.removeProperty('--promo-header-shift');
-        promoHeader.style.setProperty('transition', 'none');
-        requestAnimationFrame(() => {
-          promoHeader.style.removeProperty('transition');
-        });
-      }
-    }
+    // --- НАСТРОЙКА ТАЙМЛАЙНА ---
+    // Первые 30% скролла тратим на то, чтобы опустить текст.
+    // Оставшиеся 70% скролла тратим на то, чтобы протянуть карточки.
+    const TEXT_PHASE_END = 0.3;
 
-    if (promoPostCardsUpExit && scrollDelta > 2) {
-      promoPostCardsUpExit = false;
-    }
+    // Высчитываем локальный прогресс для каждой из фаз (от 0 до 1)
+    const pText = Math.min(1, progress / TEXT_PHASE_END);
+    const pCards = Math.max(0, (progress - TEXT_PHASE_END) / (1 - TEXT_PHASE_END));
 
-    const headerUnpinThreshold = Math.min(
-      ONE_SCROLL_COMMIT_PX,
-      Math.max(0, scrolledAtCardsPhase - 1)
-    );
-    if (
-      textCenterComplete &&
-      promoHeader &&
-      promoHeader.classList.contains('promo-header--nudge-center') &&
-      scrolled < headerUnpinThreshold
-    ) {
-      promoHeader.classList.remove('promo-header--nudge-center');
-    } else if (
-      scrolled < UNDO_COMMIT_SCROLL_PX &&
-      textScrollCommitted &&
-      !textCenterComplete &&
-      promoHeader
-    ) {
-      textScrollCommitted = false;
-      promoPostCardsUpExit = false;
-      promoHeader.classList.remove('promo-header--nudge-center');
-      promoHeader.style.removeProperty('--promo-header-shift');
-    } else if (
-      promoMetricsReady &&
-      scrolled >= ONE_SCROLL_COMMIT_PX &&
-      promoHeader &&
-      !textScrollCommitted &&
-      !textCenterComplete &&
-      !promoPostCardsUpExit
-    ) {
-      textScrollCommitted = true;
-      const shift = Math.max(0, measureHeaderShiftToCenter() * PROMO_HEADER_SHIFT_SCALE);
-      promoHeader.style.setProperty('--promo-header-shift', `${shift}px`);
-      if (shift < 0.5) {
-        textCenterComplete = true;
-        scrolledAtCardsPhase = promoCardsPhaseBaseline(scrolled, overlapZone);
+    // 1. АНИМАЦИЯ ТЕКСТА
+    if (promoHeader) {
+      // Сдвигаем пропорционально локальному прогрессу текста
+      const currentShift = maxHeaderShiftLayout * pText;
+      promoHeader.style.setProperty('--promo-header-shift', `${currentShift}px`);
+
+      // На случай, если этот класс используется в CSS для изменения opacity/цвета
+      if (pText > 0) {
+        promoHeader.classList.add('promo-header--nudge-center');
       } else {
-        requestAnimationFrame(() => {
-          if (!textScrollCommitted || textCenterComplete) return;
-          promoHeader.classList.add('promo-header--nudge-center');
-        });
+        promoHeader.classList.remove('promo-header--nudge-center');
       }
     }
 
-    if (!textCenterComplete) {
-      promoContent.style.transform = `translate3d(-50%, ${startY()}px, 0)`;
-      resetItemRise();
-    } else {
-      const baseSpan = Math.max(1, overlapZone - scrolledAtCardsPhase);
-      const span = narrow ? Math.max(baseSpan * 200, vh() * 10) : baseSpan;
-      const t = Math.max(0, Math.min(1, (scrolled - scrolledAtCardsPhase) / span));
-      /* Ниже степень — движение ближе к скроллу, плавнее без «рваного» конца */
-      const pCards = 1 - Math.pow(1 - t, 1.45);
-      const y0 = startY();
-      const p = pCards;
-      const overshoot = isPromoNarrow()
-        ? vh() * (0.12 * p + 0.16 * p * p)
-        : vh() * (0.09 * p + 0.14 * p * p);
-      const offset = y0 * (1 - pCards) - overshoot;
-      promoContent.style.transform = `translate3d(-50%, ${offset}px, 0)`;
-      const riseCap = narrow ? Math.min(vh() * 1.28, 1100) : Math.min(vh() * 0.55, 480);
-      const riseBase = pCards * riseCap;
+    // 2. АНИМАЦИЯ КАРТОЧЕК
+    if (promoContent) {
+      const narrow = window.innerWidth <= 1200;
+
+      // Откуда начинают ехать карточки (1.1 vh означает "чуть ниже границы экрана")
+      const startY = layoutVh * 1.1;
+      // Докуда они доезжают (отрицательные значения уводят блок выше центра экрана)
+      const endY = narrow ? -layoutVh * 0.2 : -layoutVh * 0.1;
+
+      // Линейная интерполяция координаты Y от прогресса
+      const currentY = startY - (startY - endY) * pCards;
+      promoContent.style.transform = `translate3d(-50%, ${currentY}px, 0)`;
+
+      // Эффект "лесенки" (stagger) для карточек
+      // Используем easing (смягчение), чтобы они выплывали красиво
+      const pCardsEased = pCards * (2 - pCards); // ease-out
+      const riseCap = narrow ? Math.min(layoutVh * 1.28, 1100) : Math.min(layoutVh * 0.55, 480);
+      const riseBase = pCardsEased * riseCap;
+
       if (narrow) {
         promoItems.forEach((el) => el.style.removeProperty('--promo-item-rise'));
         promoContent.style.setProperty('--promo-item-rise', `${riseBase}px`);
       } else {
         promoContent.style.removeProperty('--promo-item-rise');
         promoItems.forEach((el, i) => {
+          // Умножаем на коэффициент, чтобы каждая следующая карточка поднималась с задержкой
           const rise = riseBase * (1 + i * 0.52);
           el.style.setProperty('--promo-item-rise', `${rise}px`);
         });
@@ -608,6 +528,7 @@ requestAnimationFrame(raf);
     }
   }
 
+  let promoRaf = 0;
   function requestPromoTick() {
     if (promoRaf) return;
     promoRaf = requestAnimationFrame(() => {
@@ -616,32 +537,29 @@ requestAnimationFrame(raf);
     });
   }
 
+  // --- ИНИЦИАЛИЗАЦИЯ И СЛУШАТЕЛИ ---
+  updateMetrics();
   window.addEventListener('resize', () => {
-    resetPromoHeaderState({ instant: true });
+    updateMetrics();
     requestPromoTick();
   });
+
   if (typeof lenis !== 'undefined' && lenis && typeof lenis.on === 'function') {
     lenis.on('scroll', requestPromoTick);
   } else {
     window.addEventListener('scroll', requestPromoTick, { passive: true });
   }
 
-  const fontsGate =
-    document.fonts && typeof document.fonts.ready !== 'undefined'
-      ? document.fonts.ready.catch(() => {})
-      : Promise.resolve();
-  fontsGate.then(() => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        promoMetricsReady = true;
-        requestPromoTick();
-      });
+  // Делаем финальный пересчет после загрузки шрифтов, чтобы позиция текста была идеальной
+  if (document.fonts && typeof document.fonts.ready !== 'undefined') {
+    document.fonts.ready.then(() => {
+      updateMetrics();
+      requestPromoTick();
     });
-  });
+  }
 
   requestPromoTick();
 })();
-
 // ==========================================
 // STATUS SECTION: липкий блок + шаги по реальному скроллу
 // Вниз: Статус → Масштаб → Достижения. Вверх — обратный порядок (тот же progress).
@@ -664,52 +582,126 @@ requestAnimationFrame(raf);
   const triggers = [statusMainTrigger, statusScaleTrigger, statusAchievementsTrigger];
   const quotes = [statusQuoteGold, statusQuoteBlack, statusQuoteRuby];
 
-  let activeVariant = "gold";
+  const statusOscarImg = document.getElementById("statusOscarImg");
 
-  function setActiveStatusVariant(variant) {
+  let activeVariant = "gold";
+  /** true, пока скролл ниже зоны pin-spacer (блок status уже не зафиксирован) */
+  let statusStatuePastPin = false;
+
+  let statusQuoteActivateTimer = 0;
+  let statusQuoteLeaveTimer = 0;
+
+  function statusStatueIsNarrowLayout() {
+    return window.innerWidth <= 1200;
+  }
+
+  /** Позиция PNG статуи: инлайн, чтобы не терялась в каскаде и при resize без смены шага */
+  function applyStatusStatueImgTransform(variant) {
+    if (!statusOscarImg) return;
+    const narrow = statusStatueIsNarrowLayout();
+    statusOscarImg.style.transition =
+      "transform 0.55s cubic-bezier(0.22, 0.8, 0.22, 1)";
+    /* Мобилка: слабее zoom, статуя ниже (больше translateY) */
+    const narrowScale = 1.22;
+    if (variant === "gold") {
+      if (narrow) {
+        statusOscarImg.style.transform = "translateY(148px)";
+      } else {
+        statusOscarImg.style.removeProperty("transform");
+      }
+    } else if (variant === "black") {
+      statusOscarImg.style.transform = narrow
+        ? `translateY(152px) scale(${narrowScale})`
+        : "translateY(-144px) scale(1.444)";
+    } else if (variant === "ruby") {
+      /* Десктоп: крупный кадр вверху. Мобилка: ниже, чем «масштаб» */
+      statusOscarImg.style.transform = narrow
+        ? `translateY(212px) scale(${narrowScale})`
+        : "translateY(-500px) scale(1.444)";
+    }
+  }
+
+  /** Как при первом показе блока: без zoom, базовая вертикаль (как шаг «Статус») */
+  function resetStatusStatueImgAfterPin() {
+    if (!statusOscarImg) return;
+    statusOscarImg.style.transition =
+      "transform 0.55s cubic-bezier(0.22, 0.8, 0.22, 1)";
+    if (statusStatueIsNarrowLayout()) {
+      statusOscarImg.style.transform = "translateY(148px)";
+    } else {
+      statusOscarImg.style.removeProperty("transform");
+    }
+  }
+
+  function setActiveStatusVariant(variant, opts) {
+    const skipStatueImg = opts && opts.skipStatueImg === true;
     if (variant === activeVariant) return;
+
+    window.clearTimeout(statusQuoteActivateTimer);
+    statusQuoteActivateTimer = 0;
+    window.clearTimeout(statusQuoteLeaveTimer);
+    statusQuoteLeaveTimer = 0;
 
     const oldIdx = VARIANTS.indexOf(activeVariant);
     const newIdx = VARIANTS.indexOf(variant);
 
-    if (oldIdx >= 0) {
-      triggers[oldIdx].classList.remove("is-active");
-      if (quotes[oldIdx]) {
-        quotes[oldIdx].classList.remove("is-active");
-        quotes[oldIdx].classList.add("is-leaving");
-        window.setTimeout(() => quotes[oldIdx].classList.remove("is-leaving"), 400);
-      }
+    triggers.forEach((t, i) => {
+      t.classList.toggle("is-active", i === newIdx);
+    });
+
+    quotes.forEach((q) => {
+      if (!q) return;
+      q.classList.remove("is-active", "is-leaving");
+    });
+
+    if (oldIdx >= 0 && quotes[oldIdx]) {
+      const leaveEl = quotes[oldIdx];
+      leaveEl.classList.add("is-leaving");
+      statusQuoteLeaveTimer = window.setTimeout(() => {
+        statusQuoteLeaveTimer = 0;
+        leaveEl.classList.remove("is-leaving");
+      }, 400);
     }
 
-    if (newIdx >= 0) {
-      triggers[newIdx].classList.add("is-active");
-      if (quotes[newIdx]) {
-        window.setTimeout(
-          () => quotes[newIdx].classList.add("is-active"),
-          oldIdx >= 0 ? 150 : 0
-        );
+    if (newIdx >= 0 && quotes[newIdx]) {
+      const narrow = statusStatueIsNarrowLayout();
+      if (narrow) {
+        quotes[newIdx].classList.add("is-active");
+      } else {
+        const targetVariant = variant;
+        const qi = newIdx;
+        const delay = oldIdx >= 0 ? 150 : 0;
+        statusQuoteActivateTimer = window.setTimeout(() => {
+          statusQuoteActivateTimer = 0;
+          if (activeVariant !== targetVariant) return;
+          if (quotes[qi]) quotes[qi].classList.add("is-active");
+        }, delay);
       }
     }
 
     activeVariant = variant;
+    statusSection.setAttribute("data-status-variant", variant);
+    if (!skipStatueImg) {
+      applyStatusStatueImgTransform(variant);
+    }
   }
+
+  const STATUS_PIN_EXTRA_VH = 4.85;
+  const STATUS_PIN_VH_STRETCH_CAP = 920;
+  const STATUS_PIN_MIN_SCROLL_TRACK_PX = 2720;
 
   function updatePinSpacerHeight() {
     if (!pinSpacer) return;
     const statusH = statusSection.offsetHeight;
-    const vh = window.innerHeight || 1;
-    /* Запас по вертикали: пока блок sticky, progress 0→1 делит дорожку на 3 равных фазы */
-    const extraScroll = vh * 1.65;
-    pinSpacer.style.height = `${statusH + extraScroll}px`;
+    const svh = getScrollViewportHeight();
+    const stretchVh = Math.min(svh, STATUS_PIN_VH_STRETCH_CAP);
+    const extraScroll = stretchVh * STATUS_PIN_EXTRA_VH;
+    const fromStretch = statusH + extraScroll;
+    const withFloor = Math.max(fromStretch, svh + STATUS_PIN_MIN_SCROLL_TRACK_PX);
+    pinSpacer.style.height = `${withFloor}px`;
   }
 
   updatePinSpacerHeight();
-
-  const statusOscarImg = document.getElementById("statusOscarImg");
-  if (statusOscarImg) {
-    statusOscarImg.style.removeProperty("transform");
-    statusOscarImg.style.removeProperty("transition");
-  }
 
   triggers[0].classList.add("is-active");
   triggers[1].classList.remove("is-active");
@@ -724,12 +716,18 @@ requestAnimationFrame(raf);
     quotes[2].classList.remove("is-leaving");
   }
 
+  statusSection.setAttribute("data-status-variant", activeVariant);
+  applyStatusStatueImgTransform(activeVariant);
+
   let ticking = false;
+
+  const STATUS_PHASE_GOLD_END = 0.32;
+  const STATUS_PHASE_BLACK_END = 0.62;
 
   function stepFromProgress(p) {
     const t = Math.max(0, Math.min(1, p));
-    if (t < 1 / 3) return 0;
-    if (t < 2 / 3) return 1;
+    if (t < STATUS_PHASE_GOLD_END) return 0;
+    if (t < STATUS_PHASE_BLACK_END) return 1;
     return 2;
   }
 
@@ -740,41 +738,92 @@ requestAnimationFrame(raf);
       ticking = false;
       if (!pinSpacer) return;
 
-      const sr = pinSpacer.getBoundingClientRect();
-      const vh = window.innerHeight || 1;
-      const maxScroll = Math.max(1, pinSpacer.offsetHeight - vh);
+      const svh = getScrollViewportHeight();
+      const bandVh = Math.min(svh, STATUS_PIN_VH_STRETCH_CAP);
+      const spacerH = pinSpacer.offsetHeight;
+      const spacerTop = getElementDocumentOffsetTop(pinSpacer);
+      const scrollY = getDocumentScrollY();
+      const sectionScrollRange = Math.max(1, spacerH - svh);
+      const startAfter =
+        window.innerWidth <= 1200 ? bandVh * 0.08 : bandVh * 0.02;
+      const denom = Math.max(1, sectionScrollRange - startAfter);
 
-      /* До блока — первый шаг; полностью прошли вниз — последний шаг */
-      if (sr.top >= vh) {
+      if (scrollY + svh <= spacerTop) {
+        statusStatuePastPin = false;
         setActiveStatusVariant("gold");
         return;
       }
-      if (sr.bottom <= 0) {
-        setActiveStatusVariant("ruby");
+      if (scrollY >= spacerTop + spacerH) {
+        if (!statusStatuePastPin) {
+          resetStatusStatueImgAfterPin();
+        }
+        statusStatuePastPin = true;
+        setActiveStatusVariant("ruby", { skipStatueImg: true });
         return;
       }
 
-      const scrolled = Math.max(0, Math.min(maxScroll, -sr.top));
-      const progress = scrolled / maxScroll;
+      const reenteredPinFromBelow = statusStatuePastPin;
+      statusStatuePastPin = false;
+
+      const scrolled = Math.max(
+        0,
+        Math.min(sectionScrollRange - startAfter, scrollY - spacerTop - startAfter),
+      );
+      const progress = Math.max(0, Math.min(1, scrolled / denom));
       const step = stepFromProgress(progress);
-      setActiveStatusVariant(VARIANTS[step]);
+      const nextVariant = VARIANTS[step];
+      if (reenteredPinFromBelow && nextVariant === activeVariant) {
+        applyStatusStatueImgTransform(nextVariant);
+      } else {
+        setActiveStatusVariant(nextVariant);
+      }
     });
+  }
+
+  /** После resize: не возвращать zoom, если скролл уже ниже pin-spacer */
+  function syncStatusStatueImgForScrollPosition() {
+    if (!pinSpacer || !statusOscarImg) return;
+    const svh = getScrollViewportHeight();
+    const spacerH = pinSpacer.offsetHeight;
+    const spacerTop = getElementDocumentOffsetTop(pinSpacer);
+    const scrollY = getDocumentScrollY();
+    if (scrollY >= spacerTop + spacerH) {
+      resetStatusStatueImgAfterPin();
+    } else {
+      applyStatusStatueImgTransform(activeVariant);
+    }
   }
 
   window.addEventListener("scroll", onScrollStatus, { passive: true });
   window.addEventListener("resize", () => {
     updatePinSpacerHeight();
     onScrollStatus();
+    syncStatusStatueImgForScrollPosition();
   });
   if (typeof lenis !== "undefined" && lenis && typeof lenis.on === "function") {
     lenis.on("scroll", onScrollStatus);
+  }
+
+  const statusScrollRo = new ResizeObserver(() => {
+    updatePinSpacerHeight();
+    onScrollStatus();
+    syncStatusStatueImgForScrollPosition();
+  });
+  statusScrollRo.observe(statusSection);
+  if (pinSpacer) statusScrollRo.observe(pinSpacer);
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", () => {
+      updatePinSpacerHeight();
+      onScrollStatus();
+      syncStatusStatueImgForScrollPosition();
+    });
   }
 
   onScrollStatus();
 })();
 
 // ── Спираль-змея вокруг башни (перенос из Record-main) ─────────────
-
 
 
 
@@ -800,12 +849,13 @@ requestAnimationFrame(raf);
     window.innerWidth > MOBILE_ORBIT_BREAKPOINT && window.innerWidth < WIDE_ORBIT_BREAKPOINT;
   let W, H, cx, cy, rx, ry;
   let spiralPoints = [];
+  /** Те же точки, порядок index 0 = конец пути (для «роста» при скролле снизу вверх). */
+  let spiralPointsRev = [];
   let dpr = 1;
   let orbitVisible = true;
   let orbitDrawQueued = false;
 
   const TURNS = 3;
-  // Оптимизация: 150 точек для мобилок достаточно для плавной кривой
   let STEPS = isMobileOrbit ? 150 : 300; 
   const TAIL = 0.15;
   let maxParticles = isMobileOrbit ? 0 : 25;
@@ -814,9 +864,11 @@ requestAnimationFrame(raf);
   let targetPhase = 0;
   const particles = [];
 
-  // Кэшируем переменные для скролла, чтобы избежать Layout Thrashing
   let cachedStartScroll = 0;
   let cachedSpan = 1;
+
+  /** Рисуем по spiralPointsRev — тот же рост фазы, но от противоположного конца пути. */
+  let orbitSpiralFromEnd = false;
 
   function countSectionDocumentTop(el) {
     let y = 0;
@@ -829,10 +881,7 @@ requestAnimationFrame(raf);
   }
 
   function readScrollY() {
-    if (typeof lenis !== "undefined" && lenis && lenis.scroll !== undefined) {
-      return lenis.scroll;
-    }
-    return window.scrollY || document.documentElement.scrollTop || 0;
+    return getDocumentScrollY();
   }
 
   function resize() {
@@ -857,23 +906,32 @@ requestAnimationFrame(raf);
     ctx.lineJoin = "round";
 
     cx = W * 0.5;
-    /* Мобилка: спираль ниже по экрану */
     cy = isMobileOrbit ? H * 0.86 : isNarrowDesktopOrbit ? H * 0.695 : H * 0.7;
     rx = isMobileOrbit ? W * 0.46 : isNarrowDesktopOrbit ? W * 0.22 : W * 0.13;
-    /* ry: половина вертикального хода; больше ry → больше вертикальный «период» между витками */
     ry = isMobileOrbit ? H * 0.36 : isNarrowDesktopOrbit ? H * 0.28 : H * 0.27;
 
     spiralPoints = buildSpiral(TURNS, STEPS);
+    spiralPointsRev = spiralPoints.length ? spiralPoints.slice().reverse() : [];
 
-    // Вычисляем пороги скролла один раз при ресайзе
-    const vh = window.innerHeight || 1;
+    const vh = getScrollViewportHeight();
     const y0 = countSectionDocumentTop(countEl);
     const narrow = isMobileOrbit;
-    
-    cachedStartScroll = y0 + vh * (narrow ? 0.14 : 0.02);
-    cachedSpan = vh * (narrow ? 0.82 : 1.45);
+    const sectionScrollRange = Math.max(1, countEl.offsetHeight - vh);
+    const startAfter = vh * (narrow ? 0.14 : 0.02);
+
+    cachedStartScroll = y0 + startAfter;
+    cachedSpan = Math.max(1, sectionScrollRange - startAfter - vh);
 
     requestOrbitDraw();
+  }
+
+  /** Полностью выше вьюпорта / полностью ниже / пересечение. */
+  function countSectionSide() {
+    const r = countEl.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (r.bottom <= 0) return "above";
+    if (r.top >= vh) return "below";
+    return "intersecting";
   }
 
   function buildSpiral(turns, steps) {
@@ -881,7 +939,6 @@ requestAnimationFrame(raf);
     let rxTop;
     let rxBot;
     if (isMobileOrbit) {
-      /* Шире спираль на мобилке (было 0.34 / 0.52) */
       rxTop = W * 0.41;
       rxBot = W * 0.6;
     } else if (isNarrowDesktopOrbit) {
@@ -899,20 +956,38 @@ requestAnimationFrame(raf);
       const rxT = rxTop + (rxBot - rxTop) * radialT;
       ptsArray.push([cx + Math.cos(angle) * rxT, cy - ry + t * ry * 2]);
     }
-    return ptsArray.reverse();
+    return ptsArray;
   }
 
   window._updateOrbitPhase = function () {
-    // Оптимизация: если секция не видна, не считаем скролл
-    if (!orbitVisible) return; 
-
     const scrollY = readScrollY();
-    let raw = (scrollY - cachedStartScroll) / Math.max(1, cachedSpan);
-    raw = Math.max(0, Math.min(1, raw));
+    const pRaw = (scrollY - cachedStartScroll) / Math.max(1, cachedSpan);
+    const side = countSectionSide();
 
-    if (Math.abs(targetPhase - raw) > 0.0001) {
-      targetPhase = raw;
-      requestOrbitDraw();
+    if (side === "below") {
+      // 1. Блок ниже экрана (мы проскроллили наверх страницы).
+      // Сбрасываем фазу. Подготавливаем спираль к обычному росту (сверху вниз).
+      orbitSpiralFromEnd = false;
+      targetPhase = 0;
+      phase = 0; 
+    } else if (side === "above") {
+      // 2. Блок выше экрана (мы проскроллили вниз страницы).
+      // Сбрасываем фазу. Подготавливаем спираль к обратному росту (снизу вверх).
+      orbitSpiralFromEnd = true;
+      targetPhase = 0;
+      phase = 0;
+    } else {
+      // 3. Блок пересекает экран (находится в видимости).
+      let clamped = Math.max(0, Math.min(1, pRaw));
+      
+      // Если мы идем снизу (orbitSpiralFromEnd = true), инвертируем прогресс,
+      // чтобы спираль "росла", а не "стиралась".
+      let raw = orbitSpiralFromEnd ? (1 - clamped) : clamped;
+
+      if (Math.abs(targetPhase - raw) > 0.0001) {
+        targetPhase = raw;
+        requestOrbitDraw();
+      }
     }
   };
 
@@ -936,28 +1011,32 @@ requestAnimationFrame(raf);
     let needsAnimationFrame = false;
 
     if (Math.abs(targetPhase - phase) > 0.001) {
-      phase += (targetPhase - phase) * 0.06;
+      phase += (targetPhase - phase) * 0.14;
       needsAnimationFrame = true;
     } else {
       phase = targetPhase;
     }
 
-    if (!orbitVisible) {
+    // ВАЖНО: Всегда очищаем канвас! Это предотвращает эффект "застывшей" спирали,
+    // когда блок моментально уходит с экрана.
+    ctx.clearRect(0, 0, W, H);
+
+    // Если блок скрыт и спираль сброшена, дальше нет смысла производить вычисления
+    if (!orbitVisible && phase < 0.001) {
       if (needsAnimationFrame) requestOrbitDraw();
       return;
     }
 
-    ctx.clearRect(0, 0, W, H);
-
-    const total = spiralPoints.length;
+    const pathPts = orbitSpiralFromEnd ? spiralPointsRev : spiralPoints;
+    const total = pathPts.length;
     const headFloat = phase * (total - 1);
     const headIdx = headFloat | 0;
     const headFrac = headFloat - headIdx;
     const tailLen = (total * TAIL) | 0;
 
     if (headIdx >= 0 && headIdx < total - 1) {
-      const p1 = spiralPoints[headIdx];
-      const p2 = spiralPoints[headIdx + 1];
+      const p1 = pathPts[headIdx];
+      const p2 = pathPts[headIdx + 1];
       const headX = p1[0] + (p2[0] - p1[0]) * headFrac;
       const headY = p1[1] + (p2[1] - p1[1]) * headFrac;
 
@@ -992,9 +1071,9 @@ requestAnimationFrame(raf);
 
       if (baseEnd > 0) {
         ctx.beginPath();
-        ctx.moveTo(spiralPoints[0][0], spiralPoints[0][1]);
+        ctx.moveTo(pathPts[0][0], pathPts[0][1]);
         for (let i = 1; i <= baseEnd; i++) {
-          ctx.lineTo(spiralPoints[i][0], spiralPoints[i][1]);
+          ctx.lineTo(pathPts[i][0], pathPts[i][1]);
         }
         ctx.strokeStyle = isMobileOrbit
           ? "rgba(255, 220, 180, 0.75)"
@@ -1007,13 +1086,13 @@ requestAnimationFrame(raf);
       if (headIdx > baseEnd || (headIdx === baseEnd && headFrac > 1e-6)) {
         if (isMobileOrbit) {
           ctx.beginPath();
-          ctx.moveTo(spiralPoints[baseEnd][0], spiralPoints[baseEnd][1]);
+          ctx.moveTo(pathPts[baseEnd][0], pathPts[baseEnd][1]);
           for (let i = baseEnd + 1; i <= headIdx; i++) {
-            ctx.lineTo(spiralPoints[i][0], spiralPoints[i][1]);
+            ctx.lineTo(pathPts[i][0], pathPts[i][1]);
           }
           if (headIdx < total - 1) {
-            const p1 = spiralPoints[headIdx];
-            const p2 = spiralPoints[headIdx + 1];
+            const p1 = pathPts[headIdx];
+            const p2 = pathPts[headIdx + 1];
             ctx.lineTo(
               p1[0] + (p2[0] - p1[0]) * headFrac,
               p1[1] + (p2[1] - p1[1]) * headFrac
@@ -1026,8 +1105,8 @@ requestAnimationFrame(raf);
           for (let i = baseEnd; i <= headIdx; i++) {
             if (i + 1 >= total) break;
             const isLast = i === headIdx;
-            const p1 = spiralPoints[i];
-            const p2 = spiralPoints[i + 1];
+            const p1 = pathPts[i];
+            const p2 = pathPts[i + 1];
 
             const x1 = p1[0];
             const y1 = p1[1];
@@ -1065,10 +1144,19 @@ requestAnimationFrame(raf);
   }
 
   resize();
-  new ResizeObserver(() => {
+  const orbitResizeRo = new ResizeObserver(() => {
     resize();
     requestOrbitDraw();
-  }).observe(canvas.parentElement);
+  });
+  orbitResizeRo.observe(countEl);
+  orbitResizeRo.observe(canvas.parentElement);
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", () => {
+      resize();
+      requestOrbitDraw();
+    });
+  }
 
   if (typeof IntersectionObserver === "function") {
     const observedTarget = countEl || canvas.parentElement;
@@ -1089,21 +1177,12 @@ requestAnimationFrame(raf);
 
 
 
-
-
-
-
 // ==========================================
 // ПЛАВНЫЙ СКРОЛЛ ДЛЯ ЯКОРНЫХ ССЫЛОК
 // ==========================================
-// Делает так, чтобы при клике на кнопки (например, href="#heroScreen") 
-// страница плавно ехала к блоку, а не прыгала резко.
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     const targetId = this.getAttribute('href');
-    
-    // Пропускаем ссылки, которые открывают попапы (например, #salesPopup), 
-    // если у вас для них написана своя логика
     if (targetId === '#salesPopup') return; 
 
     const targetElement = document.querySelector(targetId);
@@ -1112,8 +1191,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       e.preventDefault();
       if (lenis && typeof lenis.scrollTo === "function") {
         lenis.scrollTo(targetElement, {
-          offset: 0, // Можно задать отступ сверху, если есть фиксированная шапка
-          duration: 1.5 // Время полета до блока
+          offset: 0, 
+          duration: 1.5 
         });
       } else {
         targetElement.scrollIntoView({ behavior: "auto", block: "start" });
@@ -1122,15 +1201,36 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
 
+function smoothScrollWindowToTop(durationMs) {
+  const startY = window.scrollY || document.documentElement.scrollTop || 0;
+  if (startY <= 0) return;
+  const t0 = performance.now();
+  const tick = (now) => {
+    const elapsed = now - t0;
+    const t = Math.min(1, elapsed / durationMs);
+    const y = startY * (1 - easeInOutCubic(t));
+    window.scrollTo(0, y);
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
 
-
-
-
-
-
-
-
+document.getElementById("footerToTop")?.addEventListener("click", () => {
+  const durationSec = 2.6;
+  const durationMs = durationSec * 1000;
+  if (lenis && typeof lenis.scrollTo === "function") {
+    lenis.scrollTo(0, {
+      duration: durationSec,
+      easing: (t) => easeInOutCubic(t),
+    });
+  } else {
+    smoothScrollWindowToTop(durationMs);
+  }
+});
 
 // ==========================================
 // ADVERT 3D SLIDER
@@ -1183,7 +1283,6 @@ function initAdvertSlider() {
       const slideCaption = slide.querySelector('.slide-caption');
       
       if (isMobile) {
-        // На мобильных: активный слайд 100%, остальные 95% и без текста
         if (index === activeIndex) {
           slide.style.opacity = '1';
           slide.style.transform = base + ' scale(1)';
@@ -1198,7 +1297,6 @@ function initAdvertSlider() {
           if (slideCaption) slideCaption.style.opacity = '0';
         }
       } else {
-        // На десктопе: оригинальная логика
         if (dist <= 2) {
           slide.style.opacity = '1';
           slide.style.transform = base + ' scale(1)';
@@ -1212,7 +1310,6 @@ function initAdvertSlider() {
     });
   }
 
-  // Click on left/right side of screen
   container.addEventListener('click', (e) => {
     const { theta } = initSlides();
     const rect = container.getBoundingClientRect();
@@ -1220,14 +1317,13 @@ function initAdvertSlider() {
     const halfWidth = rect.width / 2;
     
     if (clickX < halfWidth) {
-      currentAngle += theta; // prev
+      currentAngle += theta; 
     } else {
-      currentAngle -= theta; // next
+      currentAngle -= theta; 
     }
     updateRing();
   });
 
-  // Touch swipe support
   let touchStartX = 0;
   let touchEndX = 0;
 
@@ -1242,18 +1338,16 @@ function initAdvertSlider() {
     
     if (Math.abs(diff) > 50) {
       if (diff > 0) {
-        currentAngle -= theta; // swipe left = next
+        currentAngle -= theta; 
       } else {
-        currentAngle += theta; // swipe right = prev
+        currentAngle += theta; 
       }
       updateRing();
     }
   }, { passive: true });
 
-  // Initialize on load
   updateRing(true);
 
-  // Resize handler
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
@@ -1263,32 +1357,86 @@ function initAdvertSlider() {
   updateRing(true);
 }
 
-// Initialize Advert Slider when DOM is ready
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initAdvertSlider);
 } else {
   initAdvertSlider();
 }
 
-// Reveal text animation on scroll
+function initPromoHeaderReveal() {
+  const header = document.querySelector(".promo-header");
+  const promoScreen = document.getElementById("promoScreen");
+  if (!header || !promoScreen) return;
+
+  const lines = [...header.querySelectorAll(".reveal-text")];
+  if (!lines.length) return;
+
+  if (typeof IntersectionObserver !== "function") {
+    lines.forEach((el) => el.classList.add("in-view"));
+    return;
+  }
+
+  const STAGGER_MS = 95;
+  lines.forEach((el, i) => {
+    el.style.setProperty("--reveal-delay", `${i * STAGGER_MS}ms`);
+  });
+
+  let done = false;
+  const activate = (obs) => {
+    if (done) return;
+    done = true;
+    lines.forEach((el) => el.classList.add("in-view"));
+    if (obs) {
+      try {
+        obs.unobserve(promoScreen);
+      } catch (_) {
+        /* ignore */
+      }
+    }
+  };
+
+  /* Секция #promoScreen выше порога, чем сам header: threshold 0.18 на высоком .promo-header часто не срабатывал */
+  const io = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        activate(obs);
+      });
+    },
+    { threshold: 0, rootMargin: "0px 0px -4% 0px" }
+  );
+
+  io.observe(promoScreen);
+
+  const maybeAlreadyVisible = () => {
+    const r = promoScreen.getBoundingClientRect();
+    const vh = window.innerHeight || 0;
+    if (vh <= 0) return;
+    if (r.bottom > vh * 0.04 && r.top < vh * 0.96) {
+      activate(io);
+    }
+  };
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(maybeAlreadyVisible);
+  });
+}
+
 function initRevealText() {
     const targets = [...document.querySelectorAll(".reveal-text")].filter(
         (el) => !el.closest(".promo-item") && !el.closest(".promo-header")
     );
 
-    // Set reveal delays
     targets.forEach((el, i) => {
         el.style.setProperty("--reveal-delay", `${(i % 8) * 55}ms`);
     });
     
-    // Special delay for letter-o elements
     targets
         .filter((el) => el.matches(".letter-o, .count-letter-o, .promo-letter-o, .promo-word-o, .radio-title-o"))
         .forEach((el) => {
             el.style.setProperty("--reveal-delay", "220ms");
         });
     
-    // Intersection Observer for scroll-based reveal
     const io = new IntersectionObserver((entries, obs) => {
         entries.forEach((entry) => {
             if (!entry.isIntersecting) return;
@@ -1303,7 +1451,6 @@ function initRevealText() {
     targets.forEach((el) => io.observe(el));
 }
 
-/** Мобилка (≤1200px): один блок преимуществ визуально как при :hover — по скроллу. */
 function initBenefitItemsScrollActive() {
   const BP = 1200;
   const items = [...document.querySelectorAll(".screen-benefits .benefit-item")];
@@ -1363,14 +1510,19 @@ function initBenefitItemsScrollActive() {
   });
 }
 
-// Initialize on page load
-document.addEventListener("DOMContentLoaded", () => {
+function initRevealAndPromoHeader() {
+  initPromoHeaderReveal();
   initRevealText();
   initBenefitItemsScrollActive();
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initRevealAndPromoHeader);
+} else {
+  initRevealAndPromoHeader();
+}
 
 
-// Interview Section Logic
 function setInterviewInfo(title, subtitle) {
   const interviewInfoCard = document.getElementById("interviewInfoCard");
   const interviewInfoTitle = document.getElementById("interviewInfoTitle");
@@ -1404,37 +1556,54 @@ function initInterviewInteractions() {
   });
 }
 
-function initInterviewDots() {
-  const interviewScreen = document.querySelector(".interview");
-  const interviewRevealItems = [...document.querySelectorAll(".interview-reveal")];
-  
-  if (!interviewScreen || !interviewRevealItems.length) return;
-  
-  // Логика для эллипсов
-  const ellipses = document.querySelectorAll('.interview-ellipse');
-  
-  if (ellipses.length > 0 && 'IntersectionObserver' in window) {
-    const ellipseObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          requestAnimationFrame(() => {
-            entry.target.classList.add('in-view');
-          });
-          ellipseObserver.unobserve(entry.target);
-        }
-      });
-    }, {
-      root: null,
-      rootMargin: '-15% 0px -15% 0px',
-      threshold: 0.3
-    });
+function initInterviewEllipseRevealOnce() {
+  const section = document.querySelector(".interview");
+  const ellipses = [...document.querySelectorAll(".interview-ellipse")].sort(
+    (a, b) => Number(a.dataset.revealOrder || 0) - Number(b.dataset.revealOrder || 0),
+  );
+  if (!section || ellipses.length === 0) return;
 
-    ellipses.forEach(ellipse => {
-      ellipseObserver.observe(ellipse);
+  const staggerMs = 320;
+  const reducedMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function revealSequential() {
+    ellipses.forEach((el, i) => {
+      const delay = reducedMotion ? 0 : i * staggerMs;
+      window.setTimeout(() => el.classList.add("is-visible"), delay);
     });
   }
 
-  // Логика для остальных элементов (кнопки и точки)
+  if (!("IntersectionObserver" in window)) {
+    revealSequential();
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries, obs) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        obs.disconnect();
+        revealSequential();
+        break;
+      }
+    },
+    { threshold: 0.14, rootMargin: "0px 0px -6% 0px" },
+  );
+  io.observe(section);
+}
+
+function initInterviewDots() {
+  const interviewScreen = document.querySelector(".interview");
+  if (interviewScreen) {
+    initInterviewEllipseRevealOnce();
+  }
+
+  const interviewRevealItems = [...document.querySelectorAll(".interview-reveal")];
+  
+  if (!interviewScreen || !interviewRevealItems.length) return;
+
   const otherRevealItems = [...interviewRevealItems].filter(item => 
     !item.classList.contains('interview-ellipse')
   );
@@ -1448,7 +1617,6 @@ function initInterviewDots() {
       return;
     }
 
-    // Каждый элемент появляется отдельно при скролле
     revealItems.forEach((item, index) => {
       const io = new IntersectionObserver((entries, obs) => {
         entries.forEach((entry) => {
@@ -1510,10 +1678,11 @@ function initInterviewPeriods() {
 function initNewsGallery() {
   const NEWS_DROPDOWN_BREAKPOINT = 1200;
   const newsGallery = document.getElementById("newsGallery");
+  const newsViewport = newsGallery?.querySelector(".news-gallery-viewport");
   const newsTrack = document.getElementById("newsTrack");
   const newsTabs = document.querySelector(".news-tabs");
   const newsTabsDropdown = document.getElementById("newsTabsDropdown");
-  const newsTabsTrigger = document.querySelector(".news-tab");
+  const newsTabsTrigger = document.querySelector(".news-tabs > .news-tab:first-child");
   const newsTabButtons = [...document.querySelectorAll(".news-tab")];
   const newsCursor = document.getElementById("newsCursor");
   const newsCards = [...document.querySelectorAll("[data-news-card]")];
@@ -1523,42 +1692,91 @@ function initNewsGallery() {
   const STEP_LOCK_MS = 820;
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
-  const getNewsSlideMetrics = () => {
-    const scope = newsGallery.closest(".screen-news") || document.documentElement;
-    const s = getComputedStyle(scope);
-    const width = parseFloat(s.getPropertyValue("--news-card-width"));
-    const gap = parseFloat(s.getPropertyValue("--news-card-gap"));
-    const cardWidth = Number.isFinite(width) && width > 0 ? width : 400;
-    const cardGap = Number.isFinite(gap) ? gap : 40;
-    return { width: cardWidth, step: cardWidth + cardGap };
-  };
-  let newsActiveIndex = window.innerWidth <= 480 ? 0 : (newsCards.length >= 3 ? 1 : 0);
+  let currentNewsFilter = "all";
+  let newsActiveIndex = 0;
   let newsStepLocked = false;
   let newsStepUnlockTimer = 0;
 
-  const getNewsIndexBounds = () => {
-    if (window.innerWidth <= 480 || newsCards.length < 3) {
-      return { minIndex: 0, maxIndex: Math.max(0, newsCards.length - 1) };
+  const getVisibleNewsCards = () =>
+    newsCards.filter((c) => getComputedStyle(c).display !== "none");
+
+  const syncNewsTabUi = () => {
+    newsTabButtons.forEach((btn) => {
+      const f = btn.dataset.newsFilter;
+      if (f === undefined) return;
+      const active = f === currentNewsFilter;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
+    });
+  };
+
+  const applyNewsFilter = () => {
+    for (const card of newsCards) {
+      const cat = card.dataset.newsCategory || "news";
+      const show = currentNewsFilter === "all" || cat === currentNewsFilter;
+      card.style.display = show ? "" : "none";
     }
-    return { minIndex: 1, maxIndex: Math.max(1, newsCards.length - 2) };
+    const visible = getVisibleNewsCards();
+    newsActiveIndex = clamp(newsActiveIndex, 0, Math.max(0, visible.length - 1));
+    syncNewsTabUi();
+    window.requestAnimationFrame(() => {
+      renderNewsGallery();
+    });
+  };
+
+  const getNewsIndexBounds = () => {
+    const n = getVisibleNewsCards().length;
+    return {
+      minIndex: 0,
+      maxIndex: Math.max(0, n - 1),
+    };
+  };
+
+  /** Минимум видимой ширины следующего слайда справа (если он есть). */
+  const MIN_NEXT_SLIDE_PEEK_PX = 36;
+
+  /**
+   * Сдвиг трека: сначала выравнивание по левому краю активной карточки; если справа не хватает «peek» следующего,
+   * сдвигаем окно вправо по треку (часть активной может уйти за левый край вьюпорта).
+   */
+  const computeNewsTrackShiftPx = () => {
+    const visible = getVisibleNewsCards();
+    const n = visible.length;
+    const measureEl = newsViewport || newsGallery;
+    const innerW = Math.max(0, measureEl.getBoundingClientRect().width);
+
+    if (n === 0) {
+      return 0;
+    }
+
+    const i = clamp(newsActiveIndex, 0, n - 1);
+    const activeCard = visible[i];
+    const lastCard = visible[n - 1];
+
+    let viewportLeftOnTrack = activeCard.offsetLeft;
+    if (i < n - 1) {
+      const nextCard = visible[i + 1];
+      const nextLeft = nextCard.offsetLeft;
+      const minViewportLeftForPeek = nextLeft + MIN_NEXT_SLIDE_PEEK_PX - innerW;
+      viewportLeftOnTrack = Math.max(viewportLeftOnTrack, minViewportLeftForPeek);
+    }
+
+    const lastRight = lastCard.offsetLeft + lastCard.offsetWidth;
+    let shift = -viewportLeftOnTrack;
+    const shiftMax = 0;
+    const shiftMin = Math.min(0, innerW - lastRight);
+    return clamp(shift, shiftMin, shiftMax);
   };
 
   const renderNewsGallery = () => {
-    const { width: cardWidth, step: cardStep } = getNewsSlideMetrics();
+    const shiftPx = computeNewsTrackShiftPx();
     if (window.innerWidth <= NEWS_DROPDOWN_BREAKPOINT) {
       newsTrack.style.removeProperty("--news-track-shift-px");
-      newsTrack.style.setProperty(
-        "transform",
-        `translateX(${-newsActiveIndex * cardStep}px)`
-      );
+      newsTrack.style.setProperty("transform", `translateX(${shiftPx}px)`);
       return;
     }
     newsTrack.style.removeProperty("transform");
-    const galleryRect = newsGallery.getBoundingClientRect();
-    const viewportCenterX = window.innerWidth * 0.5;
-    const viewportCenterInGallery = viewportCenterX - galleryRect.left;
-    const centeredShiftPx = viewportCenterInGallery - (cardWidth * 0.5) - (newsActiveIndex * cardStep);
-    newsTrack.style.setProperty("--news-track-shift-px", `${centeredShiftPx}px`);
+    newsTrack.style.setProperty("--news-track-shift-px", `${shiftPx}px`);
   };
 
   const setNewsActiveIndex = (nextIndex) => {
@@ -1568,26 +1786,25 @@ function initNewsGallery() {
   };
 
   const stepNewsGallery = (direction) => {
-    if (!direction || newsStepLocked || newsCards.length < 2) return false;
+    const visible = getVisibleNewsCards();
+    if (!direction || newsStepLocked || visible.length < 2) return false;
     newsStepLocked = true;
     window.clearTimeout(newsStepUnlockTimer);
     newsStepUnlockTimer = window.setTimeout(() => {
       newsStepLocked = false;
     }, STEP_LOCK_MS);
-    
+
     if (window.innerWidth <= NEWS_DROPDOWN_BREAKPOINT) {
-      // На мобилке - циклический скролл
-      const total = newsCards.length;
+      const total = visible.length;
       newsActiveIndex = ((newsActiveIndex + direction) % total + total) % total;
       renderNewsGallery();
     } else {
-      // На десктопе - с границами
       setNewsActiveIndex(newsActiveIndex + direction);
     }
     return true;
   };
 
-  setNewsActiveIndex(newsActiveIndex);
+  applyNewsFilter();
 
   if (newsTabs && newsTabsTrigger && newsTabButtons.length) {
     newsTabsTrigger.setAttribute("aria-expanded", "false");
@@ -1599,6 +1816,24 @@ function initNewsGallery() {
       newsTabsTrigger.setAttribute("aria-expanded", next ? "true" : "false");
     });
 
+    newsTabs.addEventListener("click", (event) => {
+      const tab = event.target.closest(".news-tab");
+      if (!tab || tab.dataset.newsFilter === undefined) return;
+
+      if (window.innerWidth <= NEWS_DROPDOWN_BREAKPOINT && tab === newsTabsTrigger) {
+        return;
+      }
+
+      event.preventDefault();
+      currentNewsFilter = tab.dataset.newsFilter;
+      newsActiveIndex = 0;
+      applyNewsFilter();
+
+      if (window.innerWidth <= NEWS_DROPDOWN_BREAKPOINT) {
+        newsTabs.classList.remove("is-expanded");
+        newsTabsTrigger.setAttribute("aria-expanded", "false");
+      }
+    });
   }
 
   const updateCursor = (event) => {
@@ -1628,7 +1863,6 @@ function initNewsGallery() {
   let pointerStartY = 0;
   let lastSwipeAt = 0;
   const swipeThresholdPx = 32;
-  const swipeClickSuppressMs = 420;
 
   newsGallery.addEventListener("pointerdown", (event) => {
     if (window.innerWidth > NEWS_DROPDOWN_BREAKPOINT) return;
@@ -1711,10 +1945,31 @@ function initReviewsSliders() {
       h = Math.max(stageRect.height, window.innerHeight * 0.5, 420);
     }
 
-    const aspect = 805.19 / 842.64;
     const isMobile = window.innerWidth <= 1200;
-    const centerW = isMobile ? Math.min(340, w * 0.9) : Math.min(842.64, w * 0.46);
-    const centerH = centerW * aspect;
+    /** Видимая полоска соседнего слайда слева/справа (px), одинаково для любого центрального кадра */
+    const PEEK = isMobile ? 26 : 32;
+    const scaleAd = (ad) => Math.max(0.34, Math.pow(0.82, ad));
+
+    const maxCardW = isMobile ? Math.min(w * 0.88, 720) : Math.min(w * 0.5, 900);
+    const maxCardH = isMobile ? Math.min(h * 0.88, 920) : Math.min(h * 0.82, 960);
+    let uniW = maxCardW;
+    let uniH = Math.min(maxCardH, uniW * 1.08);
+    uniW = Math.min(uniW, uniH * 1.1);
+
+    const txAbsForRings = (ad) => {
+      if (ad <= 0) return 0;
+      let sum = 0;
+      for (let k = 1; k <= ad; k += 1) {
+        const sPrev = k === 1 ? 1 : scaleAd(k - 1);
+        const sK = scaleAd(k);
+        const segment = (uniW * sPrev) / 2 + (uniW * sK) / 2;
+        const part =
+          k === 1 ? Math.max(12, segment - PEEK) : segment * Math.pow(0.87, k - 1);
+        sum += part;
+      }
+      return sum;
+    };
+
     const maxR = Math.min(3, Math.floor(total / 2));
 
     reviewsFeedbackCards.forEach((card, index) => {
@@ -1736,8 +1991,8 @@ function initReviewsSliders() {
       if (ad > maxR) {
         card.style.left = "50%";
         card.style.top = "50%";
-        card.style.width = `${centerW}px`;
-        card.style.height = `${centerH}px`;
+        card.style.width = `${uniW}px`;
+        card.style.height = `${uniH}px`;
         card.style.opacity = "0";
         card.style.visibility = "hidden";
         card.style.pointerEvents = "none";
@@ -1749,21 +2004,16 @@ function initReviewsSliders() {
         return;
       }
 
-      const scale = Math.max(0.34, Math.pow(0.82, ad));
+      const scale = scaleAd(ad);
       const tz = -ad * 108;
-      // For mobile, adjust gap so side cards peek by 8px
-      const gap0 = isMobile ? (w - centerW) / 2 - 8 : w * 0.19;
-      let txAbs = 0;
-      for (let k = 1; k <= ad; k += 1) {
-        txAbs += gap0 * Math.pow(0.87, k - 1);
-      }
+      const txAbs = txAbsForRings(ad);
       const tx = sign * txAbs;
       const ty = ad * 10;
 
       card.style.left = "50%";
       card.style.top = "50%";
-      card.style.width = `${centerW}px`;
-      card.style.height = `${centerH}px`;
+      card.style.width = `${uniW}px`;
+      card.style.height = `${uniH}px`;
       card.style.opacity = "1";
       card.style.visibility = "visible";
       card.style.pointerEvents = "auto";
@@ -1869,6 +2119,9 @@ function initReviewsSliders() {
         window.requestAnimationFrame(() => layoutReviewsFeedbackCarousel());
       });
     };
+    reviewsFeedbackCards.forEach((img) => {
+      img.addEventListener("load", scheduleFeedbackLayout, { passive: true });
+    });
     window.addEventListener("resize", scheduleFeedbackLayout, { passive: true });
     window.addEventListener("reviews:tabchange", (event) => {
       if (event.detail?.tab === "feedback") scheduleFeedbackLayout();
@@ -1884,6 +2137,61 @@ function initReviewsSliders() {
   let reviewsGratitudeActiveIndex = 0;
   let reviewsGratitudeStepLocked = false;
   let reviewsGratitudeStepUnlockTimer = 0;
+
+  const GRATITUDE_CARD_BORDER_PX = 0;
+  const GRATITUDE_SLIDE_W_PX = 600;
+  const GRATITUDE_SLIDE_H_PX = 800;
+
+  const layoutReviewsGratitudeIntrinsics = () => {
+    if (!reviewsGratitudeGallery || !reviewsGratitudeCards.length) return;
+    const isMobile = window.matchMedia("(max-width: 1200px)").matches;
+    let b;
+    let slideW;
+    let slideH;
+    if (isMobile) {
+      /* Уже колонки; бордер 10px как в CSS; справа — «хвост» следующей карточки */
+      b = GRATITUDE_CARD_BORDER_PX;
+      const gw = reviewsGratitudeGallery.clientWidth;
+      if (gw < 4) return;
+      slideW = Math.max(Math.floor(gw - 52), 168);
+      slideH = (slideW * 480) / 302;
+    } else {
+      b = GRATITUDE_CARD_BORDER_PX;
+      slideW = GRATITUDE_SLIDE_W_PX;
+      slideH = GRATITUDE_SLIDE_H_PX;
+    }
+    const innerW = slideW - 2 * b;
+    const innerH = slideH - 2 * b;
+    /* Рамка PNG — декор по краям; «окно» под грамоту меньше полного inner (см. reviews_gratitude_frames.png) */
+    const CERT_APERTURE_W = 0.72;
+    const CERT_APERTURE_H = 0.76;
+    const certMaxW = innerW * CERT_APERTURE_W;
+    const certMaxH = innerH * CERT_APERTURE_H;
+
+    reviewsGratitudeGallery.style.setProperty("--rg-card-w", `${slideW}px`);
+    reviewsGratitudeGallery.style.setProperty("--rg-card-h", `${slideH}px`);
+
+    reviewsGratitudeCards.forEach((figure) => {
+      const cert = figure.querySelector(".reviews-gratitude-card-image");
+      if (!cert) return;
+      const cw = cert.naturalWidth;
+      const ch = cert.naturalHeight;
+      if (!cw || !ch) return;
+      const cs = Math.min(certMaxW / cw, certMaxH / ch);
+      cert.style.width = `${cw * cs}px`;
+      cert.style.height = `${ch * cs}px`;
+      cert.style.left = "50%";
+      cert.style.top = "50%";
+      cert.style.transform = "translate(-50%, -50%)";
+    });
+  };
+
+  const scheduleGratitudeLayout = () => {
+    window.requestAnimationFrame(() => {
+      layoutReviewsGratitudeIntrinsics();
+      window.requestAnimationFrame(() => layoutReviewsGratitudeIntrinsics());
+    });
+  };
 
   const renderReviewsGratitudeCarousel = () => {
     if (!reviewsGratitudeCards.length) return;
@@ -1912,6 +2220,18 @@ function initReviewsSliders() {
 
   if (reviewsGratitudeGallery && reviewsGratitudeCards.length) {
     renderReviewsGratitudeCarousel();
+    scheduleGratitudeLayout();
+    reviewsGratitudeGallery.querySelectorAll("img").forEach((img) => {
+      img.addEventListener("load", scheduleGratitudeLayout, { passive: true });
+    });
+    window.addEventListener("resize", scheduleGratitudeLayout, { passive: true });
+    window.addEventListener("reviews:tabchange", (event) => {
+      if (event.detail?.tab === "gratitude") scheduleGratitudeLayout();
+    });
+    if (typeof ResizeObserver !== "undefined") {
+      const gratitudeResizeObserver = new ResizeObserver(() => scheduleGratitudeLayout());
+      gratitudeResizeObserver.observe(reviewsGratitudeGallery);
+    }
     const swipeThresholdPx = 36;
     const swipeClickSuppressMs = 400;
     let pointerStartX = 0;
@@ -2030,12 +2350,8 @@ function initReviewsTabs() {
   setTab(reviewsScreen.dataset.reviewsTab || "official");
 }
 
-/**
- * Доп. сдвиг вверх (px) после выравнивания по стейджу — дожать табы за край вьюпорта.
- */
 const REVIEWS_STICKY_HIDE_TABS_EXTRA_PX = 150;
 
-/** Мобилка: sticky-top по верху #reviewsOfficialStage относительно обёртки − extra (табы не в кадре) */
 function updateReviewsStickySlideOffset() {
   const reviewsScreen = document.getElementById("reviewsScreen");
   if (!reviewsScreen) return;
@@ -2086,6 +2402,32 @@ function initReviewsStickyAlign() {
   }
 }
 
+/** Как у благодарностей: рамка + «окно» под скан; размеры картинок из naturalWidth/Height. */
+function layoutReviewsOfficialLetterIntrinsics() {
+  const stage = document.getElementById("reviewsOfficialStage");
+  if (!stage) return;
+  const borderPx = 0;
+  const certApertureW = 0.72;
+  const certApertureH = 0.76;
+  stage.querySelectorAll(".reviews-letter-wrapper").forEach((wrap) => {
+    const innerW = wrap.clientWidth - 2 * borderPx;
+    const innerH = wrap.clientHeight - 2 * borderPx;
+    const cert = wrap.querySelector(".reviews-letter-img");
+    if (!cert || innerW <= 0 || innerH <= 0) return;
+    const certMaxW = innerW * certApertureW;
+    const certMaxH = innerH * certApertureH;
+    const cw = cert.naturalWidth;
+    const ch = cert.naturalHeight;
+    if (cw && ch) {
+      const cs = Math.min(certMaxW / cw, certMaxH / ch);
+      cert.style.width = `${cw * cs}px`;
+      cert.style.height = `${ch * cs}px`;
+    }
+    cert.style.left = "50%";
+    cert.style.top = "50%";
+  });
+}
+
 function initReviewsOfficialScrollEffect() {
   const reviewsScreen = document.getElementById("reviewsScreen");
   const stage = document.getElementById("reviewsOfficialStage");
@@ -2096,6 +2438,7 @@ function initReviewsOfficialScrollEffect() {
 
   let currentSlide = 0;
   const totalSlides = slides.length;
+  const letterCenterTf = "translate(-50%, -50%)";
 
   const isReviewsMobileStack = () =>
     window.innerWidth <= 1200 ||
@@ -2111,7 +2454,6 @@ function initReviewsOfficialScrollEffect() {
       const person = slide.querySelector(".reviews-person-info");
       const frame = slide.querySelector(".reviews-letter-frame");
       
-      // Set initial opacity for mobile fade animation
       slide.style.opacity = index === 0 ? "1" : "0";
       
       if (frame) {
@@ -2119,7 +2461,7 @@ function initReviewsOfficialScrollEffect() {
         frame.style.transform = "";
       }
       if (portrait) portrait.style.transform = "";
-      if (letter) letter.style.transform = "";
+      if (letter) letter.style.transform = letterCenterTf;
       if (person) {
         person.style.transform = "";
         person.style.opacity = "1";
@@ -2136,7 +2478,6 @@ function initReviewsOfficialScrollEffect() {
       const person = slide.querySelector(".reviews-person-info");
       const frame = slide.querySelector(".reviews-letter-frame");
       
-      // Reset opacity for desktop
       slide.style.opacity = "";
       
       if (frame) {
@@ -2145,14 +2486,14 @@ function initReviewsOfficialScrollEffect() {
       }
       if (index === 0) {
         if (portrait) portrait.style.transform = "translateY(0)";
-        if (letter) letter.style.transform = "scale(1)";
+        if (letter) letter.style.transform = `${letterCenterTf} scale(1)`;
         if (person) {
           person.style.transform = "translateY(0)";
           person.style.opacity = "1";
         }
       } else {
         if (portrait) portrait.style.transform = "translateY(100%)";
-        if (letter) letter.style.transform = "scale(0)";
+        if (letter) letter.style.transform = `${letterCenterTf} scale(0)`;
         if (person) {
           person.style.transform = "translateY(0)";
           person.style.opacity = "1";
@@ -2164,22 +2505,28 @@ function initReviewsOfficialScrollEffect() {
   if (isReviewsMobileStack()) initMobileStackState();
   else initDesktopStackState();
 
+  layoutReviewsOfficialLetterIntrinsics();
+
   function handleScroll() {
     if (reviewsScreen.dataset.reviewsTab !== "official") return;
 
     const rect = reviewsScreen.getBoundingClientRect();
-    const windowHeight = window.innerHeight;
+    const physicalWindowHeight = window.innerHeight;
+    const layoutWindowHeight = physicalWindowHeight / getPageScale(); 
     const sectionHeight = reviewsScreen.offsetHeight;
-    if (rect.bottom < 0 || rect.top > windowHeight) return;
+    
+    if (rect.bottom < 0 || rect.top > physicalWindowHeight) return;
 
-    const maxScroll = Math.max(1, sectionHeight - windowHeight);
-    const currentScroll = Math.max(0, -rect.top);
+    const maxScroll = Math.max(1, sectionHeight - layoutWindowHeight);
+    const sectionTop = getElementDocumentOffsetTop(reviewsScreen);
+    const currentScroll = Math.max(
+      0,
+      Math.min(maxScroll, getDocumentScrollY() - sectionTop),
+    );
 
     const narrow = isReviewsMobileStack();
 
     if (narrow) {
-      // Mobile: Simple fade animation for entire slides
-      // Map actual scroll to virtual scroll (6x range for slower animation)
       const virtualScroll = (currentScroll / maxScroll) * (maxScroll * 6);
       const totalScrollRange = maxScroll * 6;
       const slideScrollSpace = totalScrollRange / totalSlides;
@@ -2206,19 +2553,15 @@ function initReviewsOfficialScrollEffect() {
         currentSlide = activeSlideIndex;
       }
 
-      // Apply opacity based on fade progress
       slides.forEach((slide, index) => {
         if (index < activeSlideIndex) {
           slide.style.opacity = "0";
         } else if (index === activeSlideIndex) {
           if (index === totalSlides - 1) {
-            // Last slide stays visible
             slide.style.opacity = "1";
           } else if (fadeProgress < 0.3) {
-            // Fully visible phase
             slide.style.opacity = "1";
           } else if (fadeProgress < 0.5) {
-            // Fade out phase
             slide.style.opacity = String(1 - ((fadeProgress - 0.3) / 0.2));
           } else {
             slide.style.opacity = "0";
@@ -2227,7 +2570,6 @@ function initReviewsOfficialScrollEffect() {
           if (fadeProgress < 0.5) {
             slide.style.opacity = "0";
           } else {
-            // Fade in phase
             slide.style.opacity = String((fadeProgress - 0.5) / 0.5);
           }
         } else {
@@ -2235,7 +2577,6 @@ function initReviewsOfficialScrollEffect() {
         }
       });
     } else {
-      // Desktop: Keep existing complex animation
       let scrollProgress;
       if (currentScroll < maxScroll * 0.1) {
         scrollProgress = 0;
@@ -2262,14 +2603,19 @@ function initReviewsOfficialScrollEffect() {
         const firstSlide = slides[0];
         const portrait = firstSlide.querySelector(".reviews-portrait-img");
         const letter = firstSlide.querySelector(".reviews-letter-img");
+        const frame0 = firstSlide.querySelector(".reviews-letter-frame");
         if (portrait) portrait.style.transform = "translateY(0)";
-        if (letter) letter.style.transform = "scale(1)";
+        if (letter) letter.style.transform = `${letterCenterTf} scale(1)`;
+        if (frame0) {
+          frame0.style.transformOrigin = "";
+          frame0.style.transform = "";
+        }
 
         if (slides[1]) {
           const nextPortrait = slides[1].querySelector(".reviews-portrait-img");
           const nextLetter = slides[1].querySelector(".reviews-letter-img");
           if (nextPortrait) nextPortrait.style.transform = "translateY(100%)";
-          if (nextLetter) nextLetter.style.transform = "scale(0)";
+          if (nextLetter) nextLetter.style.transform = `${letterCenterTf} scale(0)`;
         }
       }
 
@@ -2285,11 +2631,12 @@ function initReviewsOfficialScrollEffect() {
         }
         if (letter) {
           const letterScale = localProgress;
-          letter.style.transform = `scale(${letterScale})`;
+          letter.style.transform = `${letterCenterTf} scale(${letterScale})`;
         }
         if (frame) {
           const frameScale = localProgress;
-          frame.style.transformOrigin = "50.25% 45%";
+          /* Тот же центр, что у .reviews-letter-img (центр «окна»), иначе рамка уезжает вверх относительно грамоты */
+          frame.style.transformOrigin = "center center";
           frame.style.transform = `scale(${frameScale})`;
         }
 
@@ -2298,11 +2645,10 @@ function initReviewsOfficialScrollEffect() {
           const nextPortrait = nextSlide.querySelector(".reviews-portrait-img");
           const nextLetter = nextSlide.querySelector(".reviews-letter-img");
           if (nextPortrait) nextPortrait.style.transform = "translateY(100%)";
-          if (nextLetter) nextLetter.style.transform = "scale(0)";
+          if (nextLetter) nextLetter.style.transform = `${letterCenterTf} scale(0)`;
         }
       }
 
-      // Desktop text animation
       slides.forEach((slide, index) => {
         const slidePerson = slide.querySelector(".reviews-person-info");
         if (!slidePerson) return;
@@ -2329,7 +2675,6 @@ function initReviewsOfficialScrollEffect() {
         }
       });
 
-      // Reset slide opacity for desktop
       slides.forEach((slide) => {
         slide.style.opacity = "";
       });
@@ -2337,14 +2682,31 @@ function initReviewsOfficialScrollEffect() {
   }
 
   window.addEventListener("resize", () => {
+    layoutReviewsOfficialLetterIntrinsics();
     if (isReviewsMobileStack()) initMobileStackState();
     else initDesktopStackState();
     handleScroll();
   }, { passive: true });
 
   window.addEventListener("scroll", handleScroll, { passive: true });
-  window.addEventListener("reviews:tabchange", () => {
-    requestAnimationFrame(handleScroll);
+  window.addEventListener("reviews:tabchange", (event) => {
+    if (event.detail?.tab === "official") {
+      layoutReviewsOfficialLetterIntrinsics();
+      if (isReviewsMobileStack()) initMobileStackState();
+      else initDesktopStackState();
+    }
+    requestAnimationFrame(() => {
+      requestAnimationFrame(handleScroll);
+    });
+  });
+
+  stage.querySelectorAll(".reviews-letter-img").forEach((img) => {
+    const onLetterImgReady = () => {
+      layoutReviewsOfficialLetterIntrinsics();
+      handleScroll();
+    };
+    img.addEventListener("load", onLetterImgReady, { passive: true });
+    if (img.complete && img.naturalWidth) onLetterImgReady();
   });
 
   handleScroll();
@@ -2352,7 +2714,15 @@ function initReviewsOfficialScrollEffect() {
   setTimeout(() => handleScroll(), 250);
 }
 
-// Initialize interview on page load
+function initSubscribeNewsCheck() {
+  const btn = document.getElementById("subscribeCheck");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const on = btn.classList.toggle("is-checked");
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initInterviewInteractions();
   initInterviewDots();
@@ -2362,6 +2732,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initReviewsTabs();
   initReviewsOfficialScrollEffect();
   initReviewsStickyAlign();
+  initSubscribeNewsCheck();
 });
 
 // ============================================
@@ -2385,8 +2756,8 @@ function initMediaLibCarousel() {
     const vw = window.innerWidth;
     const isMobile = vw <= 1200;
     return {
-      slideWidth: Math.round(vw * (isMobile ? 0.58 : 0.35)),
-      gap: Math.round(vw * (isMobile ? 0.16 : 0.02)),
+      slideWidth: Math.round(vw * (isMobile ? 0.638 : 0.385)),
+      gap: Math.round(vw * (isMobile ? 0.176 : 0.022)),
     };
   }
 
@@ -2394,7 +2765,7 @@ function initMediaLibCarousel() {
     const slides = [...ring.querySelectorAll('.media-lib-slide')];
     const n = slides.length;
     const { slideWidth, gap } = getSlideParams();
-    const slideHeight = Math.round(window.innerHeight * 0.25);
+    const slideHeight = Math.round(window.innerHeight * 0.275);
     const theta = 360 / n;
     const radius = Math.round(((slideWidth + gap) / 2) / Math.tan(Math.PI / n));
     const phaseOffset = rowIndex === 1 ? theta / 2 : 0;
@@ -2501,7 +2872,6 @@ function initMediaLibCarousel() {
   });
 }
 
-// Initialize media library carousel
 initMediaLibCarousel();
 
 // ============================================
@@ -2592,7 +2962,6 @@ if (document.querySelector('.videoteka-tabs')) {
   initVideotekaTabs();
 }
 
-// Videoteka tab filtering
 (function initVideotekaFilter() {
   const tabs = document.querySelector('.videoteka-tabs');
   const list = document.querySelector('.videoteka-list');
@@ -2610,26 +2979,35 @@ if (document.querySelector('.videoteka-tabs')) {
     });
   }
 
-  // Initial filter — show all
   filterByCategory('all');
+
+  function showAllVideotekaVideos() {
+    tabs.querySelectorAll('.videoteka-tab').forEach(b => {
+      b.classList.remove('is-active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    tabs.querySelectorAll('.videoteka-tabs-dropdown .videoteka-tab').forEach(b => {
+      b.classList.remove('is-active');
+    });
+    filterByCategory('all');
+    const triggerSpan = tabs.querySelector('.videoteka-tabs-trigger span');
+    if (triggerSpan) triggerSpan.textContent = 'Смотреть все видео';
+    tabs.classList.remove('is-expanded');
+    const trig = tabs.querySelector('.videoteka-tabs-trigger');
+    if (trig) trig.setAttribute('aria-expanded', 'false');
+  }
 
   tabs.addEventListener('click', (e) => {
     const btn = e.target.closest('.videoteka-tab');
     const allBtn = e.target.closest('.videoteba-tab-btn');
 
     if (allBtn) {
-      // Show all videos
-      tabs.querySelectorAll('.videoteka-tab').forEach(b => {
-        b.classList.remove('is-active');
-        b.setAttribute('aria-selected', 'false');
-      });
-      filterByCategory('all');
+      showAllVideotekaVideos();
       return;
     }
 
     if (!btn) return;
 
-    // Update active state
     tabs.querySelectorAll('.videoteka-tab').forEach(b => {
       b.classList.remove('is-active');
       b.setAttribute('aria-selected', 'false');
@@ -2639,6 +3017,11 @@ if (document.querySelector('.videoteka-tabs')) {
 
     filterByCategory(btn.dataset.category);
   });
+
+  const allVideosFooterBtn = document.querySelector('.videoteka-all-videos-btn');
+  if (allVideosFooterBtn) {
+    allVideosFooterBtn.addEventListener('click', () => showAllVideotekaVideos());
+  }
 })();
 
 // ============================================
@@ -2660,7 +3043,6 @@ document.querySelectorAll('.yt-player').forEach(player => {
     const ytId = player.dataset.ytId;
     if (!rutubeId && !ytId) return;
 
-    // Try embed first, fallback to direct link if blocked
     player.classList.add('is-playing');
     const iframe = document.createElement('iframe');
     if (rutubeId) {
@@ -2672,7 +3054,6 @@ document.querySelectorAll('.yt-player').forEach(player => {
     iframe.allowFullscreen = true;
     player.appendChild(iframe);
 
-    // If iframe fails to load (blocked by adblock), open in new tab
     iframe.addEventListener('error', () => {
       iframe.remove();
       player.classList.remove('is-playing');
@@ -2711,14 +3092,12 @@ function initFooterAccordion() {
       
       const isOpen = column.classList.contains('is-open');
       
-      // Close all columns
       footerColumns.forEach((item) => {
         item.classList.remove('is-open');
         const itemTitle = item.querySelector('.footer-column-title');
         if (itemTitle) itemTitle.setAttribute('aria-expanded', 'false');
       });
 
-      // Open clicked column if it was closed
       if (!isOpen) {
         column.classList.add('is-open');
         title.setAttribute('aria-expanded', 'true');
@@ -2734,7 +3113,6 @@ function initFooterAccordion() {
   });
 }
 
-// Initialize footer accordion
 if (document.querySelector('.footer-column')) {
   initFooterAccordion();
 }
