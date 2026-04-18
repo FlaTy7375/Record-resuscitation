@@ -220,8 +220,11 @@ function initSalesSlider() {
     };
 
     const isMobile = window.innerWidth <= 1200;
+    /** Блок «продажи / реклама премии» — свайп и переходы в зеркальном направлении (не трогаем ceremonia) */
+    const rtlSales = !isCeremoniaBlock;
     const swiper = new window.Swiper(salesGalleryMain, {
-      slidesPerView: isMobile ? 1 : (isCeremoniaBlock ? 1 : 1.15),
+      rtl: rtlSales,
+      slidesPerView: isMobile ? "auto" : (isCeremoniaBlock ? 1 : 1.15),
       spaceBetween: isMobile ? 0 : (isCeremoniaBlock ? 40 : 20),
       speed: 1100,
       loop: false,
@@ -255,16 +258,27 @@ function initSalesSlider() {
     salesGalleryMain.addEventListener("keydown", (event) => {
       if (event.key === "ArrowLeft") {
         event.preventDefault();
-        swiper.slidePrev();
+        swiper[rtlSales ? "slideNext" : "slidePrev"]();
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
-        swiper.slideNext();
+        swiper[rtlSales ? "slidePrev" : "slideNext"]();
       }
     });
 
     salesGalleryMain.tabIndex = 0;
     salesGalleryMain.setAttribute("role", "group");
     salesGalleryMain.setAttribute("aria-label", "Слайдер продаж");
+
+    let lastMobileSwiper = isMobile;
+    window.addEventListener("resize", () => {
+      const m = window.innerWidth <= 1200;
+      if (m === lastMobileSwiper) return;
+      lastMobileSwiper = m;
+      swiper.params.slidesPerView = m ? "auto" : (isCeremoniaBlock ? 1 : 1.15);
+      swiper.params.spaceBetween = m ? 0 : (isCeremoniaBlock ? 40 : 20);
+      swiper.params.centeredSlides = m;
+      swiper.update();
+    });
   });
 }
 
@@ -561,7 +575,7 @@ requestAnimationFrame(raf);
 })();
 // ==========================================
 // STATUS SECTION: липкий блок + шаги по реальному скроллу
-// Вниз: Статус → Масштаб → Достижения → (виртуально) ещё ниже картинка. Вверх — обратный порядок.
+// Вниз: Статус → Масштаб → Достижения → (десктоп: виртуально ещё ниже картинка). На мобилке без последнего шага.
 // ==========================================
 (function initStatusScrollAnimation() {
   const statusSection = document.getElementById("statusScreen");
@@ -632,9 +646,9 @@ requestAnimationFrame(raf);
         ? `translateY(290px) scale(${narrowScale})`
         : "translateY(220px) scale(1.444)";
     } else if (variant === "rubyDeep") {
-      /* Виртуальный шаг после «Достижения»: та же кнопка/цитата, картинка ещё ниже */
+      /* Виртуальный шаг после «Достижения» — только десктоп; на мобилке без отдельного шага */
       statusOscarImg.style.transform = narrow
-        ? `translateY(520px) scale(${narrowScale})`
+        ? `translateY(290px) scale(${narrowScale})`
         : "translateY(500px) scale(1.444)";
     }
   }
@@ -752,6 +766,8 @@ requestAnimationFrame(raf);
     if (t < STATUS_PHASE_GOLD_END) return 0;
     if (t < STATUS_PHASE_BLACK_END) return 1;
     if (t < STATUS_PHASE_RUBY_END) return 2;
+    /* На мобилке нет виртуального шага rubyDeep — картинка не уезжает ещё ниже */
+    if (statusStatueIsNarrowLayout()) return 2;
     return 3;
   }
 
@@ -1407,9 +1423,9 @@ function initAdvertSlider() {
     const halfWidth = rect.width / 2;
     
     if (clickX < halfWidth) {
-      currentAngle += theta; 
+      currentAngle -= theta;
     } else {
-      currentAngle -= theta; 
+      currentAngle += theta;
     }
     updateRing();
   });
@@ -1428,9 +1444,9 @@ function initAdvertSlider() {
     
     if (Math.abs(diff) > 50) {
       if (diff > 0) {
-        currentAngle -= theta; 
+        currentAngle += theta;
       } else {
-        currentAngle += theta; 
+        currentAngle -= theta;
       }
       updateRing();
     }
