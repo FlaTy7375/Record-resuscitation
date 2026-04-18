@@ -266,7 +266,10 @@ async function initHero3D() {
 
     backgroundSpawnConfig.forEach((args) => spawn(...args));
 
-    // ─── Модели №1 ───────────────────────────────
+    // ─── Модели №1 (цифры «1») ───────────────────
+    /** Вращение вокруг своей вертикальной оси (рад/с), базовая скорость с лёгким разбросом по экземплярам */
+    const N1_SELF_AXIS_SPIN_RPS = 0.52;
+
     const N1_H = isMobileHero ? 88 : 134;
     function spawnN1(gltfSrc, wx, wy, wz, tiltDeg, op, brighten, color) {
       const mesh = gltfSrc.scene.clone(true);
@@ -294,6 +297,9 @@ async function initHero3D() {
         zRad += (topAwayDeg * Math.PI) / 180;
       }
       mesh.rotation.z = zRad;
+      mesh.userData.baseRotX = mesh.rotation.x;
+      mesh.userData.baseRotY = mesh.rotation.y;
+      mesh.userData.baseRotZ = mesh.rotation.z;
       mesh.position.set(-_center.x * scale, -_center.y * scale, -_center.z * scale);
       mesh.traverse(c => {
         if (c.isMesh && c.material) {
@@ -347,6 +353,7 @@ async function initHero3D() {
       col.setFriction(0.2);     
       world.createCollider(col, rb);
       
+      const n1BallR = Math.max(sw, sh) * 0.42 * COLLIDER_SHELL_N1;
       bodies.push({
         group: g,
         rb,
@@ -358,6 +365,11 @@ async function initHero3D() {
         visPos: new THREE.Vector3(wx, wy, wz),
         visQuat: homeQuat.clone(),
         scatterDir: getRandomScatterDir(),
+        spinMesh: mesh,
+        spinAngle: 0,
+        spinRate: N1_SELF_AXIS_SPIN_RPS * (0.75 + Math.random() * 0.55) * (Math.random() < 0.5 ? 1 : -1),
+        /** Радиус в мировых единицах: курсор внутри — крутимся вокруг своей оси */
+        n1HoverRadius: n1BallR * 1.35,
       });
     }
 
@@ -462,12 +474,15 @@ async function initHero3D() {
     let lastPointerPy = 0;
     let hasPointerSample = false;
     let pointerActive = false;
-    let centerPullArmed = true;
     let lastPointerMoveTime = 0;
     let pointerDown = false;
     let pointerStartX = 0;
     let pointerStartY = 0;
+    /** Пока false — фоновые GLB не притягиваются к springHomeXY (кластер в центре), только к своим homePos. */
+    let heroPointerEngaged = false;
     let scatterProgress = 0;
+    /** Пока .hero-bleed sticky с top≈0, -rect.top/vh ≈ 0 — без этого scatter не растёт при скролле. */
+    let scatterPinScrollY = null;
     let mobileFloatTime = 0;
 
     const oscarImg = document.getElementById('heroOscarImg');
@@ -485,6 +500,20 @@ async function initHero3D() {
     const FIXED_STEP_IDLE = isMobileHero ? 1 / 30 : 1 / 90; 
     const MAX_STEPS_PER_FRAME = isMobileHero ? 2 : 6;
 
+    function applyN1LocalAxisSpin(body, delta, pointerNear) {
+      const sm = body.spinMesh;
+      if (!sm || body.isBackground || sm.userData.baseRotY === undefined) return;
+      if (pointerNear) {
+        body.spinAngle += delta * body.spinRate * 1.35;
+      } else {
+        const relax = 1 - Math.exp(-11 * delta);
+        body.spinAngle += (0 - body.spinAngle) * relax;
+      }
+      sm.rotation.x = sm.userData.baseRotX;
+      sm.rotation.y = sm.userData.baseRotY + body.spinAngle;
+      sm.rotation.z = sm.userData.baseRotZ;
+    }
+
     function tick(now) {
       animId = requestAnimationFrame(tick);
 
@@ -495,8 +524,16 @@ async function initHero3D() {
       
       const rect = container.getBoundingClientRect();
       const windowHeight = window.innerHeight || 1080;
-      
-      let scrollRaw = -rect.top / windowHeight; 
+      const scrollY = window.scrollY ?? document.documentElement.scrollTop ?? 0;
+
+      let scrollRaw;
+      if (rect.top > 0) {
+        scatterPinScrollY = null;
+        scrollRaw = 0;
+      } else {
+        if (scatterPinScrollY === null) scatterPinScrollY = scrollY;
+        scrollRaw = (scrollY - scatterPinScrollY) / windowHeight;
+      }
       const scatterScrollMul = isMobileHero ? 1.55 : 2.45;
       let targetScatter = Math.max(0, Math.min(1, scrollRaw * scatterScrollMul));
       
@@ -579,12 +616,22 @@ async function initHero3D() {
       mainSwingX *= 0.9;
       mainSwingY *= 0.9;
 
+      function isN1PointerNear(tx, ty, b) {
+        if (!livePointer || !b.n1HoverRadius || b.isBackground || !b.spinMesh) return false;
+        if (mouseNDCFiltered.x < -500) return false;
+        const r = b.n1HoverRadius;
+        const dx = tx - mouseWorld.x;
+        const dy = ty - mouseWorld.y;
+        return dx * dx + dy * dy <= r * r;
+      }
+
       for (let bi = 0; bi < bodies.length; bi++) {
         const body = bodies[bi];
         const { group, rb, homePos, homeQuat, homeZ, isBackground, visPos, visQuat, scatterDir } = body;
         const t = rb.translation();
 
-        const baseTargetPos = isBackground && !isMobileHero ? springHomeXY : homePos;
+        const pullToClusterCenter = isBackground && !isMobileHero && heroPointerEngaged;
+        const baseTargetPos = pullToClusterCenter ? springHomeXY : homePos;
         const scatterX = scatterDir.x * SCATTER_DISTANCE * scatterProgress;
         const scatterY = scatterDir.y * SCATTER_DISTANCE * scatterProgress;
 
@@ -614,6 +661,7 @@ async function initHero3D() {
           const rotLerpF = 1 - Math.exp(-VISUAL_ROT_DAMP * dt);
           visQuat.slerp(_curQ, rotLerpF);
           group.quaternion.copy(visQuat);
+          applyN1LocalAxisSpin(body, dt, isN1PointerNear(mx, my, body));
           continue;
         }
 
@@ -682,6 +730,7 @@ async function initHero3D() {
         const rotLerp = 1 - Math.exp(-VISUAL_ROT_DAMP * dt);
         visQuat.slerp(_curQ, rotLerp);
         group.quaternion.copy(visQuat);
+        applyN1LocalAxisSpin(body, dt, isN1PointerNear(t.x, t.y, body));
 
         const av = rb.angvel();
         const angSp = Math.sqrt(av.x * av.x + av.y * av.y + av.z * av.z);
@@ -725,6 +774,7 @@ async function initHero3D() {
 
     if (!isMobileHero) {
       heroEl.addEventListener('pointerdown', e => {
+        heroPointerEngaged = true;
         pointerDown = true;
         pointerStartX = e.clientX;
         pointerStartY = e.clientY;
@@ -738,9 +788,9 @@ async function initHero3D() {
           if ((dx * dx + dy * dy) < 144) return;
         }
 
+        heroPointerEngaged = true;
         pointerActive = true;
         lastPointerMoveTime = performance.now();
-        centerPullArmed = true;
         const r = heroEl.getBoundingClientRect();
         const px = (e.clientX - r.left) / r.width - 0.5;
         const py = (e.clientY - r.top) / r.height - 0.5;

@@ -354,8 +354,8 @@ if (typeof Lenis === "function" && window.innerWidth >= LENIS_LAYOUT_BREAKPOINT)
     infinite: false,
     smoothWheel: true,
     syncTouch: false,
-    wheelMultiplier: 0.8, 
-    duration: 1.2,        
+    wheelMultiplier: 0.6, // Баланс между 0.8 (летает) и 0.4 (туго)
+    duration: 1.0,        // Средняя продолжительность инерции
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   });
 }
@@ -433,7 +433,7 @@ requestAnimationFrame(raf);
 
   const promoContent = promoStage.querySelector('.promo-content');
   const promoHeader = promoSection.querySelector('.promo-header');
-  const promoItems = [...promoStage.querySelectorAll('.promo-item')];
+  const promoItems = [...promoStage.querySelectorAll('.promo-content > .promo-item')];
 
   // КРИТИЧЕСКИ ВАЖНО: отключаем CSS-переходы для заголовка. 
   // Мы управляем позицией напрямую через JS-скролл, transition будет только вызывать лаги.
@@ -495,36 +495,35 @@ requestAnimationFrame(raf);
       }
     }
 
-    // 2. АНИМАЦИЯ КАРТОЧЕК
-    if (promoContent) {
+    // 2. АНИМАЦИЯ КАРТОЧЕК — вертикаль задаётся на каждом .promo-item (--promo-layer-y), не на .promo-content
+    if (promoContent && promoItems.length) {
       const narrow = window.innerWidth <= 1200;
 
-      // Откуда начинают ехать карточки (1.1 vh означает "чуть ниже границы экрана")
+      // Откуда начинают ехать карточки (1.1 vh — чуть ниже границы экрана)
       const startY = layoutVh * 1.1;
-      // Докуда они доезжают (отрицательные значения уводят блок выше центра экрана)
+      // Докуда доезжают (отрицательные — выше центра экрана)
       const endY = narrow ? -layoutVh * 0.2 : -layoutVh * 0.1;
 
-      // Линейная интерполяция координаты Y от прогресса
-      const currentY = startY - (startY - endY) * pCards;
-      promoContent.style.transform = `translate3d(-50%, ${currentY}px, 0)`;
+      /**
+       * Вертикальный слой для карточки (px). Сейчас все индексы делят один pCards;
+       * сюда можно вынести разные диапазоны progress по itemIndex.
+       */
+      function getPromoLayerYForItem(_itemIndex) {
+        return startY - (startY - endY) * pCards;
+      }
 
-      // Эффект "лесенки" (stagger) для карточек
-      // Используем easing (смягчение), чтобы они выплывали красиво
+      promoItems.forEach((el, i) => {
+        el.style.setProperty('--promo-layer-y', `${getPromoLayerYForItem(i)}px`);
+      });
+
       const pCardsEased = pCards * (2 - pCards); // ease-out
       const riseCap = narrow ? Math.min(layoutVh * 1.28, 1100) : Math.min(layoutVh * 0.55, 480);
       const riseBase = pCardsEased * riseCap;
 
-      if (narrow) {
-        promoItems.forEach((el) => el.style.removeProperty('--promo-item-rise'));
-        promoContent.style.setProperty('--promo-item-rise', `${riseBase}px`);
-      } else {
-        promoContent.style.removeProperty('--promo-item-rise');
-        promoItems.forEach((el, i) => {
-          // Умножаем на коэффициент, чтобы каждая следующая карточка поднималась с задержкой
-          const rise = riseBase * (1 + i * 0.52);
-          el.style.setProperty('--promo-item-rise', `${rise}px`);
-        });
-      }
+      promoItems.forEach((el, i) => {
+        const rise = riseBase * (1 + i * 0.52);
+        el.style.setProperty('--promo-item-rise', `${rise}px`);
+      });
     }
   }
 
@@ -562,7 +561,7 @@ requestAnimationFrame(raf);
 })();
 // ==========================================
 // STATUS SECTION: липкий блок + шаги по реальному скроллу
-// Вниз: Статус → Масштаб → Достижения. Вверх — обратный порядок (тот же progress).
+// Вниз: Статус → Масштаб → Достижения → (виртуально) ещё ниже картинка. Вверх — обратный порядок.
 // ==========================================
 (function initStatusScrollAnimation() {
   const statusSection = document.getElementById("statusScreen");
@@ -578,9 +577,23 @@ requestAnimationFrame(raf);
 
   if (!statusMainTrigger || !statusScaleTrigger || !statusAchievementsTrigger) return;
 
-  const VARIANTS = ["gold", "black", "ruby"];
+  const VARIANTS = ["gold", "black", "ruby", "rubyDeep"];
   const triggers = [statusMainTrigger, statusScaleTrigger, statusAchievementsTrigger];
   const quotes = [statusQuoteGold, statusQuoteBlack, statusQuoteRuby];
+
+  /** Индекс кнопки заголовка: rubyDeep = тот же, что «Достижения» (виртуальный шаг) */
+  function getTriggerIndexForVariant(v) {
+    if (v === "rubyDeep") return 2;
+    const i = VARIANTS.indexOf(v);
+    return i >= 0 && i < triggers.length ? i : 0;
+  }
+
+  /** Индекс цитаты: rubyDeep — та же ruby-цитата */
+  function getQuoteIndexForVariant(v) {
+    if (v === "rubyDeep") return 2;
+    const i = VARIANTS.indexOf(v);
+    return i >= 0 && i < quotes.length ? i : 0;
+  }
 
   const statusOscarImg = document.getElementById("statusOscarImg");
 
@@ -600,7 +613,7 @@ requestAnimationFrame(raf);
     if (!statusOscarImg) return;
     const narrow = statusStatueIsNarrowLayout();
     statusOscarImg.style.transition =
-      "transform 0.55s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
     /* Мобилка: слабее zoom, статуя ниже (больше translateY) */
     const narrowScale = 1.22;
     if (variant === "gold") {
@@ -614,10 +627,15 @@ requestAnimationFrame(raf);
         ? `translateY(152px) scale(${narrowScale})`
         : "translateY(-144px) scale(1.444)";
     } else if (variant === "ruby") {
-      /* Десктоп: крупный кадр вверху. Мобилка: ниже, чем «масштаб» */
+      /* Достижения: картинка ниже исходного положения */
       statusOscarImg.style.transform = narrow
-        ? `translateY(212px) scale(${narrowScale})`
-        : "translateY(-500px) scale(1.444)";
+        ? `translateY(290px) scale(${narrowScale})`
+        : "translateY(220px) scale(1.444)";
+    } else if (variant === "rubyDeep") {
+      /* Виртуальный шаг после «Достижения»: та же кнопка/цитата, картинка ещё ниже */
+      statusOscarImg.style.transform = narrow
+        ? `translateY(520px) scale(${narrowScale})`
+        : "translateY(500px) scale(1.444)";
     }
   }
 
@@ -625,7 +643,7 @@ requestAnimationFrame(raf);
   function resetStatusStatueImgAfterPin() {
     if (!statusOscarImg) return;
     statusOscarImg.style.transition =
-      "transform 0.55s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
     if (statusStatueIsNarrowLayout()) {
       statusOscarImg.style.transform = "translateY(148px)";
     } else {
@@ -642,40 +660,43 @@ requestAnimationFrame(raf);
     window.clearTimeout(statusQuoteLeaveTimer);
     statusQuoteLeaveTimer = 0;
 
-    const oldIdx = VARIANTS.indexOf(activeVariant);
-    const newIdx = VARIANTS.indexOf(variant);
+    const oldQuoteIdx = getQuoteIndexForVariant(activeVariant);
+    const newQuoteIdx = getQuoteIndexForVariant(variant);
+    const newTriggerIdx = getTriggerIndexForVariant(variant);
 
     triggers.forEach((t, i) => {
-      t.classList.toggle("is-active", i === newIdx);
+      t.classList.toggle("is-active", i === newTriggerIdx);
     });
 
-    quotes.forEach((q) => {
-      if (!q) return;
-      q.classList.remove("is-active", "is-leaving");
-    });
+    if (oldQuoteIdx !== newQuoteIdx) {
+      quotes.forEach((q) => {
+        if (!q) return;
+        q.classList.remove("is-active", "is-leaving");
+      });
 
-    if (oldIdx >= 0 && quotes[oldIdx]) {
-      const leaveEl = quotes[oldIdx];
-      leaveEl.classList.add("is-leaving");
-      statusQuoteLeaveTimer = window.setTimeout(() => {
-        statusQuoteLeaveTimer = 0;
-        leaveEl.classList.remove("is-leaving");
-      }, 400);
-    }
+      if (quotes[oldQuoteIdx]) {
+        const leaveEl = quotes[oldQuoteIdx];
+        leaveEl.classList.add("is-leaving");
+        statusQuoteLeaveTimer = window.setTimeout(() => {
+          statusQuoteLeaveTimer = 0;
+          leaveEl.classList.remove("is-leaving");
+        }, 400);
+      }
 
-    if (newIdx >= 0 && quotes[newIdx]) {
-      const narrow = statusStatueIsNarrowLayout();
-      if (narrow) {
-        quotes[newIdx].classList.add("is-active");
-      } else {
-        const targetVariant = variant;
-        const qi = newIdx;
-        const delay = oldIdx >= 0 ? 150 : 0;
-        statusQuoteActivateTimer = window.setTimeout(() => {
-          statusQuoteActivateTimer = 0;
-          if (activeVariant !== targetVariant) return;
-          if (quotes[qi]) quotes[qi].classList.add("is-active");
-        }, delay);
+      if (quotes[newQuoteIdx]) {
+        const narrow = statusStatueIsNarrowLayout();
+        if (narrow) {
+          quotes[newQuoteIdx].classList.add("is-active");
+        } else {
+          const targetVariant = variant;
+          const qi = newQuoteIdx;
+          const delay = oldQuoteIdx >= 0 ? 150 : 0;
+          statusQuoteActivateTimer = window.setTimeout(() => {
+            statusQuoteActivateTimer = 0;
+            if (activeVariant !== targetVariant) return;
+            if (quotes[qi]) quotes[qi].classList.add("is-active");
+          }, delay);
+        }
       }
     }
 
@@ -723,12 +744,15 @@ requestAnimationFrame(raf);
 
   const STATUS_PHASE_GOLD_END = 0.32;
   const STATUS_PHASE_BLACK_END = 0.62;
+  /** После «Достижения» (ruby): вторая половина скролла в зоне pin — виртуальный шаг rubyDeep */
+  const STATUS_PHASE_RUBY_END = 0.81;
 
   function stepFromProgress(p) {
     const t = Math.max(0, Math.min(1, p));
     if (t < STATUS_PHASE_GOLD_END) return 0;
     if (t < STATUS_PHASE_BLACK_END) return 1;
-    return 2;
+    if (t < STATUS_PHASE_RUBY_END) return 2;
+    return 3;
   }
 
   function onScrollStatus() {
@@ -794,14 +818,80 @@ requestAnimationFrame(raf);
     }
   }
 
-  window.addEventListener("scroll", onScrollStatus, { passive: true });
+  /** Макс. скролл в тех же координатах, что getDocumentScrollY (учёт zoom layout). */
+  function getLayoutMaxScrollY() {
+    const se = document.documentElement;
+    return Math.max(0, se.scrollHeight - window.innerHeight) / getPageScale();
+  }
+
+  /**
+   * Целевой scrollY: нижняя граница #statusScreen совпадает с низом вьюпорта.
+   * Если такую позицию достичь нельзя — null.
+   */
+  function getStatusBottomAlignScrollY() {
+    const top = getElementDocumentOffsetTop(statusSection);
+    const bottom = top + statusSection.offsetHeight;
+    const svh = getScrollViewportHeight();
+    const raw = bottom - svh;
+    if (raw < 0) return null;
+    const maxY = getLayoutMaxScrollY();
+    if (raw > maxY + 1) return null;
+    return Math.min(raw, maxY);
+  }
+
+  /** Небольшая «магнитная» фиксация после остановки скролла у позиции выравнивания низа блока status. */
+  const STATUS_BOTTOM_SNAP_ZONE_PX = 56;
+  const STATUS_BOTTOM_SNAP_DEBOUNCE_MS = 160;
+  const STATUS_BOTTOM_SNAP_DURATION_SEC = 0.48;
+  let statusBottomSnapDebounceTimer = 0;
+  let statusBottomSnapSuppressUntil = 0;
+
+  function trySnapScrollToStatusBottom() {
+    const now = performance.now();
+    if (now < statusBottomSnapSuppressUntil) return;
+    const targetY = getStatusBottomAlignScrollY();
+    if (targetY === null) return;
+    const y = getDocumentScrollY();
+    const d = y - targetY;
+    if (Math.abs(d) < 1.2) return;
+    if (Math.abs(d) > STATUS_BOTTOM_SNAP_ZONE_PX) return;
+
+    statusBottomSnapSuppressUntil = now + 650;
+
+    if (lenis && typeof lenis.scrollTo === "function") {
+      lenis.scrollTo(targetY, {
+        duration: STATUS_BOTTOM_SNAP_DURATION_SEC,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      window.scrollTo({
+        top: targetY * getPageScale(),
+        behavior: "smooth",
+      });
+    }
+  }
+
+  function scheduleStatusBottomSnap() {
+    window.clearTimeout(statusBottomSnapDebounceTimer);
+    statusBottomSnapDebounceTimer = window.setTimeout(
+      trySnapScrollToStatusBottom,
+      STATUS_BOTTOM_SNAP_DEBOUNCE_MS,
+    );
+  }
+
+  function onScrollStatusAndSnap() {
+    onScrollStatus();
+    scheduleStatusBottomSnap();
+  }
+
+  window.addEventListener("scroll", onScrollStatusAndSnap, { passive: true });
   window.addEventListener("resize", () => {
     updatePinSpacerHeight();
     onScrollStatus();
     syncStatusStatueImgForScrollPosition();
   });
   if (typeof lenis !== "undefined" && lenis && typeof lenis.on === "function") {
-    lenis.on("scroll", onScrollStatus);
+    lenis.on("scroll", onScrollStatusAndSnap);
   }
 
   const statusScrollRo = new ResizeObserver(() => {
@@ -820,7 +910,7 @@ requestAnimationFrame(raf);
     });
   }
 
-  onScrollStatus();
+  onScrollStatusAndSnap();
 })();
 
 // ── Спираль-змея вокруг башни (перенос из Record-main) ─────────────
@@ -1424,7 +1514,10 @@ function initPromoHeaderReveal() {
 
 function initRevealText() {
     const targets = [...document.querySelectorAll(".reveal-text")].filter(
-        (el) => !el.closest(".promo-item") && !el.closest(".promo-header")
+        (el) =>
+            !el.closest(".promo-item") &&
+            !el.closest(".promo-header") &&
+            !el.classList.contains("status-footer"),
     );
 
     targets.forEach((el, i) => {
@@ -1449,6 +1542,35 @@ function initRevealText() {
     });
     
     targets.forEach((el) => io.observe(el));
+}
+
+/** «28 МАЯ»: появление снизу вверх при каждом скролле к блоку (in-view снимается при уходе из зоны). */
+function initStatusFooterReveal() {
+  const el = document.querySelector(".status-footer.reveal-text");
+  if (!el) return;
+
+  if (typeof IntersectionObserver !== "function") {
+    el.classList.add("in-view");
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+        } else {
+          entry.target.classList.remove("in-view");
+        }
+      });
+    },
+    {
+      threshold: 0.12,
+      rootMargin: "0px 0px -6% 0px",
+    },
+  );
+
+  io.observe(el);
 }
 
 function initBenefitItemsScrollActive() {
@@ -1513,6 +1635,7 @@ function initBenefitItemsScrollActive() {
 function initRevealAndPromoHeader() {
   initPromoHeaderReveal();
   initRevealText();
+  initStatusFooterReveal();
   initBenefitItemsScrollActive();
 }
 
