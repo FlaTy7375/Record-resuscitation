@@ -1597,6 +1597,14 @@ function initStatusFooterReveal() {
   const el = document.querySelector(".status-footer.reveal-text");
   if (!el) return;
 
+  const isMobile = window.innerWidth <= 1200;
+
+  // На мобильной версии всегда показываем текст
+  if (isMobile) {
+    el.classList.add("in-view");
+    return;
+  }
+
   if (typeof IntersectionObserver !== "function") {
     el.classList.add("in-view");
     return;

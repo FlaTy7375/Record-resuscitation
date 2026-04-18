@@ -1530,8 +1530,8 @@ body.site-menu-open {
     position: absolute;
     left: 50%;
     top: calc((155 / 1080) * 100%);
-    width: calc((680 / 1920) * 100%);
-    height: calc((1100 / 1080) * 100%);
+    width: calc((680 / 1920) * 100% * 1.07);
+    height: calc((1100 / 1080) * 100% * 1.07);
     object-fit: contain;
     object-position: center top;
     transform: translateX(-50%) !important;
@@ -7736,7 +7736,7 @@ left: 0;
     }
 
     .status-footer-anchor {
-        padding-bottom: calc(20px + var(--status-view-lift));
+        padding-bottom: calc(60px + var(--status-view-lift));
     }
 
     .status-footer {
@@ -9132,7 +9132,7 @@ a.interview-node {
         position: absolute;
         left: 16px;
         right: 16px;
-        top: 20px;
+        top: -35px;
         margin: 0;
         text-align: center;
     }
@@ -9356,7 +9356,7 @@ a.interview-node {
     }
 
     .status-footer-anchor {
-        padding-bottom: calc(20px + var(--status-view-lift));
+        padding-bottom: calc(60px + var(--status-view-lift));
     }
 
     .status-footer {
