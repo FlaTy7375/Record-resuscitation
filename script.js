@@ -499,13 +499,14 @@ requestAnimationFrame(raf);
     if (promoContent && promoItems.length) {
       const narrow = window.innerWidth <= 1200;
 
-      // На мобилке отключаем анимацию карточек — они располагаются последовательно через CSS
       if (narrow) {
+        // На мобилке: карточки просто располагаются одна за другой, без сложной анимации
         promoItems.forEach((el) => {
           el.style.setProperty('--promo-layer-y', '0px');
           el.style.setProperty('--promo-item-rise', '0px');
         });
       } else {
+        // На десктопе: сохраняем оригинальную анимацию
         // Откуда начинают ехать карточки (1.1 vh — чуть ниже границы экрана)
         const startY = layoutVh * 1.1;
         // Докуда доезжают (отрицательные — выше центра экрана)
@@ -751,7 +752,6 @@ requestAnimationFrame(raf);
   applyStatusStatueImgTransform(activeVariant);
 
   let ticking = false;
-  let lastTransformY = 0; // Кэшируем последнее значение transform
 
   const STATUS_PHASE_GOLD_END = 0.32;
   const STATUS_PHASE_BLACK_END = 0.62;
@@ -811,23 +811,39 @@ requestAnimationFrame(raf);
         }
       }
 
-      // --- ЛОГИКА ОСТАНОВКИ 3-ГО БЛОКА И НАЕЗДА 4-ГО ---
+      // --- ИДЕАЛЬНАЯ ЛОГИКА ОСТАНОВКИ (БЕЗ ДРОЖАНИЯ) ---
       const statusH = statusSection.offsetHeight;
-      
-      // Вычисляем точку скролла, когда низ 3-го блока касается низа экрана
-      // (это момент, когда следующий блок физически "догоняет" текущий)
-      const freezeY = spacerTop + spacerH - Math.min(statusH, svh);
+      const stableVh = (window.innerHeight || document.documentElement.clientHeight) / getPageScale();
+      const freezeY = spacerTop + spacerH - Math.min(statusH, stableVh);
 
-      let ty = 0;
-      if (scrollY > freezeY) {
-          // Имитируем "заморозку" блока, сдвигая его вниз синхронно со скроллом
-          ty = scrollY - freezeY;
-      }
-      
-      // Применяем transform только если значение изменилось (избегаем "тряски")
-      if (Math.abs(ty - lastTransformY) > 0.5) {
-        lastTransformY = ty;
-        statusSection.style.transform = `translateY(${ty}px)`;
+      if (scrollY >= freezeY) {
+          // Отказываемся от конфликтующего JS-сдвига (transform).
+          // Намертво фиксируем блок относительно экрана телефона.
+          statusSection.style.position = "fixed";
+          statusSection.style.left = "50%";
+          statusSection.style.transform = "translateX(-50%)";
+          statusSection.style.width = "100%";
+          statusSection.style.maxWidth = "1920px";
+          statusSection.style.zIndex = "1"; // Убираем под 4-й блок
+          
+          // Умное выравнивание: если блок выше экрана - прибиваем к низу, если ниже - к верху.
+          if (statusH >= stableVh) {
+              statusSection.style.bottom = "0px";
+              statusSection.style.top = "auto";
+          } else {
+              statusSection.style.top = "0px";
+              statusSection.style.bottom = "auto";
+          }
+      } else {
+          // Возвращаем в обычное состояние, если пользователь скроллит обратно вверх
+          statusSection.style.position = "";
+          statusSection.style.bottom = "";
+          statusSection.style.top = "";
+          statusSection.style.left = "";
+          statusSection.style.width = "";
+          statusSection.style.maxWidth = "";
+          statusSection.style.zIndex = "";
+          statusSection.style.transform = "";
       }
     });
   }
@@ -857,12 +873,13 @@ requestAnimationFrame(raf);
    */
 function getStatusBottomAlignScrollY() {
     const top = getElementDocumentOffsetTop(pinSpacer);
-    const svh = getScrollViewportHeight();
+    
+    // Здесь тоже используем стабильную высоту
+    const stableVh = (window.innerHeight || document.documentElement.clientHeight) / getPageScale();
     const statusH = statusSection.offsetHeight;
     const spacerH = pinSpacer.offsetHeight;
     
-    // Целевая точка магнита — это момент начала заморозки
-    const freezeY = top + spacerH - Math.min(statusH, svh);
+    const freezeY = top + spacerH - Math.min(statusH, stableVh);
     
     if (freezeY < 0) return null;
     const maxY = getLayoutMaxScrollY();
@@ -1585,8 +1602,6 @@ function initStatusFooterReveal() {
     return;
   }
 
-  // На мобилке (≤1200px) текст должен появляться раньше, чтобы не перекрывался статуей
-  const isMobile = window.innerWidth <= 1200;
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -1598,8 +1613,8 @@ function initStatusFooterReveal() {
       });
     },
     {
-      threshold: isMobile ? 0.01 : 0.12,
-      rootMargin: isMobile ? "0px 0px -2% 0px" : "0px 0px -6% 0px",
+      threshold: 0.12,
+      rootMargin: "0px 0px -6% 0px",
     },
   );
 
@@ -2118,9 +2133,10 @@ function initReviewsSliders() {
       for (let k = 1; k <= ad; k += 1) {
         const sPrev = k === 1 ? 1 : scaleAd(k - 1);
         const sK = scaleAd(k);
+        // Для первого кольца (соседние слайды) ставим впритык к центральному
+        // Отступ = половина ширины центральной + половина ширины соседней
         const segment = (uniW * sPrev) / 2 + (uniW * sK) / 2;
-        const part =
-          k === 1 ? Math.max(12, segment - PEEK) : segment * Math.pow(0.87, k - 1);
+        const part = k === 1 ? segment : segment * Math.pow(0.87, k - 1);
         sum += part;
       }
       return sum;
