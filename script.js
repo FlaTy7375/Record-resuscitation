@@ -751,6 +751,7 @@ requestAnimationFrame(raf);
   applyStatusStatueImgTransform(activeVariant);
 
   let ticking = false;
+  let lastTransformY = 0; // Кэшируем последнее значение transform
 
   const STATUS_PHASE_GOLD_END = 0.32;
   const STATUS_PHASE_BLACK_END = 0.62;
@@ -823,7 +824,11 @@ requestAnimationFrame(raf);
           ty = scrollY - freezeY;
       }
       
-      statusSection.style.transform = `translateY(${ty}px)`;
+      // Применяем transform только если значение изменилось (избегаем "тряски")
+      if (Math.abs(ty - lastTransformY) > 0.5) {
+        lastTransformY = ty;
+        statusSection.style.transform = `translateY(${ty}px)`;
+      }
     });
   }
   /** После resize: не возвращать zoom, если скролл уже ниже pin-spacer */

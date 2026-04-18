@@ -7703,6 +7703,13 @@ left: 0;
             transform 0.4s cubic-bezier(0.22, 0.82, 0.18, 1);
     }
 
+    /* Оптимизация для плавного скролла и предотвращения "тряски" */
+    .status {
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+
     .status-date-main {
         font-size: 21px;
     }
