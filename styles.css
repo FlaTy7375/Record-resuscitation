@@ -2144,10 +2144,10 @@ body.site-menu-open {
     max-width: 1920px;
     width: 100%;
     margin: 0 auto;
+    /* margin-top: calc(-1 * var(--real-vh)); <--- УДАЛИТЬ ЭТУ СТРОКУ */
     min-height: calc(100vh + var(--promo-overlap-scroll));
     overflow: visible;
     isolation: isolate;
-    /* Липкий кадр с линиями: выше одного экрана — больше места под фон */
     --promo-sticky-h: calc(var(--real-vh) + min(28vh, 400px));
 }
 
@@ -7382,11 +7382,12 @@ left: 0;
 
     .promo-content {
         flex-direction: column;
-        gap: 10px;
+        gap: 20px;
         width: 100%;
         max-width: 100%;
         padding: 60px max(12px, env(safe-area-inset-right)) 100px max(12px, env(safe-area-inset-left));
         box-sizing: border-box;
+        position: relative;
     }
 
     .promo-item {
@@ -7396,22 +7397,24 @@ left: 0;
         margin-right: auto;
         padding: 14px;
         margin-bottom: 0;
+        transform: none !important;
+        position: relative;
     }
 
     .promo-item-1 {
-        transform: translateY(calc(-400px + var(--promo-layer-y, 0px) - var(--promo-item-rise, 0px)));
+        transform: none !important;
     }
 
     .promo-item-2 {
-        transform: translateX(-350px) translateY(calc(650px + var(--promo-layer-y, 0px) - var(--promo-item-rise, 0px)));
+        transform: none !important;
     }
 
     .promo-item-3 {
-        transform: translateY(calc(400px + var(--promo-layer-y, 0px) - var(--promo-item-rise, 0px)));
+        transform: none !important;
     }
 
     .promo-item-4 {
-        transform: translateY(calc(1350px + var(--promo-layer-y, 0px) - var(--promo-item-rise, 0px)));
+        transform: none !important;
     }
 
     .promo-card {
@@ -7685,10 +7688,19 @@ left: 0;
 
     .status-footer-anchor {
         padding-bottom: calc(20px + var(--status-view-lift));
+        z-index: 10;
+        margin-bottom: 60px;
     }
 
     .status-footer {
         font-size: clamp(50px, 10vw, 80px);
+    }
+
+    /* На мобилке текст "28 МАЯ" должен появляться быстрее */
+    .status-footer.reveal-text {
+        transition:
+            opacity 0.4s cubic-bezier(0.22, 0.82, 0.18, 1),
+            transform 0.4s cubic-bezier(0.22, 0.82, 0.18, 1);
     }
 
     .status-date-main {
@@ -12426,17 +12438,22 @@ body.modal-open {
 /* Мобилка: низкая высота экрана (<700px) — ещё компактнее */
 @media (max-width: 1200px) and (max-height: 699px) {
     .status-statue-overlay--award {
-        top: 202px;
+        top: 162px;
     }
 
-    /* Правый блок (дата): базово top 330px — на 20px выше */
+    /* Правый блок (дата): базово top 330px — на 60px выше */
     .status-statue-overlay--date {
-        top: 310px;
+        top: 270px;
     }
 
     .status-statue-img {
         max-width: 349px;
         max-height: 640px;
+    }
+
+    /* Поднимаем картинку статуи на 80px выше */
+    .status-statue-stage {
+        bottom: calc(100px + clamp(3.25rem, 11vw, 5.5rem));
     }
 
     .hero-oscar-img {

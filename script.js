@@ -499,31 +499,39 @@ requestAnimationFrame(raf);
     if (promoContent && promoItems.length) {
       const narrow = window.innerWidth <= 1200;
 
-      // Откуда начинают ехать карточки (1.1 vh — чуть ниже границы экрана)
-      const startY = layoutVh * 1.1;
-      // Докуда доезжают (отрицательные — выше центра экрана)
-      const endY = narrow ? -layoutVh * 0.2 : -layoutVh * 0.1;
+      // На мобилке отключаем анимацию карточек — они располагаются последовательно через CSS
+      if (narrow) {
+        promoItems.forEach((el) => {
+          el.style.setProperty('--promo-layer-y', '0px');
+          el.style.setProperty('--promo-item-rise', '0px');
+        });
+      } else {
+        // Откуда начинают ехать карточки (1.1 vh — чуть ниже границы экрана)
+        const startY = layoutVh * 1.1;
+        // Докуда доезжают (отрицательные — выше центра экрана)
+        const endY = -layoutVh * 0.1;
 
-      /**
-       * Вертикальный слой для карточки (px). Сейчас все индексы делят один pCards;
-       * сюда можно вынести разные диапазоны progress по itemIndex.
-       */
-      function getPromoLayerYForItem(_itemIndex) {
-        return startY - (startY - endY) * pCards;
+        /**
+         * Вертикальный слой для карточки (px). Сейчас все индексы делят один pCards;
+         * сюда можно вынести разные диапазоны progress по itemIndex.
+         */
+        function getPromoLayerYForItem(_itemIndex) {
+          return startY - (startY - endY) * pCards;
+        }
+
+        promoItems.forEach((el, i) => {
+          el.style.setProperty('--promo-layer-y', `${getPromoLayerYForItem(i)}px`);
+        });
+
+        const pCardsEased = pCards * (2 - pCards); // ease-out
+        const riseCap = Math.min(layoutVh * 0.55, 480);
+        const riseBase = pCardsEased * riseCap;
+
+        promoItems.forEach((el, i) => {
+          const rise = riseBase * (1 + i * 0.52);
+          el.style.setProperty('--promo-item-rise', `${rise}px`);
+        });
       }
-
-      promoItems.forEach((el, i) => {
-        el.style.setProperty('--promo-layer-y', `${getPromoLayerYForItem(i)}px`);
-      });
-
-      const pCardsEased = pCards * (2 - pCards); // ease-out
-      const riseCap = narrow ? Math.min(layoutVh * 1.28, 1100) : Math.min(layoutVh * 0.55, 480);
-      const riseBase = pCardsEased * riseCap;
-
-      promoItems.forEach((el, i) => {
-        const rise = riseBase * (1 + i * 0.52);
-        el.style.setProperty('--promo-item-rise', `${rise}px`);
-      });
     }
   }
 
@@ -627,14 +635,14 @@ requestAnimationFrame(raf);
         ? `translateY(152px) scale(${narrowScale})`
         : "translateY(-144px) scale(1.444)";
     } else if (variant === "ruby") {
-      /* Достижения: картинка ниже исходного положения */
+      /* Достижения: для мобилки опускаем картинку один раз, для десктопа картинка ниже исходного положения */
       statusOscarImg.style.transform = narrow
         ? `translateY(290px) scale(${narrowScale})`
         : "translateY(220px) scale(1.444)";
     } else if (variant === "rubyDeep") {
-      /* Виртуальный шаг после «Достижения»: та же кнопка/цитата, картинка ещё ниже */
+      /* Виртуальный шаг после «Достижения»: для мобилки оставляем как в ruby (не меняем), для десктопа картинка ещё ниже */
       statusOscarImg.style.transform = narrow
-        ? `translateY(520px) scale(${narrowScale})`
+        ? `translateY(290px) scale(${narrowScale})`
         : "translateY(500px) scale(1.444)";
     }
   }
@@ -711,7 +719,7 @@ requestAnimationFrame(raf);
   const STATUS_PIN_VH_STRETCH_CAP = 920;
   const STATUS_PIN_MIN_SCROLL_TRACK_PX = 2720;
 
-  function updatePinSpacerHeight() {
+ function updatePinSpacerHeight() {
     if (!pinSpacer) return;
     const statusH = statusSection.offsetHeight;
     const svh = getScrollViewportHeight();
@@ -719,7 +727,9 @@ requestAnimationFrame(raf);
     const extraScroll = stretchVh * STATUS_PIN_EXTRA_VH;
     const fromStretch = statusH + extraScroll;
     const withFloor = Math.max(fromStretch, svh + STATUS_PIN_MIN_SCROLL_TRACK_PX);
-    pinSpacer.style.height = `${withFloor}px`;
+    
+    // Возвращаем как было изначально, убираем + svh
+    pinSpacer.style.height = `${withFloor}px`; 
   }
 
   updatePinSpacerHeight();
@@ -772,38 +782,50 @@ requestAnimationFrame(raf);
         window.innerWidth <= 1200 ? bandVh * 0.08 : bandVh * 0.02;
       const denom = Math.max(1, sectionScrollRange - startAfter);
 
+      // --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ СТАТУЙ И ТЕКСТОВ ---
       if (scrollY + svh <= spacerTop) {
         statusStatuePastPin = false;
         setActiveStatusVariant("gold");
-        return;
-      }
-      if (scrollY >= spacerTop + spacerH) {
+      } else if (scrollY >= spacerTop + spacerH) {
         if (!statusStatuePastPin) {
           resetStatusStatueImgAfterPin();
         }
         statusStatuePastPin = true;
         setActiveStatusVariant("ruby", { skipStatueImg: true });
-        return;
-      }
-
-      const reenteredPinFromBelow = statusStatuePastPin;
-      statusStatuePastPin = false;
-
-      const scrolled = Math.max(
-        0,
-        Math.min(sectionScrollRange - startAfter, scrollY - spacerTop - startAfter),
-      );
-      const progress = Math.max(0, Math.min(1, scrolled / denom));
-      const step = stepFromProgress(progress);
-      const nextVariant = VARIANTS[step];
-      if (reenteredPinFromBelow && nextVariant === activeVariant) {
-        applyStatusStatueImgTransform(nextVariant);
       } else {
-        setActiveStatusVariant(nextVariant);
+        const reenteredPinFromBelow = statusStatuePastPin;
+        statusStatuePastPin = false;
+
+        const scrolled = Math.max(
+          0,
+          Math.min(sectionScrollRange - startAfter, scrollY - spacerTop - startAfter),
+        );
+        const progress = Math.max(0, Math.min(1, scrolled / denom));
+        const step = stepFromProgress(progress);
+        const nextVariant = VARIANTS[step];
+        if (reenteredPinFromBelow && nextVariant === activeVariant) {
+          applyStatusStatueImgTransform(nextVariant);
+        } else {
+          setActiveStatusVariant(nextVariant);
+        }
       }
+
+      // --- ЛОГИКА ОСТАНОВКИ 3-ГО БЛОКА И НАЕЗДА 4-ГО ---
+      const statusH = statusSection.offsetHeight;
+      
+      // Вычисляем точку скролла, когда низ 3-го блока касается низа экрана
+      // (это момент, когда следующий блок физически "догоняет" текущий)
+      const freezeY = spacerTop + spacerH - Math.min(statusH, svh);
+
+      let ty = 0;
+      if (scrollY > freezeY) {
+          // Имитируем "заморозку" блока, сдвигая его вниз синхронно со скроллом
+          ty = scrollY - freezeY;
+      }
+      
+      statusSection.style.transform = `translateY(${ty}px)`;
     });
   }
-
   /** После resize: не возвращать zoom, если скролл уже ниже pin-spacer */
   function syncStatusStatueImgForScrollPosition() {
     if (!pinSpacer || !statusOscarImg) return;
@@ -828,15 +850,19 @@ requestAnimationFrame(raf);
    * Целевой scrollY: нижняя граница #statusScreen совпадает с низом вьюпорта.
    * Если такую позицию достичь нельзя — null.
    */
-  function getStatusBottomAlignScrollY() {
-    const top = getElementDocumentOffsetTop(statusSection);
-    const bottom = top + statusSection.offsetHeight;
+function getStatusBottomAlignScrollY() {
+    const top = getElementDocumentOffsetTop(pinSpacer);
     const svh = getScrollViewportHeight();
-    const raw = bottom - svh;
-    if (raw < 0) return null;
+    const statusH = statusSection.offsetHeight;
+    const spacerH = pinSpacer.offsetHeight;
+    
+    // Целевая точка магнита — это момент начала заморозки
+    const freezeY = top + spacerH - Math.min(statusH, svh);
+    
+    if (freezeY < 0) return null;
     const maxY = getLayoutMaxScrollY();
-    if (raw > maxY + 1) return null;
-    return Math.min(raw, maxY);
+    if (freezeY > maxY + 1) return null;
+    return Math.min(freezeY, maxY);
   }
 
   /** Небольшая «магнитная» фиксация после остановки скролла у позиции выравнивания низа блока status. */
@@ -1554,6 +1580,8 @@ function initStatusFooterReveal() {
     return;
   }
 
+  // На мобилке (≤1200px) текст должен появляться раньше, чтобы не перекрывался статуей
+  const isMobile = window.innerWidth <= 1200;
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -1565,8 +1593,8 @@ function initStatusFooterReveal() {
       });
     },
     {
-      threshold: 0.12,
-      rootMargin: "0px 0px -6% 0px",
+      threshold: isMobile ? 0.01 : 0.12,
+      rootMargin: isMobile ? "0px 0px -2% 0px" : "0px 0px -6% 0px",
     },
   );
 
