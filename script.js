@@ -2121,7 +2121,7 @@ function initReviewsSliders() {
 
     // Максимальные габариты, которые мы можем занять
     const maxCardW = isMobile ? Math.min(w * 0.88, 720) : Math.min(w * 0.5, 900);
-    const maxCardH = isMobile ? Math.min(h * 0.88, 920) : Math.min(h * 0.82, 960);
+    const maxCardH = isMobile ? Math.min(h * 0.88, 920) : Math.min(h * 0.95, 1100);
 
     // Считываем реальные пропорции активной картинки
     const activeCard = reviewsFeedbackCards[reviewsFeedbackActiveIndex];
@@ -2140,15 +2140,20 @@ function initReviewsSliders() {
     }
 
     // Масштаб для каскада
-    const scaleAd = (ad) => Math.max(0.4, 1 - ad * 0.15);
+    const scaleAd = (ad) => {
+      if (ad === 0) return 1.15; // Увеличиваем передний план
+      if (ad === 1) return 0.75; // Уменьшаем первый задний
+      if (ad === 2) return 0.55; // Уменьшаем второй задний
+      return Math.max(0.35, 1.15 - ad * 0.2); // Уменьшаем остальные
+    };
 
     // Отступы теперь базируются на РЕАЛЬНОЙ ширине картинки (uniW), дыр не будет
     const txAbsForRings = (ad) => {
       if (ad <= 0) return 0;
-      if (ad === 1) return uniW * 0.65;
-      if (ad === 2) return uniW * 1.15;
-      if (ad === 3) return uniW * 1.55;
-      return uniW * (1.55 + (ad - 3) * 0.3);
+      if (ad === 1) return uniW * 0.45;
+      if (ad === 2) return uniW * 0.80;
+      if (ad === 3) return uniW * 1.10;
+      return uniW * (1.10 + (ad - 3) * 0.25);
     };
 
     const maxR = Math.min(3, Math.floor(total / 2));
