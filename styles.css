@@ -1867,7 +1867,7 @@ body.site-menu-open {
 }
 
 .status-title-main {
-    margin: 0 0 40px 0;
+    margin: 0 0 80px 0;
     color: #7b7b7b;
     text-transform: uppercase;
     font-family: "Roboto", sans-serif;
@@ -1889,7 +1889,7 @@ body.site-menu-open {
 }
 
 .status-title-sub {
-    margin: 0 0 40px 0;
+    margin: 0 0 80px 0;
     color: #7b7b7b;
     text-transform: uppercase;
     font-family: "Roboto", sans-serif;
@@ -2111,8 +2111,8 @@ body.site-menu-open {
 }
 
 .status-statue-overlay--date {
-    bottom: 40%;
-    right: 0;
+    bottom: 39%;
+    right: 95px;
     transition: transform 0.45s ease;
 }
 
@@ -6857,11 +6857,19 @@ left: 0;
     .partners-row-track {
         gap: 5px;
     }
+    .partners-row,
+    .partners-row-dark,
+    .partners-row-light {
+        overflow: visible;
+    }
     .partners-card .partners-logo {
         width: 106px;
     }
     .partners-logo-wrap {
         height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .partners-card-divider {
         background: #523A25 !important;
@@ -6931,6 +6939,9 @@ left: 0;
         height: 12px;
     }
     .partners-row-dark-second .partners-row-track {
+        height: 65px;
+    }
+    .partners-row-dark-second .partners-card-dark {
         height: 65px;
     }
     .partners-card-meta {
@@ -13067,7 +13078,13 @@ body.modal-open {
     width: 279px;
     overflow: hidden;
     transform: translateX(-32px);
+    
 }
+
+.partners-card-arrow-new {
+    width: 15px !important;
+}
+
     .media-book {
         transform:
             translate3d(0, var(--book-turn-y), var(--book-turn-z))
@@ -13233,7 +13250,7 @@ body.modal-open {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 248px;
+    width: 106px;
     height: 100px;
     background-image: url('./assets/runline.svg');
     background-size: contain;
