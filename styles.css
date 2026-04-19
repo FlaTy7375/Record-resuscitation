@@ -4685,6 +4685,11 @@ left: 0;
 .partners-card-dark {
     height: 202px;
     background: rgba(255, 255, 255, 0.04);
+    transition: background-color 2s ease;
+}
+
+.partners-card-dark.is-scrolled {
+    background: rgb(249, 240, 232);
 }
 
 .partners-card-brand-only {
@@ -4716,6 +4721,11 @@ left: 0;
 .partners-logo-dark {
     opacity: 0.34;
     filter: grayscale(1) brightness(1.12);
+    transition: opacity 2s ease;
+}
+
+.partners-card-dark.is-scrolled .partners-logo-dark {
+    opacity: 0;
 }
 
 .partners-card-dark::after {
@@ -4733,6 +4743,11 @@ left: 0;
 
 .partners-card-divider-dark {
     background: rgba(255, 255, 255, 0.2);
+    transition: background-color 2s ease;
+}
+
+.partners-card-dark.is-scrolled .partners-card-divider-dark {
+    background: rgba(82, 58, 37, 0.28);
 }
 
 .partners-card-meta {
@@ -4751,6 +4766,11 @@ left: 0;
 
 .partners-card-meta-dark {
     color: rgba(255, 255, 255, 0.43);
+    transition: color 2s ease;
+}
+
+.partners-card-dark.is-scrolled .partners-card-meta-dark {
+    color: #523A25;
 }
 
 .partners-card-dot {
@@ -4774,10 +4794,20 @@ left: 0;
 
 .partners-card-dot-dark {
     border-color: rgba(255, 255, 255, 0.5);
+    transition: border-color 2s ease;
+}
+
+.partners-card-dark.is-scrolled .partners-card-dot-dark {
+    border-color: #523A25;
 }
 
 .partners-card-dot-dark span {
     background: rgba(255, 255, 255, 0.5);
+    transition: background-color 2s ease;
+}
+
+.partners-card-dark.is-scrolled .partners-card-dot-dark span {
+    background: #523A25;
 }
 
 .partners-card-arrow {
@@ -4788,6 +4818,15 @@ left: 0;
     height: 16px;
     display: block;
     object-fit: contain;
+    transition: opacity 2s ease;
+}
+
+.partners-card-dark .partners-card-arrow {
+    opacity: 1;
+}
+
+.partners-card-dark.is-scrolled .partners-card-arrow {
+    opacity: 0;
 }
 
 .partners-feature::after {
@@ -5952,9 +5991,14 @@ left: 0;
     .reviews-gratitude-gallery {
         margin-top: 0;
     }
+    
 }
 
-
+@media (max-width: 1550px) {
+    .media-book-frame {
+        transform: translate(-50%, -50%) translateZ(0) scale(1.1) !important;
+    }
+}
 
 .reviews-gratitude-card-frame {
     position: absolute;
@@ -12847,6 +12891,35 @@ body.modal-open {
  */
 
 
+@media (min-width: 1200px) and (max-width: 1550px) {
+    .media-book {
+        transform:
+            translate3d(0, var(--book-turn-y), var(--book-turn-z))
+            scale(1.6)
+            rotateX(calc(var(--book-rotate-x) + 14deg))
+            rotateY(var(--book-rotate-y))
+            rotateZ(8.75deg);
+    }
+
+    .media-book-scene.is-animating-next .media-book {
+        transform:
+            translate3d(0, calc(var(--book-turn-y) - 4px), var(--book-turn-z))
+            scale(1.6)
+            rotateX(calc(var(--book-rotate-x) + 15.6deg))
+            rotateY(calc(var(--book-rotate-y) - 1.35deg))
+            rotateZ(8.1deg);
+    }
+
+    .media-book-scene.is-animating-prev .media-book {
+        transform:
+            translate3d(0, calc(var(--book-turn-y) - 3px), var(--book-turn-z))
+            scale(1.6)
+            rotateX(calc(var(--book-rotate-x) + 15.2deg))
+            rotateY(calc(var(--book-rotate-y) + 1.2deg))
+            rotateZ(9.1deg);
+    }
+}
+
 @media (min-width: 1200px) and (max-width: 1520px) {
     .media-lib-carousel {
         transform: scale(1.2);
@@ -13121,3 +13194,66 @@ body.modal-open {
     pointer-events: none;
 }
 
+
+
+.partners-card-arrow-new {
+    position: absolute;
+    right: 14px;
+    top: 13px;
+    width: 21px;
+    height: 16px;
+    background-image: url('./assets/brown-arrow.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 2s ease;
+    pointer-events: none;
+}
+
+.partners-card-dark.is-scrolled .partners-card-arrow-new {
+    opacity: 1;
+}
+
+
+.partners-logo-new {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 248px;
+    height: 100px;
+    background-image: url('./assets/runline.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 2s ease;
+    pointer-events: none;
+}
+
+/* Первая строка: новая картинка по центру карточки (выше) */
+.partners-row-dark-first .partners-logo-new {
+    top: 37%;
+    transform: translate(-50%, -50%);
+}
+
+.partners-row-dark-first .partners-card-dark.is-scrolled .partners-logo-new {
+    opacity: 1;
+}
+
+/* Вторая строка: старая картинка остаётся видимой */
+.partners-row-dark-second .partners-card-dark .partners-logo-dark {
+    opacity: 0.34;
+    filter: grayscale(1) brightness(1.12);
+    transition: opacity 2s ease;
+}
+
+.partners-row-dark-second .partners-card-dark.is-scrolled .partners-logo-dark {
+    opacity: 1;
+    filter: none;
+}
+
+.partners-row-dark-second .partners-card-dark.is-scrolled .partners-logo-new {
+    opacity: 0;
+}

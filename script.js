@@ -3528,3 +3528,47 @@ if (document.readyState === "loading") {
     }
   });
 })();
+
+// Плавное изменение цвета фона тёмных карточек партнёров при скролле
+(function initPartnersScrollEffect() {
+  const partnersSection = document.getElementById('partnersScreen');
+  if (!partnersSection) return;
+
+  const darkCards = partnersSection.querySelectorAll('.partners-card-dark');
+  if (!darkCards.length) return;
+
+  // Добавляем новые элементы к каждой тёмной карточке
+  darkCards.forEach(card => {
+    // Добавляем новую стрелку brown-arrow.svg
+    const arrow = card.querySelector('.partners-card-arrow');
+    if (arrow) {
+      const newArrow = document.createElement('div');
+      newArrow.className = 'partners-card-arrow-new';
+      card.appendChild(newArrow);
+    }
+    
+    // Добавляем новый логотип runline.svg
+    const logoWrap = card.querySelector('.partners-logo-wrap');
+    if (logoWrap) {
+      const newLogo = document.createElement('div');
+      newLogo.className = 'partners-logo-new';
+      logoWrap.appendChild(newLogo);
+    }
+  });
+
+  function updatePartnersCards() {
+    const sectionRect = partnersSection.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    
+    // Добавляем класс только когда секция находится в центре экрана или выше
+    // sectionRect.top < 0 означает что верх секции уже выше верха экрана
+    if (sectionRect.top < 0 && sectionRect.bottom > viewportHeight * 0.5) {
+      darkCards.forEach(card => card.classList.add('is-scrolled'));
+    } else {
+      darkCards.forEach(card => card.classList.remove('is-scrolled'));
+    }
+  }
+
+  window.addEventListener('scroll', updatePartnersCards, { passive: true });
+  updatePartnersCards(); // Проверяем при загрузке
+})();
