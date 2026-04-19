@@ -1837,8 +1837,8 @@ body.site-menu-open {
     padding: 100px;
     padding-top: 200px;
     background: #0f0f0f;
-    height: 1750px;
-    --status-h: 1750px;
+    height: 2200px;
+    --status-h: 2200px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -2082,7 +2082,7 @@ body.site-menu-open {
 }
 
 .status-statue-overlay--award {
-    top: 42%;
+    bottom: 42%;
     left: 100px;
     transition: transform 0.45s ease;
 }
@@ -2111,7 +2111,7 @@ body.site-menu-open {
 }
 
 .status-statue-overlay--date {
-    top: 44%;
+    bottom: 40%;
     right: 0;
     transition: transform 0.45s ease;
 }
@@ -10464,7 +10464,7 @@ a.interview-node {
 
 .videoteka-item-copy {
     align-self: center;
-    max-width: 760px;
+    max-width: 100%;
     color: #f1f1f1;
     padding-left: 40px;
 }
@@ -10479,7 +10479,7 @@ a.interview-node {
 .videoteka-item-copy p {
     color: #F1F1F1;
     margin: 0;
-    max-width: 541px;
+    max-width: 900px;
     font: 300 24px/1.38 "Manrope", sans-serif;
 }
 
