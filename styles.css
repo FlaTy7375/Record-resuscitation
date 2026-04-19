@@ -4639,6 +4639,10 @@ left: 0;
     animation: partnersLightMarquee 8s linear infinite;
 }
 
+.partners-row-light .partners-row-track:hover {
+    animation-play-state: paused;
+}
+
 .partners-row-dark-first,
 .partners-row-dark-second {
     position: relative;
@@ -4657,6 +4661,10 @@ left: 0;
     will-change: transform;
 }
 
+.partners-row.partners-row-dark-first:hover .partners-row-track {
+    animation-play-state: paused !important;
+}
+
 .partners-row-dark-second .partners-row-track {
     display: flex;
     gap: 18px;
@@ -4664,6 +4672,10 @@ left: 0;
     flex-wrap: nowrap;
     animation: partnersDarkMarqueeBackward 12s linear infinite;
     will-change: transform;
+}
+
+.partners-row.partners-row-dark-second:hover .partners-row-track {
+    animation-play-state: paused !important;
 }
 
 .partners-card {
@@ -5017,7 +5029,7 @@ left: 0;
 
 .advert-3d-slider .scene {
   width: 100%;
-  perspective: 8000px;
+  perspective: 5000px;
   display: flex;
   align-items: center;
   justify-content: center;
