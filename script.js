@@ -2491,7 +2491,8 @@ function initReviewsSliders() {
       const localX = clamp((event.clientX - rect.left) / scale, 0, reviewsGratitudeGallery.offsetWidth);
       const localY = clamp((event.clientY - rect.top) / scale, 0, reviewsGratitudeGallery.offsetHeight);
       const isLeftZone = localX < reviewsGratitudeGallery.offsetWidth * 0.5;
-      reviewsGratitudeGallery.classList.add("is-cursoft-zone", isLeftZone);
+      reviewsGratitudeGallery.classList.add("is-cursor-active");
+      reviewsGratitudeGallery.classList.toggle("is-left-zone", isLeftZone);
       reviewsGratitudeGallery.classList.toggle("is-right-zone", !isLeftZone);
       
       // Используем координаты относительно viewport для более точного позиционирования
@@ -2597,11 +2598,15 @@ function initReviewsTabs() {
 
   reviewsTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      setTab(tab.dataset.reviewsTab || "official");
+      const tabName = tab.dataset.reviewsTab || "official";
+      setTab(tabName);
       
-      // Скролл к блоку reviewsScreen
+      // Скролл к блоку reviewsScreen при переключении на любой таб
       if (reviewsScreen) {
-        reviewsScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Небольшая задержка для корректной отработки анимации переключения таба
+        setTimeout(() => {
+          reviewsScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
       }
     });
   });
