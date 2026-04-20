@@ -638,6 +638,51 @@ async function initHero3D() {
         if (isMobileHero && !livePointer) {
           let mx = homePos.x + scatterX;
           let my = homePos.y + scatterY;
+          
+          // Плавное исчезновение моделей после разлёта для оптимизации
+          if (scatterProgress > 0.7) {
+            // Начинаем затухание с 0.7, полностью скрываем на 0.95
+            const fadeStart = 0.7;
+            const fadeEnd = 0.95;
+            const fadeProgress = (scatterProgress - fadeStart) / (fadeEnd - fadeStart);
+            const opacity = Math.max(0, 1 - fadeProgress);
+            
+            if (scatterProgress >= fadeEnd) {
+              group.visible = false;
+              continue;
+            } else {
+              group.visible = true;
+              // Применяем opacity ко всем мешам в группе
+              group.traverse(obj => {
+                if (obj.isMesh && obj.material) {
+                  if (Array.isArray(obj.material)) {
+                    obj.material.forEach(mat => {
+                      mat.transparent = true;
+                      mat.opacity = opacity;
+                    });
+                  } else {
+                    obj.material.transparent = true;
+                    obj.material.opacity = opacity;
+                  }
+                }
+              });
+            }
+          } else {
+            group.visible = true;
+            // Восстанавливаем полную видимость
+            group.traverse(obj => {
+              if (obj.isMesh && obj.material) {
+                if (Array.isArray(obj.material)) {
+                  obj.material.forEach(mat => {
+                    mat.opacity = 1;
+                  });
+                } else {
+                  obj.material.opacity = 1;
+                }
+              }
+            });
+          }
+          
           if (scatterProgress < 0.005) {
             const swayK = Math.min(1, (0.005 - scatterProgress) / 0.005);
             const tf = mobileFloatTime;
