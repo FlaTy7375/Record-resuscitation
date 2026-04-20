@@ -36,7 +36,7 @@
 /* Мобилка: длиннее «дорожка» скролла пока промо sticky — жест сначала проигрывает карточки, потом уезжает страница */
 @media (max-width: 1200px) {
     :root {
-        --promo-overlap-scroll: min(280vh, 3200px);
+        --promo-overlap-scroll: 3200px;
     }
 }
 
@@ -681,7 +681,6 @@ body.site-menu-open {
 @media (max-width: 1200px) {
     body.site-menu-open {
         background-color: #000;
-        min-height: 100dvh;
     }
 
     html:has(body.site-menu-open) {
@@ -768,7 +767,6 @@ body.site-menu-open {
         bottom: auto;
         width: 375px;
         max-width: 100%;
-        max-height: 100dvh;
         align-items: flex-start;
         overflow-x: hidden;
         overflow-y: auto;
@@ -6451,13 +6449,13 @@ left: 0;
         position: sticky;
         /* Отрицательный top: при липком скролле «срезаем» верх (заголовок/табы),
            чтобы в кадре оставалась зона article с письмом и грамотой */
-        top: clamp(-750px, -42dvh, -300px);
+        top: -300px;
         height: 1220px;
         overflow: hidden;
     }
     .reviews-media {
         height: 1220px;
-        transform: translateY(clamp(-100px, calc(22dvh - 280px), -40px)) scale(1);
+        transform: translateY(-40px) scale(1);
         transform-origin: top center;
     }
     .reviews-media-title-top {
@@ -7679,7 +7677,8 @@ left: 0;
     }
 
     .countdown-section {
-        height: 230vh;
+        height: auto;
+        min-height: 100vh;
     }
 
     .countdown-pin {
@@ -9293,7 +9292,8 @@ a.interview-node {
     }
 
     .countdown-section {
-        height: 230vh;
+        height: auto;
+        min-height: 100vh;
     }
 
     .countdown-pin {
@@ -10216,11 +10216,11 @@ a.interview-node {
     }
 
     .media-lib-scene {
-        height: 27.5vh;
+        height: 300px;
     }
 
     .media-lib-slide img {
-        height: 27.5vh;
+        height: 300px;
     }
 
     .reviews-media-dates,
@@ -12453,7 +12453,7 @@ body.modal-open {
         width: calc(100vw - 30px);
         max-width: 345px;
         /* Весь контент по абсолютным координатам ~до 730px + запас; без внутреннего скролла */
-        height: min(830px, calc(100dvh - 24px));
+        height: 830px;
         max-height: none;
         transform: translate(-50%, -50%);
         border-radius: 8px;
@@ -12820,8 +12820,8 @@ body.modal-open {
     
     .reviews-feedback-list.reviews-feedback-3d {
         width: 100%;
-        height: min(65vh, 720px);
-        min-height: min(58vh, 620px);
+        height: 720px;
+        min-height: 620px;
         margin-top: 16px;
         perspective-origin: 50% 45%;
     }

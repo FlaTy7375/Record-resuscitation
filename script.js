@@ -10,7 +10,8 @@
       document.documentElement.style.setProperty('--real-vh', compensatedVh);
     } else {
       document.documentElement.style.zoom = '';
-      document.documentElement.style.setProperty('--real-vh', window.innerHeight + 'px');
+      // На мобилке не используем динамические вычисления высоты
+      document.documentElement.style.setProperty('--real-vh', '100vh');
     }
   }
   updateScale();
@@ -2112,12 +2113,13 @@ function initReviewsSliders() {
     let w = reviewsFeedbackList.clientWidth || reviewsFeedbackList.offsetWidth;
     let h = reviewsFeedbackList.clientHeight || reviewsFeedbackList.offsetHeight;
     
+    const isMobile = window.innerWidth <= 1200;
+    
     if (w < 40 || h < 40) {
       w = Math.max(stageRect.width, Math.min(window.innerWidth, 1920) * 0.72, 360);
-      h = Math.max(stageRect.height, window.innerHeight * 0.5, 420);
+      // На мобилке используем фиксированную высоту вместо vh
+      h = isMobile ? 620 : Math.max(stageRect.height, window.innerHeight * 0.5, 420);
     }
-
-    const isMobile = window.innerWidth <= 1200;
 
     const maxCardW = isMobile ? Math.min(w * 0.88, 720) : Math.min(w * 0.5, 900);
     const maxCardH = isMobile ? Math.min(h * 0.88, 920) : Math.min(h * 0.95, 1100);
@@ -3022,7 +3024,9 @@ function initMediaLibCarousel() {
     const slides = [...ring.querySelectorAll('.media-lib-slide')];
     const n = slides.length;
     const { slideWidth, gap } = getSlideParams();
-    const slideHeight = Math.round(window.innerHeight * 0.275);
+    const isMobile = window.innerWidth <= 1200;
+    // На мобилке используем фиксированную высоту вместо vh
+    const slideHeight = isMobile ? 300 : Math.round(window.innerHeight * 0.275);
     const theta = 360 / n;
     const radius = Math.round(((slideWidth + gap) / 2) / Math.tan(Math.PI / n));
     const phaseOffset = rowIndex === 1 ? theta / 2 : 0;
