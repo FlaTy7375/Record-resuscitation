@@ -13461,3 +13461,12 @@ body.modal-open {
         will-change: auto;
     }
 }
+
+/* Скрываем блок статуи до инициализации JS */
+.status {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+body.js-ready .status {
+    opacity: 1;
+}

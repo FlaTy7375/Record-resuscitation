@@ -5,18 +5,19 @@
     if (w >= 1200) {
       const scale = Math.min(1, w / 1920);
       document.documentElement.style.zoom = scale;
-      // Компенсируем vh: делим на scale чтобы получить реальный размер
       const compensatedVh = (window.innerHeight / scale) + 'px';
       document.documentElement.style.setProperty('--real-vh', compensatedVh);
     } else {
       document.documentElement.style.zoom = '';
-      // На мобилке не используем динамические вычисления высоты
       document.documentElement.style.setProperty('--real-vh', '100vh');
     }
   }
   updateScale();
   window.addEventListener('resize', updateScale, { passive: true });
 })();
+
+// Показываем блок статуи после инициализации JS
+document.body.classList.add('js-ready');
 
 // Глобальная функция получения текущего scale для JS-расчетов
 // Глобальная функция получения текущего scale для JS-расчетов
