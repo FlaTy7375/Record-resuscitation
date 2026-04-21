@@ -815,10 +815,10 @@ requestAnimationFrame(raf);
       const sectionScrollRange = Math.max(1, spacerH - svh);
 
       // --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ---
-      if (scrollY + svh <= spacerTop) {
-        // Блок ещё не вошёл в viewport
+      if (scrollY <= spacerTop) {
+        // Верх viewport ещё не достиг блока — сбрасываем всё
         statusStatuePastPin = false;
-        if (statusAnimStarted) deactivateAll();
+        deactivateAll();
 
       } else if (scrollY >= spacerTop + spacerH) {
         // Блок уже прокручен — фиксируем на последнем активном шаге
@@ -834,7 +834,7 @@ requestAnimationFrame(raf);
         // Мёртвая зона: ждём пока блок войдёт на 50% высоты viewport
         const deadZone = svh * 0.5;
         if (rawScrolled < deadZone) {
-          if (statusAnimStarted) deactivateAll();
+          deactivateAll();
         } else {
           const progress = Math.max(0, Math.min(1, (rawScrolled - deadZone) / (sectionScrollRange - deadZone)));
           const step = stepFromProgress(progress);
