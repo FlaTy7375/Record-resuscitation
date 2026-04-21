@@ -1807,7 +1807,7 @@ body.site-menu-open {
 @media (max-width: 1200px) {
     .count-clock-video {
                clip-path: circle(9% at 47% 73.9%);
-        transform: translateX(calc(-50% + 13px));
+        transform: translateX(calc(-50% + 33px));
     }
 
     .count-clock-video {
@@ -2270,7 +2270,7 @@ body.site-menu-open {
 .screen-promo {
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 6;
     height: var(--promo-sticky-h);
     width: 100%;
     overflow: visible;
@@ -2310,7 +2310,7 @@ body.site-menu-open {
 /* В потоке сразу после .screen-promo: подтягиваем на высоту липкого кадра и даём дорожку скролла = --promo-overlap-scroll */
 .promo-content-shell {
     position: relative;
-    z-index: 2;
+    z-index: 6;
     width: 100%;
     max-width: 1920px;
     margin: calc(-1 * var(--promo-sticky-h)) auto 0;
