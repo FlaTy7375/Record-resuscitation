@@ -1612,7 +1612,7 @@ body.site-menu-open {
     height: calc((1100 / 1080) * 100% * 1.07);
     object-fit: contain;
     object-position: center top;
-    transform: translateX(-50%) !important;
+    transform: translateX(-50%);
     transform-origin: center center;
     will-change: transform;
     pointer-events: none;

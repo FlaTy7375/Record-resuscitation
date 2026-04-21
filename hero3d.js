@@ -583,9 +583,9 @@ async function initHero3D() {
       if (oscarImg) {
         if (isMobileHero) {
           const tf = mobileFloatTime;
-          /* Слабее смещение — фоновый дрейф без акцента */
-          oscarTargetX = Math.sin(tf * 0.32) * 1.1 + Math.sin(tf * 0.12) * 0.45;
-          oscarTargetY = Math.cos(tf * 0.28) * 0.95 + Math.cos(tf * 0.13) * 0.38;
+          /* Заметное покачивание на мобилке */
+          oscarTargetX = Math.sin(tf * 0.32) * 8 + Math.sin(tf * 0.12) * 3;
+          oscarTargetY = Math.cos(tf * 0.28) * 7 + Math.cos(tf * 0.13) * 2.5;
         }
         const oscarDelta = Math.abs(oscarParallaxX - oscarTargetX) + Math.abs(oscarParallaxY - oscarTargetY);
         /* На мобилке кадр всегда пересчитываем — нужно непрерывное покачивание (rockDeg). */
@@ -596,8 +596,8 @@ async function initHero3D() {
           const tiltDeg = isMobileHero ? oscarParallaxX * 0.12 : oscarParallaxX * 0.25;
           const tx = oscarParallaxX;
           const ty = oscarParallaxY;
-          /* Лёгкое покачивание: малая амплитуда, низкая частота */
-          const rockDeg = isMobileHero ? Math.sin(mobileFloatTime * 0.95) * 0.55 : 0;
+          /* Заметное покачивание: увеличенная амплитуда */
+          const rockDeg = isMobileHero ? Math.sin(mobileFloatTime * 0.95) * 3.5 : 0;
           const td = tiltDeg + rockDeg;
           if (
             isMobileHero ||
@@ -605,7 +605,7 @@ async function initHero3D() {
             Math.abs((oscarImg._lastTy ?? 0) - ty) > 0.02 ||
             Math.abs((oscarImg._lastTd ?? 0) - td) > 0.01
           ) {
-            oscarImg.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) rotate(${td.toFixed(3)}deg)`;
+            oscarImg.style.transform = `translateX(-50%) translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) rotate(${td.toFixed(3)}deg)`;
             oscarImg._lastTx = tx;
             oscarImg._lastTy = ty;
             oscarImg._lastTd = td;
