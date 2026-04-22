@@ -1163,7 +1163,7 @@ body.site-menu-open {
 }
 
 .radio-note {
-    margin-bottom: 190px;
+    margin-bottom: 260px;
     width: 622px;
     color: rgba(248, 239, 232, 0.78);
     text-align: center;
@@ -1235,7 +1235,8 @@ body.site-menu-open {
 
 .radio-title-right {
     left: 1101px;
-    top: 550px;
+    top: 500px;
+    margin-top: -110px;
     color: #e9b18e;
     transform: translateY(200px);
 }
@@ -1697,6 +1698,7 @@ body.site-menu-open {
 
 .title-bottom {
     margin-left: auto;
+    margin-right: 40px;
 }
 
 .decor-letter {
@@ -1710,7 +1712,7 @@ body.site-menu-open {
     background: linear-gradient(180deg, #f5c3a0, #f1a775);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-left: 100px;
+    margin-left: 80px;
 }
 
 .hero-footer {
@@ -3471,6 +3473,17 @@ body.site-menu-open {
 }
 
 .sales-line {
+    position: absolute;
+    top: 174px;
+    width: 100%;
+    height: 1px;
+    margin: 0 0 0px 0;
+    background: rgba(255, 255, 255);
+}
+
+.ceremony2 .sales-line {
+    position: unset;
+    top: unset;
     width: 100%;
     height: 1px;
     margin: 0 0 10px 0;
@@ -3559,11 +3572,6 @@ body.site-menu-open {
     border: 2px solid #f1a775;
 }
 
-.sales-nav:disabled {
-    cursor: default;
-    opacity: 0.38;
-}
-
 .sales-conditions {
     display: inline-flex;
     align-items: center;
@@ -3609,6 +3617,31 @@ body.site-menu-open {
     justify-content: flex-start;
     width: max-content;
     gap: 18px;
+}
+
+.sales-nav {
+    border: 1px solid #F1A775;
+}
+
+.sales-nav .sales-nav-arrow {
+    filter: brightness(0) saturate(100%) invert(74%) sepia(44%) saturate(600%) hue-rotate(330deg) brightness(103%) contrast(92%);
+}
+
+.sales-nav:hover {
+    border-color: #f1f1f1;
+}
+
+.sales-nav:hover .sales-nav-arrow {
+    filter: brightness(0) invert(1);
+}
+
+.sales-nav:disabled {
+    cursor: default;
+    border: 1px solid #f1f1f1;
+}
+
+.sales-nav:disabled .sales-nav-arrow {
+    filter: brightness(0) invert(1);
 }
 
 .sales-nominee-line-top-left,
@@ -3695,6 +3728,7 @@ body.site-menu-open {
 .sales-nominee-btn.reveal-text.in-view:hover,
 .sales-nominee-btn.reveal-text.in-view:focus-visible {
     background-color: #dc1924;
+    box-shadow: 0px 17px 42.5px 0px #D70B0B66;
 }
 
 .sales-nominee-line {
@@ -4223,6 +4257,7 @@ left: 0;
 
 .sales-header {
     text-align: left;
+    position: relative;
 }
 
 .sales-slider-controls {
@@ -11816,7 +11851,7 @@ a.interview-node {
 .footer-link::before {
     content: "";
     position: absolute;
-    left: 0;
+    left: 2px;
     top: 50%;
     width: 1px;
     height: 32.5px;
