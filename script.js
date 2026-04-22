@@ -343,15 +343,14 @@ if (document.readyState === "loading") {
 // отдельный потолок шага (см. initMobileDocumentScrollCap), без «липкой» интерполяции.
 // ==========================================
 
-const isMobile = window.innerWidth <= 1200;
+const isMobileDevice = window.innerWidth <= 1024;
 
 const lenis = new Lenis({
-  // Уменьшаем duration. 5.2 — это очень много, на мобилках создает эффект «киселя»
-  duration: isMobile ? 1.2 : 2.2, 
+  duration: isMobileDevice ? 1.0 : 1.5, // Уменьшили длительность для отзывчивости
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   direction: 'vertical', 
   gestureDirection: 'vertical',
-  smooth: !isMobile, // ВЫКЛЮЧАЕМ smooth для мобилок, чтобы не конфликтовать с нативным скроллом
+  smooth: !isMobileDevice, // Отключаем на мобильных для нативного скролла
   mouseMultiplier: 1,
   smoothTouch: false, 
   touchMultiplier: 1.5,
@@ -3180,7 +3179,13 @@ function initMediaLibCarousel() {
   });
 }
 
-initMediaLibCarousel();
+if (!isMobileDevice) {
+  initMediaLibCarousel();
+} else {
+  // На мобильных можно просто показать статичный список или упрощенную версию
+  const carousel = document.getElementById('mediaLibCarousel');
+  if (carousel) carousel.style.overflowX = 'auto'; 
+}
 
 // ============================================
 // VIDEOTEKA TABS WRAPPER
