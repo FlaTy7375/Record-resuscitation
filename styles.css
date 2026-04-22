@@ -3684,8 +3684,13 @@ body.site-menu-open {
 
 .sales-nominee-word-underline {
     display: inline;
-    border-bottom: 2px solid currentColor;
-    padding-bottom: 4px;
+    white-space: nowrap;
+}
+
+.sales-nominee-word-underline .sales-nominee-letter-left,
+.sales-nominee-word-underline .sales-nominee-o,
+.sales-nominee-word-underline .sales-nominee-letter-right {
+    box-shadow: 0 3px 0 0 currentColor;
 }
 
 .sales-nominee-note {
@@ -6938,6 +6943,7 @@ left: 0;
 }
 .radio-title-right {
     transform: translate(-80px, 50px) !important;
+    margin-top: 10px;
 }
 .radio-advert {
     padding-top: 148px;
@@ -7509,8 +7515,8 @@ left: 0;
     }
 
     .sales-nominee-title {
-        font-size: 49px;
-        line-height: 49px;
+        font-size: clamp(36px, 12vw, 49px);
+        line-height: clamp(36px, 12vw, 49px);
         letter-spacing: -6%;
     }
 
@@ -9087,7 +9093,7 @@ a.interview-node {
     }
 
     .sales-line {
-        margin-bottom: 10px;
+        top: 60px;
     }
 
     .sales-copy {
@@ -9119,8 +9125,8 @@ a.interview-node {
     }
 
     .sales-nominee-title {
-        font-size: 46px;
-        line-height: 49px;
+        font-size: clamp(32px, 11vw, 46px);
+        line-height: clamp(32px, 11vw, 49px);
         letter-spacing: -6%;
     }
 
@@ -9141,7 +9147,7 @@ a.interview-node {
     .sales-nominee-line-bottom {
         width: 350px;
         margin: 0 auto;
-        margin-left: 17px;
+        margin-left: -5px;
     }
 
     .sales-nominee-note {
@@ -9243,6 +9249,7 @@ a.interview-node {
     }
     .sales-copy {
         margin-left: 0;
+        margin-top: 40px;
     }
     .swiper {
         margin: 0;
@@ -13510,4 +13517,40 @@ body.modal-open {
 }
 body.js-ready .status {
     opacity: 1;
+}
+
+br.mobile-only {
+    display: none;
+}
+
+@media (max-width: 1200px) {
+    br.mobile-only {
+        display: block;
+    }
+}
+
+@media (max-width: 1200px) {
+    .sales-nominee-premii {
+        display: block;
+    }
+}
+
+@media (max-width: 1200px) {
+    .sales-nominee-line-bottom {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .sales-nominee-premii {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 1200px) {
+    .sales-nominee-word-underline {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+    }
 }
