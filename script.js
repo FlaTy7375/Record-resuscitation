@@ -726,9 +726,9 @@ requestAnimationFrame(raf);
     }
   }
 
-  const STATUS_PIN_EXTRA_VH = 4.85;
+  const STATUS_PIN_EXTRA_VH = 2.425;
   const STATUS_PIN_VH_STRETCH_CAP = 920;
-  const STATUS_PIN_MIN_SCROLL_TRACK_PX = 2720;
+  const STATUS_PIN_MIN_SCROLL_TRACK_PX = 1360;
 
  function updatePinSpacerHeight() {
     if (!pinSpacer) return;
