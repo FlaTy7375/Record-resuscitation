@@ -1,7 +1,12 @@
 // Масштабирование страницы пропорционально ширине экрана (только >1200px)
 (function applyPageScale() {
+  let lastWidth = window.innerWidth;
+  // Запоминаем изначальную высоту для мобилок, чтобы она не прыгала
+  let initialMobileHeight = window.innerHeight;
+
   function updateScale() {
     const w = window.innerWidth;
+    
     if (w >= 1200) {
       const scale = Math.min(1, w / 1920);
       document.documentElement.style.zoom = scale;
@@ -9,9 +14,22 @@
       document.documentElement.style.setProperty('--real-vh', compensatedVh);
     } else {
       document.documentElement.style.zoom = '';
-      document.documentElement.style.setProperty('--real-vh', '100vh');
+      
+      // Если ширина не изменилась (просто скрылась адресная строка), не обновляем высоту
+      if (w === lastWidth && document.documentElement.style.getPropertyValue('--real-vh')) {
+          return;
+      }
+      
+      // Если перевернули телефон - берем новую высоту
+      if (w !== lastWidth) {
+          initialMobileHeight = window.innerHeight;
+      }
+      
+      document.documentElement.style.setProperty('--real-vh', initialMobileHeight + 'px');
     }
+    lastWidth = w;
   }
+  
   updateScale();
   window.addEventListener('resize', updateScale, { passive: true });
 })();
@@ -446,11 +464,18 @@ function getElementDocumentOffsetTop(el) {
  * Высота вьюпорта в координатах скролла документа (как для scrollY + «один экран»).
  */
 function getScrollViewportHeight() {
+  // Забираем значение из нашей стабилизированной CSS переменной на мобилках
+  if (window.innerWidth <= 1200) {
+      const realVhStr = document.documentElement.style.getPropertyValue('--real-vh');
+      if (realVhStr) {
+          return parseFloat(realVhStr);
+      }
+  }
+
   let vh = window.innerHeight || document.documentElement.clientHeight || 1;
   if (window.visualViewport && Number.isFinite(window.visualViewport.height)) {
     vh = Math.max(1, window.visualViewport.height);
   }
-  // Конвертируем физическую высоту окна в координаты Layout'а
   return vh / getPageScale(); 
 }
 
@@ -603,7 +628,11 @@ requestAnimationFrame(raf);
 
   // --- ИНИЦИАЛИЗАЦИЯ И СЛУШАТЕЛИ ---
   updateMetrics();
+ let promoLastWidth = window.innerWidth;
   window.addEventListener('resize', () => {
+    if (window.innerWidth <= 1200 && window.innerWidth === promoLastWidth) return;
+    promoLastWidth = window.innerWidth;
+    
     updateMetrics();
     requestPromoTick();
   });
@@ -1073,39 +1102,56 @@ function getStatusBottomAlignScrollY() {
     );
   }
 
-  function onScrollStatusAndSnap() {
+function onScrollStatusAndSnap() {
     onScrollStatus();
     scheduleStatusBottomSnap();
   }
 
-  window.addEventListener("scroll", onScrollStatusAndSnap, { passive: true });
-  window.addEventListener("resize", () => {
+  // --- НАЧАЛО БЛОКА СО СЛУШАТЕЛЯМИ ---
+
+  // Переменная для отслеживания ширины экрана
+  let statusLastWidth = window.innerWidth;
+
+  // Наша защищённая функция ресайза
+  const handleStatusResize = () => {
+    const currentWidth = window.innerWidth;
+    // Если на мобилке изменилась только высота (скрылась строка) — игнорируем
+    if (currentWidth <= 1200 && currentWidth === statusLastWidth) {
+      return;
+    }
+    statusLastWidth = currentWidth;
+
     updatePinSpacerHeight();
     onScrollStatus();
     syncStatusStatueImgForScrollPosition();
-  });
+  };
+
+  // 1. ВАЖНО: ВОЗВРАЩАЕМ СЛУШАТЕЛИ СКРОЛЛА (именно они запускают анимацию)
+  window.addEventListener("scroll", onScrollStatusAndSnap, { passive: true });
   if (typeof lenis !== "undefined" && lenis && typeof lenis.on === "function") {
     lenis.on("scroll", onScrollStatusAndSnap);
   }
 
+  // 2. Ставим слушатели ресайза с нашей проверкой
+  window.addEventListener("resize", handleStatusResize, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", handleStatusResize, { passive: true });
+  }
+
+  // 3. Наблюдатель за размером самого блока (ResizeObserver)
   const statusScrollRo = new ResizeObserver(() => {
     updatePinSpacerHeight();
     onScrollStatus();
     syncStatusStatueImgForScrollPosition();
   });
+  
   statusScrollRo.observe(statusSection);
   if (pinSpacer) statusScrollRo.observe(pinSpacer);
 
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", () => {
-      updatePinSpacerHeight();
-      onScrollStatus();
-      syncStatusStatueImgForScrollPosition();
-    });
-  }
-
+  // 4. Запускаем просчёт при первичной загрузке страницы
   onScrollStatusAndSnap();
-})();
+
+})(); // Конец функции initStatusScrollAnimation
 
 // ── Спираль-змея вокруг башни (перенос из Record-main) ─────────────
 

@@ -1780,7 +1780,7 @@ body.site-menu-open {
     max-width: none; 
     width: 100%;
     margin: 0 auto;
-    height: 350vh; /* Увеличили с 260vh для долгого залипания */
+    height: 350svh; /* Увеличили с 260vh для долгого залипания */
     min-height: 2500px; /* Жесткий лимит */
     overflow: visible;
 }
@@ -2287,7 +2287,7 @@ body.site-menu-open {
     min-height: calc(100vh + var(--promo-overlap-scroll));
     overflow: visible;
     isolation: isolate;
-    --promo-sticky-h: calc(var(--real-vh) + min(28vh, 400px));
+    --promo-sticky-h: calc(var(--real-vh) + min(28svh, 400px));
 }
 
 .screen-promo {
@@ -2312,7 +2312,7 @@ body.site-menu-open {
     content: '';
     position: absolute;
     left: 50%;
-    top: min(24vh, 320px);
+    top: min(24svh, 320px);
     bottom: 0;
     width: 120%;
     height: auto;
