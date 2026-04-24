@@ -704,18 +704,6 @@ requestAnimationFrame(raf);
       awardOverlay.style.transform = "translateY(70px)";
     }
     
-    // Управляем позицией блока .status-statue-stage на мобилке
-    const statueStage = document.querySelector('.status-statue-stage');
-    if (statueStage && narrow) {
-      statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
-      if (variant === "gold" || variant === "black") {
-        // Когда СТАТУС или МАСШТАБ активен - блок остаётся на месте (50px)
-        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(50px)', 'important');
-      } else {
-        // Когда другие кнопки активны - блок в обычном положении (0px)
-        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
-      }
-    }
   }
 
   /** Как при первом показе блока: без zoom, базовая вертикаль (как шаг «Статус») */
@@ -734,13 +722,6 @@ requestAnimationFrame(raf);
     if (awardOverlay && statusStatueIsNarrowLayout()) {
       awardOverlay.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
       awardOverlay.style.transform = "translateY(70px)";
-    }
-    
-    // Сбрасываем позицию блока stage на мобилке (в обычное положение, как до фиксации)
-    const statueStage = document.querySelector('.status-statue-stage');
-    if (statueStage && statusStatueIsNarrowLayout()) {
-      statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
-      statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
     }
   }
 
@@ -798,24 +779,6 @@ requestAnimationFrame(raf);
     if (!skipStatueImg) {
       applyStatusStatueImgTransform(variant);
     }
-    
-    // Дополнительно опускаем блок stage когда цитата gold активна
-    const statueStage = document.querySelector('.status-statue-stage');
-    const narrow = statusStatueIsNarrowLayout();
-    if (statueStage && narrow) {
-      const isGoldQuoteActive = statusQuoteGold && statusQuoteGold.classList.contains('is-active');
-      statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
-      if (isGoldQuoteActive) {
-        // Когда цитата gold активна - опускаем на 140px
-        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(140px)', 'important');
-      } else if (variant === "gold" || variant === "black") {
-        // Когда кнопка СТАТУС или МАСШТАБ активна - оставляем на 50px
-        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(50px)', 'important');
-      } else {
-        // В остальных случаях - обычное положение
-        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
-      }
-    }
   }
 
   const STATUS_PIN_EXTRA_VH = 2.425;
@@ -862,42 +825,41 @@ requestAnimationFrame(raf);
       if (awardOverlay) awardOverlay.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
     }, 50);
   }
-  
-  // Начальное состояние для блока stage на мобилке (в обычном положении, до фиксации)
-  const statueStage = document.querySelector('.status-statue-stage');
-  if (statueStage && statusStatueIsNarrowLayout()) {
-    statueStage.style.transition = "none";
-    statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
-    setTimeout(() => {
-      if (statueStage) statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
-    }, 50);
-  }
-  
-  // Наблюдатель за изменением класса is-active у цитаты gold
-  if (statusQuoteGold && statusStatueIsNarrowLayout()) {
+
+  // На мобилке: когда цитата gold (текст при кнопке СТАТУС) становится видимой — опускаем statueStage на 90px
+  if (statusQuoteGold) {
     const observer = new MutationObserver(() => {
+      if (!statusStatueIsNarrowLayout()) return;
       const statueStage = document.querySelector('.status-statue-stage');
       if (!statueStage) return;
-      
-      const isGoldQuoteActive = statusQuoteGold.classList.contains('is-active');
+      const isActive = statusQuoteGold.classList.contains('is-active');
       statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
-      
-      if (isGoldQuoteActive) {
-        // Когда цитата gold активна - опускаем на 140px
-        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(140px)', 'important');
-      } else if (activeVariant === "gold" || activeVariant === "black") {
-        // Когда кнопка СТАТУС или МАСШТАБ активна - оставляем на 50px
-        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(50px)', 'important');
-      } else {
-        // В остальных случаях - обычное положение
-        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
+      // Опускаем на 90px когда gold активен, оставляем на всех последующих шагах
+      if (isActive) {
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(90px)', 'important');
       }
     });
-    
-    observer.observe(statusQuoteGold, {
-      attributes: true,
-      attributeFilter: ['class']
+    observer.observe(statusQuoteGold, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  // На мобилке: когда активна кнопка МАСШТАБ — опускаем картинку и правый блок (дата) на 20px
+  if (statusQuoteBlack) {
+    const observerBlack = new MutationObserver(() => {
+      if (!statusStatueIsNarrowLayout()) return;
+      const img = document.getElementById('statusOscarImg');
+      const dateOverlay = document.querySelector('.status-statue-overlay--date');
+      const isActive = statusQuoteBlack.classList.contains('is-active');
+      const t = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      if (img) {
+        img.style.transition = t;
+        img.style.transform = isActive ? 'translateY(105px)' : 'translateY(70px)';
+      }
+      if (dateOverlay) {
+        dateOverlay.style.transition = t;
+        dateOverlay.style.transform = isActive ? 'translateY(35px)' : '';
+      }
     });
+    observerBlack.observe(statusQuoteBlack, { attributes: true, attributeFilter: ['class'] });
   }
 
   // Флаг: был ли уже активирован хотя бы один шаг (чтобы не активировать gold до входа в зону)

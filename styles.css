@@ -7648,13 +7648,13 @@ left: 0;
         filter: contrast(4);
         width: 800px;
         height: 600px;
-        left: 80%;
+        left: 72.625%;
         transform: translateX(-50%);
     }
 
     .sales-star-1 {
         left: 63%;
-        margin-left: -220px;
+        margin-left: -247px;
         top: 100px;
         width: 50px;
         height: 50px;
@@ -7662,7 +7662,7 @@ left: 0;
 
     .sales-star-2 {
         left: 48%;
-        margin-left: 180px;
+        margin-left: 153px;
         top: 160px;
         width: 35px;
         height: 35px;
@@ -7982,8 +7982,8 @@ left: 0;
 
     .status-statue-stage {
         position: absolute;
-        top: auto;
-        bottom: calc(170px + clamp(3.25rem, 11vw, 5.5rem));
+        top: 204px;
+        bottom: auto;
         left: 50%;
         transform: translateX(-50%);
         width: 375px;
@@ -9274,13 +9274,13 @@ a.interview-node {
         filter: contrast(4);
         width: 800px;
         height: 600px;
-        left: 80%;
+        left: 72.625%;
         transform: translateX(-50%);
     }
 
     .sales-star-1 {
         left: 63%;
-        margin-left: -220px;
+        margin-left: -247px;
         top: 100px;
         width: 50px;
         height: 50px;
@@ -9288,7 +9288,7 @@ a.interview-node {
 
     .sales-star-2 {
         left: 48%;
-        margin-left: 180px;
+        margin-left: 153px;
         top: 160px;
         width: 35px;
         height: 35px;
@@ -9614,8 +9614,8 @@ a.interview-node {
 
     .status-statue-stage {
         position: absolute;
-        top: auto;
-        bottom: calc(170px + clamp(3.25rem, 11vw, 5.5rem));
+        top: 140px;
+        bottom: auto;
         left: 50%;
         transform: translateX(-50%);
         width: 375px;
