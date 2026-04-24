@@ -204,8 +204,14 @@ export function setStatueCameraFocus(variant) {
 
   const img = document.getElementById('statusOscarImg');
   if (img) {
+    // На мобилке (<=1200px) картинка всегда в одном положении
+    const isMobile = window.innerWidth <= 1200;
     img.style.transition = 'transform 0.8s cubic-bezier(0.22, 0.8, 0.22, 1)';
-    img.style.transform = `translateY(${cfg.y}) scale(${cfg.scale})`;
+    if (isMobile) {
+      img.style.transform = 'translateY(70px)';
+    } else {
+      img.style.transform = `translateY(${cfg.y}) scale(${cfg.scale})`;
+    }
   }
 }
 
@@ -219,8 +225,13 @@ export function resetStatueCamera() {
   currentImgZoom = 1;
   const img = document.getElementById('statusOscarImg');
   if (img) {
+    const isMobile = window.innerWidth <= 1200;
     img.style.transition = 'transform 0.8s cubic-bezier(0.22, 0.8, 0.22, 1)';
-    img.style.transform = 'scale(1)';
+    if (isMobile) {
+      img.style.transform = 'translateY(70px)';
+    } else {
+      img.style.transform = 'scale(1)';
+    }
   }
 }
 

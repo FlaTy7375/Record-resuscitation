@@ -679,24 +679,42 @@ requestAnimationFrame(raf);
     const narrow = statusStatueIsNarrowLayout();
     statusOscarImg.style.transition =
       "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
-    /* Мобилка: слабее zoom, статуя ниже (больше translateY) */
-    const narrowScale = 1.22;
-    if (variant === "gold") {
-      statusOscarImg.style.transform = narrow
-        ? `translateY(-2px) scale(${narrowScale})`
-        : "translateY(-144px) scale(1.444)";
-    } else if (variant === "black") {
-      statusOscarImg.style.transform = narrow
-        ? `translateY(152px) scale(${narrowScale})`
-        : "translateY(106px) scale(1.444)";
-    } else if (variant === "ruby") {
-      statusOscarImg.style.transform = narrow
-        ? `translateY(190px) scale(${narrowScale})`
-        : "translateY(356px) scale(1.444)";
-    } else if (variant === "rubyDeep") {
-      statusOscarImg.style.transform = narrow
-        ? `translateY(200px) scale(${narrowScale * 1.15})`
-        : "translateY(606px) scale(1.444)";
+    
+    // На мобилке картинка всегда в одном положении (70px), не двигается
+    if (narrow) {
+      statusOscarImg.style.transform = `translateY(70px)`;
+    } else {
+      // На десктопе применяем разные позиции
+      if (variant === "gold") {
+        statusOscarImg.style.transform = "translateY(-144px) scale(1.444)";
+      } else if (variant === "black") {
+        statusOscarImg.style.transform = "translateY(106px) scale(1.444)";
+      } else if (variant === "ruby") {
+        statusOscarImg.style.transform = "translateY(356px) scale(1.444)";
+      } else if (variant === "rubyDeep") {
+        statusOscarImg.style.transform = "translateY(606px) scale(1.444)";
+      }
+    }
+    
+    // Управляем позицией блока .status-statue-overlay--award на мобилке
+    const awardOverlay = document.querySelector('.status-statue-overlay--award');
+    if (awardOverlay && narrow) {
+      awardOverlay.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      // На мобилке блок award всегда в одном положении (70px), не двигается
+      awardOverlay.style.transform = "translateY(70px)";
+    }
+    
+    // Управляем позицией блока .status-statue-stage на мобилке
+    const statueStage = document.querySelector('.status-statue-stage');
+    if (statueStage && narrow) {
+      statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      if (variant === "gold") {
+        // Когда СТАТУС активен - блок опускается ниже (50px)
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(50px)', 'important');
+      } else {
+        // Когда другие кнопки активны - блок в обычном положении (0px)
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
+      }
     }
   }
 
@@ -706,9 +724,23 @@ requestAnimationFrame(raf);
     statusOscarImg.style.transition =
       "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
     if (statusStatueIsNarrowLayout()) {
-      statusOscarImg.style.transform = "translateY(-2px)";
+      statusOscarImg.style.transform = "translateY(70px)";
     } else {
       statusOscarImg.style.removeProperty("transform");
+    }
+    
+    // Сбрасываем позицию блока award на мобилке
+    const awardOverlay = document.querySelector('.status-statue-overlay--award');
+    if (awardOverlay && statusStatueIsNarrowLayout()) {
+      awardOverlay.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      awardOverlay.style.transform = "translateY(70px)";
+    }
+    
+    // Сбрасываем позицию блока stage на мобилке (в обычное положение, как до фиксации)
+    const statueStage = document.querySelector('.status-statue-stage');
+    if (statueStage && statusStatueIsNarrowLayout()) {
+      statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
     }
   }
 
@@ -766,6 +798,24 @@ requestAnimationFrame(raf);
     if (!skipStatueImg) {
       applyStatusStatueImgTransform(variant);
     }
+    
+    // Дополнительно опускаем блок stage когда цитата gold активна
+    const statueStage = document.querySelector('.status-statue-stage');
+    const narrow = statusStatueIsNarrowLayout();
+    if (statueStage && narrow) {
+      const isGoldQuoteActive = statusQuoteGold && statusQuoteGold.classList.contains('is-active');
+      statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      if (isGoldQuoteActive) {
+        // Когда цитата gold активна - опускаем на 140px
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(140px)', 'important');
+      } else if (variant === "gold") {
+        // Когда только кнопка СТАТУС активна - опускаем на 50px
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(50px)', 'important');
+      } else {
+        // В остальных случаях - обычное положение
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
+      }
+    }
   }
 
   const STATUS_PIN_EXTRA_VH = 2.425;
@@ -794,13 +844,60 @@ requestAnimationFrame(raf);
   if (statusOscarImg) {
     statusOscarImg.style.transition = "none";
     if (statusStatueIsNarrowLayout()) {
-      statusOscarImg.style.transform = "translateY(-2px)";
+      statusOscarImg.style.transform = "translateY(70px)";
     } else {
       statusOscarImg.style.removeProperty("transform");
     }
     setTimeout(() => {
       if (statusOscarImg) statusOscarImg.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
     }, 50);
+  }
+  
+  // Начальное состояние для блока award на мобилке
+  const awardOverlay = document.querySelector('.status-statue-overlay--award');
+  if (awardOverlay && statusStatueIsNarrowLayout()) {
+    awardOverlay.style.transition = "none";
+    awardOverlay.style.transform = "translateY(70px)";
+    setTimeout(() => {
+      if (awardOverlay) awardOverlay.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+    }, 50);
+  }
+  
+  // Начальное состояние для блока stage на мобилке (в обычном положении, до фиксации)
+  const statueStage = document.querySelector('.status-statue-stage');
+  if (statueStage && statusStatueIsNarrowLayout()) {
+    statueStage.style.transition = "none";
+    statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
+    setTimeout(() => {
+      if (statueStage) statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+    }, 50);
+  }
+  
+  // Наблюдатель за изменением класса is-active у цитаты gold
+  if (statusQuoteGold && statusStatueIsNarrowLayout()) {
+    const observer = new MutationObserver(() => {
+      const statueStage = document.querySelector('.status-statue-stage');
+      if (!statueStage) return;
+      
+      const isGoldQuoteActive = statusQuoteGold.classList.contains('is-active');
+      statueStage.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
+      
+      if (isGoldQuoteActive) {
+        // Когда цитата gold активна - опускаем на 140px
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(140px)', 'important');
+      } else if (activeVariant === "gold") {
+        // Когда только кнопка СТАТУС активна - опускаем на 50px
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(50px)', 'important');
+      } else {
+        // В остальных случаях - обычное положение
+        statueStage.style.setProperty('transform', 'translateX(-50%) translateY(0)', 'important');
+      }
+    });
+    
+    observer.observe(statusQuoteGold, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
   }
 
   // Флаг: был ли уже активирован хотя бы один шаг (чтобы не активировать gold до входа в зону)
@@ -849,7 +946,7 @@ requestAnimationFrame(raf);
     if (statusOscarImg) {
       statusOscarImg.style.transition = "transform 1.2s cubic-bezier(0.22, 0.8, 0.22, 1)";
       if (statusStatueIsNarrowLayout()) {
-        statusOscarImg.style.transform = "translateY(-2px)";
+        statusOscarImg.style.transform = "translateY(70px)";
       } else {
         statusOscarImg.style.removeProperty("transform");
       }
