@@ -1,0 +1,25 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.9);stop-opacity:1" />
+      <stop offset="50%" style="stop-color:rgba(255,255,255,0.6);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0.9);stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Внешнее кольцо -->
+  <circle cx="500" cy="500" r="480" fill="none" stroke="url(#ringGradient)" stroke-width="2" opacity="0.8" filter="url(#glow)"/>
+  
+  <!-- Среднее кольцо -->
+  <circle cx="500" cy="500" r="380" fill="none" stroke="url(#ringGradient)" stroke-width="1.5" opacity="0.6" filter="url(#glow)"/>
+  
+  <!-- Внутреннее кольцо -->
+  <circle cx="500" cy="500" r="280" fill="none" stroke="url(#ringGradient)" stroke-width="1" opacity="0.4" filter="url(#glow)"/>
+</svg>

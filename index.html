@@ -1,0 +1,2956 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+ <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Рекорд</title>
+    <link rel="icon" type="image/png" href="./assets/titlelogo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Roboto:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="./assets/images/hero/logo_2026.webp"
+      fetchpriority="high"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three/three.module.js"
+        }
+      }
+    </script>
+    <link rel="modulepreload" href="./vendor/three/three.module.js" />
+    <link rel="modulepreload" href="./vendor/three/loaders/GLTFLoader.js" />
+    <link rel="modulepreload" href="./vendor/three/loaders/DRACOLoader.js" />
+    <link rel="modulepreload" href="./vendor/three/loaders/RGBELoader.js" />
+    <link rel="modulepreload" href="./oscarViewerShared.js" />
+    <link rel="modulepreload" href="./hero3d.js" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+    <main class="page">
+        <aside class="site-menu" id="siteMenuPanel" aria-hidden="true" data-lenis-prevent>
+          <div class="site-menu__backdrop" data-site-menu-close></div>
+          <div class="site-menu__shell">
+            <div class="site-menu__desktop-tab">
+              <button class="site-menu__close-btn" aria-label="Закрыть меню" data-site-menu-close>
+                <img src="./assets/site-menu-close.svg" alt="" />
+              </button>
+            </div>
+            <div class="site-menu__panel">
+              
+              <div class="site-menu__content">
+                <div class="site-menu__logo">
+                  <video class="site-menu__logo-video" autoplay loop muted playsinline>
+                    <source src="./assets/logo.webm" type="video/webm">
+                  </video>
+                  <img class="site-menu__logo-mark" src="./assets/images/award/log.png" alt="" />
+                </div>
+
+                <div class="site-menu__actions">
+                  <a href="#" class="site-menu__btn site-menu__btn--primary">
+                    Принять участие
+                    <img src="./assets/site-menu-arrow-menu.svg" alt="" />
+                  </a>
+
+                  <a href="#" class="site-menu__btn site-menu__btn--outline">
+                    Победители 2026
+                    <img src="./assets/site-menu-arrow-menu.svg" alt="" />
+                  </a>
+                </div>
+
+                <nav class="site-menu__nav">
+                  <div class="site-menu__group" id="site-menu-group-about">
+                    <button class="site-menu__nav-item" data-site-menu-group="site-menu-group-about">
+                      О ПРЕМИИ
+                      <img src="./assets/site-menu-arrow-dropdown.svg" alt="" />
+                    </button>
+                    <div class="site-menu__submenu">
+                      <a href="#" class="site-menu__submenu-link">Что о нас говорят?</a>
+                      <a href="#" class="site-menu__submenu-link">Реклама премии</a>
+                      <a href="#" class="site-menu__submenu-link">Что вам дает участие?</a>
+                      <a href="#" class="site-menu__submenu-link">СМИ о премии</a>
+                      <a href="#" class="site-menu__submenu-link">Пост-релиз Премии</a>
+                      <a href="#" class="site-menu__submenu-link">Требования к номинациям</a>
+                    </div>
+                  </div>
+
+                  <div class="site-menu__group" id="site-menu-group-award">
+                    <button class="site-menu__nav-item" data-site-menu-group="site-menu-group-award">
+                      ПРЕМИЯ 2026
+                      <img src="./assets/site-menu-arrow-dropdown.svg" alt="" />
+                    </button>
+                    <div class="site-menu__submenu">
+                      <a href="#" class="site-menu__submenu-link">Номинации</a>
+                      <a href="#" class="site-menu__submenu-link">Этапы проведения</a>
+                      <a href="#" class="site-menu__submenu-link">Жюри</a>
+                      <a href="#" class="site-menu__submenu-link">Участники</a>
+                    </div>
+                  </div>
+
+                  <div class="site-menu__group" id="site-menu-group-materials">
+                    <button class="site-menu__nav-item" data-site-menu-group="site-menu-group-materials">
+                      МАТЕРИАЛЫ
+                      <img src="./assets/site-menu-arrow-dropdown.svg" alt="" />
+                    </button> 
+                    <div class="site-menu__submenu">
+                      <a href="#" class="site-menu__submenu-link">Фотогалерея</a>
+                      <a href="#" class="site-menu__submenu-link">Видеоотчеты</a>
+                      <a href="#" class="site-menu__submenu-link">Логотипы и брендбук</a>
+                      <a href="#" class="site-menu__submenu-link">Презентации</a>
+                    </div>
+                  </div>
+                </nav>
+
+                <div class="site-menu__socials">
+                  <a href="#" class="site-menu__social-link">Dzen</a>
+                  <a href="#" class="site-menu__social-link">Telegram</a>
+                  <a href="#" class="site-menu__social-link">RuTube</a>
+                  <a href="#" class="site-menu__social-link">Telegram-канал</a>
+                  <a href="#" class="site-menu__social-link">Max</a>
+                  <a href="#" class="site-menu__social-link">Вконтакте</a>
+                </div>
+
+                <div class="site-menu__subscribe">
+                  <span class="site-menu__subscribe-label">Подписаться на рассылку:</span>
+                  <div class="site-menu__subscribe-row">
+                    <input type="email" class="site-menu__subscribe-input" placeholder="Введите Email" />
+                    <button class="site-menu__subscribe-submit">
+                      <img src="./assets/site-menu-submit.svg" alt="" />
+                    </button>
+                  </div>
+                </div>
+
+                <div class="site-menu__footer">
+                  <a href="#">Политика конфиденциальности</a>
+                  <a href="#">Отказ от ответственности</a>
+                </div>
+
+                
+              </div>
+              <div class="for-background">
+                <button class="site-menu__mobile-close-btn" type="button" aria-label="Закрыть меню" data-site-menu-close>
+                  <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+        <button
+          type="button"
+          class="page-menu-btn"
+          id="pageMenuToggle"
+          aria-label="Открыть меню"
+          aria-controls="siteMenuPanel"
+          aria-expanded="false"
+        >
+            <span class="page-menu-btn__ripple" aria-hidden="true"></span>
+            <img src="./assets/menu.svg" alt="" width="33" height="33" decoding="async" />
+        </button>
+        <div class="hero-bleed">
+        <div id="hero3dScene" class="hero-3d-scene" aria-hidden="true"></div>
+        <section class="hero" id="heroScreen">
+        <img id="heroOscarImg" class="hero-oscar-img" src="./assets/oscar-hq.png" alt="" aria-hidden="true" />
+        <header class="header">
+            <a href="#salesPopup" class="badge badge-left">Принять участие <span><img src="./assets/vector5.svg" alt="" width="9" height="14"/></span></a>
+            <div class="site-menu__media">
+              <video class="site-menu__video" autoplay loop muted playsinline>
+                <source src="./assets/logo.webm" type="video/webm">
+              </video>
+              <img class="site-menu__photo" src="./assets/images/award/log.png" alt="" />
+            </div>
+            <a href="#salesPopup" class="badge badge-right">Победители 2026 <span><img src="./assets/vector5.svg" alt="" width="9" height="14"/></span></a>
+        </header>
+
+        <div class="main-content">
+            <h1 class="title-top">РЕК<span class="decor-letter">О</span>РДЫ</h1>
+            <h1 class="title-bottom">
+            РЫНКА <span class="gradient-text">НЕДВИЖИМОСТИ</span>
+            </h1>
+        </div>
+
+        <div class="hero-footer">
+            <div class="scroll-hint"><span><img src="./assets/vector1.svg" alt="" width="19" height="12"/></span> ЛИСТАЙ ВНИЗ</div>
+
+          <div class="social-links">
+            <a href="https://t.me/your_channel" target="_blank" rel="noopener noreferrer" class="social-link">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_3384_286)">
+                <path d="M12.7556 1.23168L0.456264 5.99912C-0.0386849 6.22114 -0.20609 6.66573 0.336634 6.90703L3.49195 7.91495L11.1211 3.17561C11.5377 2.87808 11.9641 2.95741 11.5972 3.28471L5.04475 9.24815L4.83892 11.7719C5.02956 12.1615 5.37863 12.1633 5.6013 11.9697L7.41412 10.2455L10.5189 12.5824C11.24 13.0115 11.6324 12.7346 11.7875 11.9481L13.8239 2.25545C14.0354 1.28732 13.6748 0.860757 12.7556 1.23168Z" fill="white"/>
+                </g>
+                <defs>
+                <clipPath id="clip0_3384_286">
+                <rect width="13.8826" height="13.8826" fill="white"/>
+                </clipPath>
+                </defs>
+                </svg>
+            </a>
+            <a href="https://max.ru/your_page" target="_blank" rel="noopener noreferrer" class="social-link">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_3384_290)">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M5.73173 0.186479C4.64844 0.367818 3.16003 1.09968 2.28068 1.88346C1.46614 2.60936 0.656457 3.83916 0.323544 4.85598C0.0873076 5.57714 0.0551186 5.87202 0.0588666 7.27566C0.0627249 8.74974 0.0953548 9.00273 0.477985 10.5276C0.706174 11.4371 0.923008 12.4991 0.959827 12.8877C1.05176 13.858 1.24898 14.0474 2.08843 13.9712C2.75458 13.9108 3.4537 13.6144 3.77934 13.2542C3.97479 13.0381 3.9846 13.0401 4.83739 13.4758C5.60265 13.8668 5.80702 13.9215 6.67954 13.9683C8.68816 14.0764 10.5588 13.3686 11.9478 11.9753C13.3559 10.563 14.0009 9.03691 13.9978 7.12541C13.9945 5.0802 13.3782 3.56952 11.9625 2.13634C11.2451 1.40999 10.9014 1.15711 10.1412 0.795865C9.62583 0.55103 8.94126 0.296605 8.62003 0.230463C8.06202 0.115707 6.31367 0.0890303 5.73173 0.186479ZM6.28148 3.67579C4.84466 3.98831 3.92915 5.05694 3.63085 6.76968C3.47972 7.63746 3.5549 8.94243 3.80425 9.7821C4.0417 10.5818 4.1688 10.6462 4.71491 10.2447L5.16887 9.91086L5.64321 10.1629C6.03014 10.3683 6.29008 10.4147 7.05457 10.4145C7.86447 10.4143 8.07061 10.3729 8.57406 10.109C9.89128 9.41843 10.5292 8.30185 10.4471 6.83053C10.3709 5.46272 9.68425 4.4642 8.43759 3.90816C7.71378 3.58539 7.03428 3.51209 6.28148 3.67579Z" fill="white"/>
+                </g>
+                <defs>
+                <clipPath id="clip0_3384_290">
+                <rect width="14" height="14" fill="white"/>
+                </clipPath>
+                </defs>
+                </svg>
+            </a>
+            <a href="https://rutube.ru/your_channel" target="_blank" rel="noopener noreferrer" class="social-link">
+                <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.5 5C15 5 16 5.4 16 7C16 9 16.5 10.5 16 11C15.6 11.4 14.5 11.8333 14 12L15.5 14.5L16.5 16H14L10.5 12H5V16L4.5 15.5H2.5V5H14.5ZM5.5 7.5V9.5H13V7L5.5 7.5Z" fill="white"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.7087 2.46516C15.1753 2.82726 15.0523 3.38527 15.3939 3.89295C15.9514 4.72152 17.2275 4.32817 17.2275 3.32776C17.2275 3.02266 17.1765 2.89726 16.9529 2.65347C16.5829 2.24966 16.1277 2.18075 15.7087 2.46516ZM1.7624 4.04571L1.56303 4.20717L1.54023 10.1464C1.52435 14.2818 1.5453 16.1529 1.6093 16.3074C1.76105 16.6739 1.99598 16.7199 3.7156 16.7199C5.28036 16.7199 5.31599 16.7159 5.5483 16.5163L5.78525 16.3126L5.81126 14.6163L5.83735 12.9199H8.18651H10.5358L11.8131 14.7688C12.5156 15.7857 13.1503 16.6407 13.2236 16.6688C13.4719 16.7641 16.8702 16.7251 17.0911 16.6245C17.3232 16.5187 17.5273 16.1183 17.4507 15.9188C17.4236 15.848 16.867 15.0887 16.2139 14.2314L15.0265 12.6727L15.3754 12.4948C16.2151 12.0664 16.7776 11.2523 16.9877 10.1614C17.0399 9.89044 17.0825 9.07978 17.0824 8.35989C17.0822 6.97061 16.9741 6.31971 16.6323 5.64973C16.2166 4.83493 15.1673 4.13877 14.103 3.97173C13.7696 3.91938 11.2795 3.88535 7.75796 3.88501C2.17669 3.88433 1.95434 3.89033 1.7624 4.04571ZM2.78747 10.3021V15.4532H3.67414H4.56081V13.7352C4.56081 12.0962 4.569 12.0097 4.73848 11.8563C4.90492 11.7056 5.10302 11.6939 7.89163 11.6713C9.64875 11.657 10.9543 11.6802 11.08 11.728C11.2224 11.7822 11.7092 12.4115 12.5502 13.6288L13.8075 15.4485L14.6778 15.4509C15.5061 15.4531 15.5428 15.4457 15.4378 15.2983C15.3771 15.2131 14.881 14.5557 14.3353 13.8374C13.2357 12.3902 13.1467 12.1577 13.5655 11.8283C13.6879 11.732 13.8575 11.6532 13.9423 11.6532C14.2832 11.6532 15.031 11.2966 15.2766 11.0169C15.6901 10.5459 15.7919 10.0375 15.7919 8.44433C15.7919 6.79953 15.6954 6.35172 15.2399 5.88271C14.5307 5.15244 14.5171 5.151 8.18778 5.151H2.78747V10.3021ZM4.7872 6.58968L4.56081 6.76769V8.3935C4.56081 9.99153 4.56418 10.0225 4.75951 10.206L4.9582 10.3927L9.10231 10.3685C13.1366 10.345 13.2526 10.3397 13.4795 10.1702C14.0156 9.76977 14.0608 9.63247 14.0608 8.40211C14.0608 7.14245 13.9985 6.97027 13.4186 6.62878C13.1443 6.46715 12.9565 6.45888 9.07276 6.43574C5.05354 6.41184 5.01132 6.41336 4.7872 6.58968ZM5.82747 8.40211V9.11989H9.33192H12.8364V8.40211V7.68433H9.33192H5.82747V8.40211Z" fill="white"/>
+                </svg>
+            </a>
+          </div>
+        </div>
+        
+        </section>
+        </div>
+        <section class="countdown-section" id="countScreen">
+            <div class="countdown-pin">
+                <canvas class="count-orbit-canvas" id="countOrbitCanvas" aria-hidden="true"></canvas>
+                <img class="count-clock-image" src="./assets/hero-bg.png" alt="" aria-hidden="true" />
+                <video class="count-clock-video" src="./assets/часы.webm" autoplay muted loop playsinline aria-hidden="true"></video>
+                <div class="countdown-container">
+                    
+                    <div class="titles-wrapper">
+                        <h2 class="title-white">ДО ПРЕМИИ</h2>
+                        <h2 class="title-gold">ОСТАЛОСЬ:</h2>
+                    </div>
+
+                    <div class="cards-group">
+                    <div class="timer-group">
+                        <div class="cards-row">
+                            <div class="timer-card">
+                                <span class="number">10</span>
+                                <span class="label">ДНЕЙ</span>
+                            </div>
+                            <div class="timer-card">
+                                <span class="number">45</span>
+                                <span class="label">ЧАСОВ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tower-spacer"></div>
+                
+                    <div class="cards-row second">
+                        <div class="timer-card">
+                            <span class="number">25</span>
+                            <span class="label">МИНУТ</span>
+                        </div>
+                        <div class="timer-card">
+                            <div class="number flip">
+                                <span class="current">45</span>
+                            </div>
+                            <span class="label">СЕКУНД</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+        <div class="status-pin-spacer">
+        <section class="status" id="statusScreen" aria-label="Status">
+
+          <h2 class="status-title-main reveal-text is-active">Статус</h2>
+          <p class="status-title-sub status-title-sub-1 reveal-text">масштаб</p>
+          <p class="status-title-sub status-title-sub-2 reveal-text">
+            Достижения
+          </p>
+            <div class="status-scroll-hint">
+                <img src="./assets/vector1.svg" alt="" /><span class="reveal-text"
+                >листай вниз</span
+                >
+            </div>
+          <div class="status-quote status-quote-gold reveal-text is-active">
+            <img
+              class="status-bracket left"
+              src="./assets/bracket_left.svg"
+              alt=""
+            />
+            <p>
+              <span class="u">Самая крупная международная </span>
+              <span>и&nbsp;престижная премия</span>
+              <span class="muted"> в&nbsp;сфере девелопмента</span>
+            </p>
+            <img
+              class="status-bracket right"
+              src="./assets/bracket_right.svg"
+              alt=""
+            />
+          </div>
+
+          <div class="status-quote status-quote-black reveal-text">
+            <img
+              class="status-bracket left"
+              src="./assets/bracket_left.svg"
+              alt=""
+            />
+            <p>
+              <span class="u">Масштабная рекламная кампания </span>
+              <span>охватывает всю страну</span>
+              <span class="muted"> и привлекает миллионы покупателей</span>
+            </p>
+            <img
+              class="status-bracket right"
+              src="./assets/bracket_right.svg"
+              alt=""
+            />
+          </div>
+
+          <div class="status-quote status-quote-ruby reveal-text">
+            <img
+              class="status-bracket left"
+              src="./assets/bracket_left.svg"
+              alt=""
+            />
+            <p>
+              <span class="u">16 лет успешной работы </span>
+              <span>и тысячи победителей</span>
+              <span class="muted"> подтверждают статус премии</span>
+            </p>
+            <img
+              class="status-bracket right"
+              src="./assets/bracket_right.svg"
+              alt=""
+            />
+          </div>
+
+          <div class="status-footer-anchor">
+            <p class="status-footer reveal-text">28 МАЯ 2026</p>
+          </div>
+
+          <div class="status-statue-stage">
+            <img id="statusOscarImg" class="status-statue-img" src="./assets/oscar-grey-hq.png" alt="" aria-hidden="true" />
+            <div class="status-statue-overlay status-statue-overlay--award">
+              <p class="status-award-main reveal-text">ГЛАВНАЯ ПРЕМИЯ</p>
+              <p class="status-award-sub reveal-text">
+                ЗА ДОСТИЖЕНИЯ НА РЫНКЕ НЕДВИЖИМОСТИ
+              </p>
+            </div>
+            <div class="status-statue-overlay status-statue-overlay--date">
+              <p class="status-date-main reveal-text">20.04.2020</p>
+              <p class="status-date-sub reveal-text">ГОД ОСНОВАНИЯ</p>
+            </div>
+          </div>
+        </section>
+        </div>
+
+        <div id="promoStage" class="promo-stage">
+        <section class="screen screen-promo" id="promoScreen" aria-labelledby="promoTitle">
+            <div class="promo-pin">
+            <div class="promo-inner">
+            <header class="promo-header">
+            <p class="promo-author reveal-text">Анна Маркина</p>
+            <p class="promo-role reveal-text">Руководитель премии «Рекорды Рынка Недвижимости»</p>
+
+            <h2 id="promoTitle" class="promo-title">
+                <span class="promo-title-line promo-title-line-1 reveal-text">
+                <span class="promo-word-split promo-word-split-1">
+                    <span class="part-1">«РЕК</span><span class="promo-word-o">О</span><span class="part-2">РДЫ</span>
+                </span>
+                <span> РЫНКА НЕДВИЖИМОСТИ»</span>
+                </span>
+
+                <span class="promo-title-line promo-title-line-2">
+                <!-- Десктоп версия -->
+                <span class="promo-title-line-2-row reveal-text promo-desktop-only">— ЕДИНСТВЕННАЯ ПРЕМИЯ, КОТОРАЯ</span>
+                <span class="promo-title-line-2-row reveal-text promo-desktop-only">
+                    <span>УВЕЛИЧИТ ВАШИ </span>
+                    <span class="promo-word-split promo-word-split-2">
+                    <span class="part-1">ПР</span><span class="promo-word-o">О</span><span class="part-2">ДАЖИ</span>
+                    </span>
+                </span>
+                <!-- Мобильная версия -->
+                <span class="promo-title-line-2-row reveal-text promo-mobile-only">— ЕДИНСТВЕННАЯ ПРЕМИЯ,</span>
+                <span class="promo-title-line-2-row reveal-text promo-mobile-only">КОТОРАЯ УВЕЛИЧИТ</span>
+                <span class="promo-title-line-2-row reveal-text promo-mobile-only">
+                    <span>ВАШИ </span>
+                    <span class="promo-word-split promo-word-split-2">
+                    <span class="part-1">ПР</span><span class="promo-word-o">О</span><span class="part-2">ДАЖИ</span>
+                    </span>
+                </span>
+                </span>
+            </h2>
+            </header>
+            </div>
+            </div>
+        </section>
+
+            <div class="promo-content-shell">
+            <div class="promo-content">
+            <article class="promo-item promo-item-1">
+                <img class="promo-card promo-card-1 reveal-text" src="./assets/images/promo/promo_rect70.webp" alt="Медиа фасады и билборды" loading="lazy" />
+                <p class="promo-copy promo-copy-1 reveal-text">
+                <span class="muted">В нашем арсенале </span>
+                <span class="under">68 топовых медиа фасадов и билбордов в Москве и регионах</span>
+                </p>
+                
+            </article>
+
+            <article class="promo-item promo-item-2">
+                 <img class="promo-card promo-card-4 reveal-text" src="./assets/images/promo/promo_rect73.webp" alt="Реклама на радио и в федеральных СМИ" loading="lazy" />
+                <p class="promo-copy promo-copy-4 reveal-text">
+                <span class="under">Реклама на 30 радиостанциях в Москве, федеральные СМИ, </span>
+                <span class="muted">новостные ленты крупнейших информагентств</span>
+                </p>
+               
+            </article>
+
+            <article class="promo-item promo-item-3">
+                <p class="promo-copy promo-copy-2 reveal-text">
+                <span class="muted">Премия каждый год формирует </span>
+                <span class="under">«Рейтинг лучших объектов и компаний рынка недвижимости».</span>
+                </p>
+                <img class="promo-card promo-card-2 reveal-text" src="./assets/images/promo/promo_rect71.webp" alt="Рейтинг объектов и компаний" loading="lazy" />
+            </article>
+
+            <article class="promo-item promo-item-4">
+                <img class="promo-card promo-card-3 reveal-text" src="./assets/images/promo/promo_rect72.webp" alt="Рекламная и пиар кампания" loading="lazy" />
+                <p class="promo-copy promo-copy-3 reveal-text">
+                <span class="muted">Наша рекламная и пиар компания — </span>
+                <span class="under">это максимальное количество касаний с вашим потенциальным покупателем</span>
+                </p>
+                
+            </article>
+
+            </div>
+            </div>
+        </div>
+
+        <section class="screen screen-benefits" id="benefitsScreen">
+            <div class="benefits-container">
+
+            <header class="benefits-header">
+            <h2 class="benefits-title reveal-text">
+            <span class="benefits-title-part">Чт</span>
+            <span class="benefits-decor-o">о</span>
+            <span class="benefits-title-part">вам дает</span>
+            </h2>
+            <p class="benefits-subtitle reveal-text">участие в премии</p>
+            </header>
+
+            <div class="benefits-list">
+
+            <article class="benefit-item reveal-text">
+            <div class="benefit-left">
+                <span class="benefit-index">01</span>
+                <div class="benefit-info">
+                <h3 class="benefit-name">УЗНАВАЕМОСТЬ</h3>
+                </div>
+            </div>
+            <p class="benefit-copy">Статус номинанта, финалиста или победителя премии работает на вас и после церемонии: упоминания в СМИ, рост доверия со стороны покупателей. <br>Это инвестиция, которая поднимает средний чек и упрощает закрытие сделок.</p>
+            <div class="benefit-right">
+                <img class="benefit-card" src="./assets/ben1.jpg" alt="Узнаваемость" />
+            </div>
+            </article>
+
+            <article class="benefit-item reveal-text">
+            <div class="benefit-left">
+                <span class="benefit-index">02</span>
+                <div class="benefit-info">
+                <h3 class="benefit-name">РЕКЛАМА</h3>
+                </div>
+            </div>
+            <p class="benefit-copy">История вашего объекта в «Рекордах» не заканчивается на следующее утро после церемонии, а только начинает раскрываться. Премия рассказывает о номинантах, финалистах и победителях весь год: на радио и в digital — и до, и после церемонии. </p>
+            <div class="benefit-right">
+                <img class="benefit-card" src="./assets/ben2.jpg" alt="Реклама" />
+            </div>
+            </article>
+
+            <article class="benefit-item reveal-text">
+            <div class="benefit-left">
+                <span class="benefit-index">03</span>
+                <div class="benefit-info">
+                <h3 class="benefit-name">ЛИДЕРСТВО</h3>
+                </div>
+            </div>
+            <p class="benefit-copy">Церемония собирает топ-менеджеров рынка недвижимости, ключевых застройщиков, инвесторов. Вы — не в зрительном зале, а на сцене, рядом с теми, кто задаёт стандарты.</p>
+            <div class="benefit-right">
+                <img class="benefit-card" src="./assets/ben3.jpg" alt="Клиенты" />
+            </div>
+            </article>
+
+            <article class="benefit-item reveal-text">
+            <div class="benefit-left">
+                <span class="benefit-index">04</span>
+                <div class="benefit-info">
+                <h3 class="benefit-name">ПАРТНЕРСТВА</h3>
+                </div>
+            </div>
+            <p class="benefit-copy">Закрытый формат церемонии — это нетворкинг, который невозможно организовать в обычных условиях. Здесь начинаются партнерства и заключаются многомиллионные сделки.</p>
+            <div class="benefit-right">
+                <img class="benefit-card" src="./assets/ben4.jpg" alt="Партнерства" />
+            </div>
+            </article>
+
+            </div>
+
+            <div class="benefits-cta">
+            <a class="benefits-btn reveal-text" href="#salesPopup">ПРИНЯТЬ УЧАСТИЕ</a>
+            <div class="benefits-footer-links">
+                <a class="benefits-link reveal-text" href="#promoScreen">УСЛОВИЯ УЧАСТИЯ</a>
+                <a class="benefits-link reveal-text" href="#promoScreen">СТАТЬ ПАРТНЕРОМ</a>
+            </div>
+            </div>
+
+            </div>
+        </section>
+
+        <!-- Слайды этого блока: массив BEFORE_SALES_SLIDES в script.js -->
+        <div class="sales-top-layout-wrapp sales-top-layout-wrapp--before-sales" role="region" aria-labelledby="salesMainTitleBefore">
+            <div class="sales-top-layout">
+            <div class="sales-slider-progress" aria-hidden="true">
+                <div class="sales-slider-progress-bar"></div>
+            </div>
+
+            <div class="sales-col-left">
+
+                <header class="sales-header">
+                <h2 id="salesMainTitleBefore" class="sales-title reveal-text">
+                    <span class="sales-title-part sales-title-part-left">пр</span><span class="sales-title-o">o</span><span class="sales-title-part sales-title-part-right">дажи</span>
+                </h2>
+
+                <img class="sales-line" src="./assets/97b69a48afbab8785dbcf31f6cd23ebe2b5b79fe.svg" alt="" aria-hidden="true" loading="lazy" />
+
+                <p class="sales-copy reveal-text">
+                    16 лет оргкомитет проводит масштабную рекламную и PR-кампанию Премии (наружная и радио реклама, реклама на такси) с целью увеличения посещаемости сайта recordi.ru.
+                    <br /><br />
+                    Следовательно, повышает узнаваемость ваших объектов и продажи
+                </p>
+                </header>
+
+                <div class="sales-bottom">
+                    <a class="sales-conditions reveal-text" href="#heroScreen">Подробные условия</a>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="sales-slider-controls">
+                <div class="sales-meta reveal-text" aria-live="polite">01 <span>/ 03</span></div>
+                </div>
+
+                <div class="sales-nav-buttons">
+                    <button class="sales-nav sales-nav-prev" type="button" aria-label="Предыдущий слайд">
+                    <img class="sales-nav-arrow sales-nav-arrow-prev" src="./assets/a0e06579757b5f495cfec4ac59b801a9e6411816.svg" alt="" aria-hidden="true" loading="lazy" />
+                    </button>
+
+                    <button class="sales-nav sales-nav-next" type="button" aria-label="Следующий слайд">
+                    <img class="sales-nav-arrow" src="./assets/a0e06579757b5f495cfec4ac59b801a9e6411816.svg" alt="" aria-hidden="true" loading="lazy" />
+                    </button>
+                </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="sales-col-right">
+                <div class="sales-gallery sales-gallery-main swiper">
+                <div class="swiper-wrapper"></div>
+                </div>
+
+
+            </div>
+
+            </div>
+        </div>
+
+        <section class="screen screen-sales" id="salesScreen">
+
+            <aside class="sales-nominee-cta">
+            <div class="sales-nominee-sides" aria-hidden="true">
+                <picture>
+                    <source media="(max-width: 1200px)" srcset="./assets/mob-border.svg" />
+                    <img class="sales-nominee-side sales-nominee-side-frame" src="./assets/dea8be4fb65cbf114960204ec83267b751563bbf.svg" alt="" loading="lazy" />
+                </picture>
+            </div>
+
+            <h2 class="sales-nominee-title reveal-text">
+                <span class="sales-nominee-text-line sales-nominee-line-top">
+                <span class="sales-nominee-line-top-word">
+                    <span class="sales-nominee-line-top-left">х</span><span class="sales-nominee-top-o">o</span><span class="sales-nominee-line-top-right">тите стать</span>
+                </span>
+                </span>
+                <span class="sales-nominee-text-line sales-nominee-line-bottom">
+                <span class="sales-nominee-word-underline"><span class="sales-nominee-letter-left">н</span><span class="sales-nominee-o">o</span><span class="sales-nominee-letter-right">минантом</span></span> <span class="sales-nominee-premii">премии?</span>
+                </span>
+            </h2>
+            
+            <p class="sales-nominee-note reveal-text">
+                *Заполните предварительную заявку, мы перезвоним вам в течение часа.
+            </p>
+            
+            <a class="sales-nominee-btn reveal-text" id="salesPopupOpen" href="#salesPopup" role="button">Оставить заявку</a>
+            
+            </aside>
+            <section class="sales-ceremony" aria-labelledby="ceremonyTitle">
+                 <div class="sales-decorations" aria-hidden="true">
+            <div class="sales-star sales-star-1">
+                <img class="sales-star-icon sales-star-icon-1" src="./assets/16080717b880427e4b8a4685fcfc6052d60041e4.svg" alt="" loading="lazy" />
+            </div>
+            <div class="sales-star sales-star-2">
+                <img class="sales-star-icon sales-star-icon-2" src="./assets/54767d7c02021a27db68650151cbc79829ea3a76.svg" alt="" loading="lazy" />
+            </div>
+            <div class="sales-star sales-star-3">
+                <img class="sales-star-icon sales-star-icon-3" src="./assets/5b9f3185ec728707de5c0ff20989660f467ac156.svg" alt="" loading="lazy" />
+            </div>
+            <div class="sales-star sales-star-4">
+                <img class="sales-star-icon sales-star-icon-4" src="./assets/a58e6d2da51866c7e19231e43d548be920fce8dc.svg" alt="" loading="lazy" />
+            </div>
+            </div>
+            <h2 id="ceremonyTitle" class="sales-ceremony-title reveal-text">
+                <span class="sales-ceremony-line-1">церем<span class="sales-ceremony-o">o</span>ния</span>
+                <span class="sales-ceremony-line-2">награждения</span>
+            </h2>
+
+            <img class="sales-bg-city" src="./assets/fe313874e8a88998db4e277c1a3edd46c8c4d77b.svg" alt="" aria-hidden="true" loading="lazy" />
+
+           <div class="sales-wrapp-info">
+             <article class="sales-info sales-info-place sales-info1">
+                <svg class="sales-info-place-badge-single sales-info-badge-desktop" width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg"><foreignObject x="-9.98135" y="-8.79971" width="102.781" height="102.782"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(10.91px);clip-path:url(#bgblur_0_0_1_clip_path);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="21.8134" cx="41.4095" cy="42.5911" r="29.1153" fill="white" fill-opacity="0.01" stroke="url(#paint0_linear_0_1)" stroke-width="0.924296"/><foreignObject x="-21.8134" y="-21.8134" width="127.627" height="127.627"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(10.91px);clip-path:url(#bgblur_1_0_1_clip_path);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="21.8134" cx="42" cy="42" r="41.5379" stroke="url(#paint1_linear_0_1)" stroke-width="0.924296"/><path fill-rule="evenodd" clip-rule="evenodd" d="M34.5729 31.045C38.6671 26.985 45.3141 26.985 49.4083 31.045C54.5244 36.1185 51.7726 47.0878 43.2656 55.5239L41.9906 56.7883L40.7156 55.5239C32.2086 47.0878 29.4568 36.1185 34.5729 31.045ZM39.0662 38.1312C39.0662 36.5304 40.3763 35.2312 41.9906 35.2312C43.6049 35.2312 44.915 36.5304 44.915 38.1312C44.915 39.7319 43.6049 41.0312 41.9906 41.0312C40.3763 41.0312 39.0662 39.7319 39.0662 38.1312Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M34.5729 31.045C38.6671 26.985 45.3141 26.985 49.4083 31.045C54.5244 36.1185 51.7726 47.0878 43.2656 55.5239L41.9906 56.7883L40.7156 55.5239C32.2086 47.0878 29.4568 36.1185 34.5729 31.045ZM39.0662 38.1312C39.0662 36.5304 40.3763 35.2312 41.9906 35.2312C43.6049 35.2312 44.915 36.5304 44.915 38.1312C44.915 39.7319 43.6049 41.0312 41.9906 41.0312C40.3763 41.0312 39.0662 39.7319 39.0662 38.1312Z" fill="url(#paint2_linear_0_1)"/><defs><clipPath id="bgblur_0_0_1_clip_path" transform="translate(9.98135 8.79971)"><circle cx="41.4095" cy="42.5911" r="29.1153"/></clipPath><clipPath id="bgblur_1_0_1_clip_path" transform="translate(21.8134 21.8134)"><circle cx="42" cy="42" r="41.5379"/></clipPath><linearGradient id="paint0_linear_0_1" x1="41.4095" y1="13.0137" x2="41.4095" y2="72.1686" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><linearGradient id="paint1_linear_0_1" x1="42" y1="0" x2="42" y2="84" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="0.528564" stop-color="#F1A775" stop-opacity="0"/></linearGradient><linearGradient id="paint2_linear_0_1" x1="41.9906" y1="28" x2="41.9906" y2="56.7883" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient></defs></svg>
+                <svg class="sales-info-place-badge-single sales-info-badge-mobile" width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg"><foreignObject x="-5.76495" y="-5.08234" width="59.36" height="59.36"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(6.3px);clip-path:url(#bgblur_0_0_1_clip_path_mobile);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="12.598" cx="23.915" cy="24.5976" r="16.8151" fill="#0F0F0F" stroke="url(#paint0_linear_0_1_mobile)" stroke-width="0.533812"/><foreignObject x="-12.598" y="-12.598" width="73.7086" height="73.7086"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(6.3px);clip-path:url(#bgblur_1_0_1_clip_path_mobile);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="12.598" cx="24.2564" cy="24.2564" r="23.9895" stroke="url(#paint1_linear_0_1_mobile)" stroke-width="0.533812"/><g clip-path="url(#clip2_0_1_mobile)"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.9684 17.9295C22.3329 15.5847 26.1718 15.5847 28.5363 17.9295C31.491 20.8596 29.9018 27.1947 24.9887 32.0669L24.2523 32.7971L23.516 32.0669C18.6029 27.1947 17.0136 20.8596 19.9684 17.9295ZM22.5634 22.022C22.5634 21.0975 23.32 20.3471 24.2523 20.3471C25.1846 20.3471 25.9413 21.0975 25.9413 22.022C25.9413 22.9465 25.1846 23.6968 24.2523 23.6968C23.32 23.6968 22.5634 22.9465 22.5634 22.022Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.9684 17.9295C22.3329 15.5847 26.1718 15.5847 28.5363 17.9295C31.491 20.8596 29.9018 27.1947 24.9887 32.0669L24.2523 32.7971L23.516 32.0669C18.6029 27.1947 17.0136 20.8596 19.9684 17.9295ZM22.5634 22.022C22.5634 21.0975 23.32 20.3471 24.2523 20.3471C25.1846 20.3471 25.9413 21.0975 25.9413 22.022C25.9413 22.9465 25.1846 23.6968 24.2523 23.6968C23.32 23.6968 22.5634 22.9465 22.5634 22.022Z" fill="url(#paint2_linear_0_1_mobile)"/></g><defs><clipPath id="bgblur_0_0_1_clip_path_mobile" transform="translate(5.76495 5.08234)"><circle cx="23.915" cy="24.5976" r="16.8151"/></clipPath><clipPath id="bgblur_1_0_1_clip_path_mobile" transform="translate(12.598 12.598)"><circle cx="24.2564" cy="24.2564" r="23.9895"/></clipPath><linearGradient id="paint0_linear_0_1_mobile" x1="23.915" y1="7.51562" x2="23.915" y2="41.6796" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><linearGradient id="paint1_linear_0_1_mobile" x1="24.2564" y1="0" x2="24.2564" y2="48.5128" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="0.528564" stop-color="#F1A775" stop-opacity="0"/></linearGradient><linearGradient id="paint2_linear_0_1_mobile" x1="24.2523" y1="16.1709" x2="24.2523" y2="32.7971" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><clipPath id="clip2_0_1_mobile"><rect width="11.8225" height="16.7485" fill="white" transform="translate(18.4814 16.1709)"/></clipPath></defs></svg>
+                <div class="sales-info-label">#Место</div>
+                <div class="sales-info-value">Triumph Event Hall</div>
+            </article>
+
+            <div class="sales-info2">
+                <article class="sales-info sales-info-hosts sales-info-hosts-1">
+                <svg class="sales-info-hosts-badge-single sales-info-badge-desktop" width="85" height="85" viewBox="0 0 85 85" fill="none" xmlns="http://www.w3.org/2000/svg"><foreignObject x="-10.1004" y="-8.90509" width="104.006" height="104.006"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(11.04px);clip-path:url(#bgblur_0_0_1_clip_path);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="22.0731" cx="41.9022" cy="43.0975" r="29.4619" fill="black" fill-opacity="0.25" stroke="url(#paint0_linear_0_1)" stroke-width="0.935299"/><foreignObject x="-22.0731" y="-22.0731" width="129.146" height="129.146"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(11.04px);clip-path:url(#bgblur_1_0_1_clip_path);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="22.0731" cx="42.5" cy="42.5" r="42.0323" stroke="url(#paint1_linear_0_1)" stroke-width="0.935299"/><g clip-path="url(#clip2_0_1)"><path d="M42.9256 46.9954C45.5212 46.9954 47.6148 44.886 47.6148 42.2905L47.6305 32.8807C47.6305 30.2773 45.529 28.1758 42.9256 28.1758C40.33 28.1758 38.2207 30.2773 38.2207 32.8807V42.2905C38.2207 44.886 40.33 46.9954 42.9256 46.9954Z" fill="white"/><path d="M42.9256 46.9954C45.5212 46.9954 47.6148 44.886 47.6148 42.2905L47.6305 32.8807C47.6305 30.2773 45.529 28.1758 42.9256 28.1758C40.33 28.1758 38.2207 30.2773 38.2207 32.8807V42.2905C38.2207 44.886 40.33 46.9954 42.9256 46.9954Z" fill="url(#paint2_linear_0_1)"/><path d="M51.2374 42.2891C51.2374 46.994 47.2617 50.2874 42.9253 50.2874C38.5969 50.2874 34.6134 46.994 34.6134 42.2891H31.9473C31.9473 47.6448 36.2131 52.0674 41.3571 52.828V57.972H44.4937V52.828C49.6377 52.0674 53.9035 47.6448 53.9035 42.2891H51.2374Z" fill="white"/><path d="M51.2374 42.2891C51.2374 46.994 47.2617 50.2874 42.9253 50.2874C38.5969 50.2874 34.6134 46.994 34.6134 42.2891H31.9473C31.9473 47.6448 36.2131 52.0674 41.3571 52.828V57.972H44.4937V52.828C49.6377 52.0674 53.9035 47.6448 53.9035 42.2891H51.2374Z" fill="url(#paint3_linear_0_1)"/></g><defs><clipPath id="bgblur_0_0_1_clip_path" transform="translate(10.1004 8.90509)"><circle cx="41.9022" cy="43.0975" r="29.4619"/></clipPath><clipPath id="bgblur_1_0_1_clip_path" transform="translate(22.0731 22.0731)"><circle cx="42.5" cy="42.5" r="42.0323"/></clipPath><linearGradient id="paint0_linear_0_1" x1="41.9022" y1="13.168" x2="41.9022" y2="73.0271" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><linearGradient id="paint1_linear_0_1" x1="42.5" y1="0" x2="42.5" y2="85" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="0.528564" stop-color="#F1A775" stop-opacity="0"/></linearGradient><linearGradient id="paint2_linear_0_1" x1="42.9256" y1="28.1758" x2="42.9256" y2="46.9954" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><linearGradient id="paint3_linear_0_1" x1="42.9254" y1="42.2891" x2="42.9254" y2="57.972" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><clipPath id="clip2_0_1"><rect width="29.7977" height="29.7977" fill="white" transform="translate(28.0273 28.1758)"/></clipPath></defs></svg>
+                <svg class="sales-info-hosts-badge-single sales-info-badge-mobile" width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg"><foreignObject x="-5.76495" y="-5.08234" width="59.36" height="59.36"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(6.3px);clip-path:url(#bgblur_0_0_2_clip_path_mobile);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="12.598" cx="23.915" cy="24.5976" r="16.8151" fill="#0F0F0F" stroke="url(#paint0_linear_0_2_mobile)" stroke-width="0.533812"/><foreignObject x="-12.598" y="-12.598" width="73.7086" height="73.7086"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(6.3px);clip-path:url(#bgblur_1_0_2_clip_path_mobile);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="12.598" cx="24.2564" cy="24.2564" r="23.9895" stroke="url(#paint1_linear_0_2_mobile)" stroke-width="0.533812"/><g clip-path="url(#clip2_0_2_mobile)"><path d="M24.0003 26.4426C25.5682 26.4426 26.833 25.1685 26.833 23.6005L26.8424 17.9163C26.8424 16.3437 25.5729 15.0742 24.0003 15.0742C22.4324 15.0742 21.1582 16.3437 21.1582 17.9163V23.6005C21.1582 25.1685 22.4324 26.4426 24.0003 26.4426Z" fill="white"/><path d="M24.0003 26.4426C25.5682 26.4426 26.833 25.1685 26.833 23.6005L26.8424 17.9163C26.8424 16.3437 25.5729 15.0742 24.0003 15.0742C22.4324 15.0742 21.1582 16.3437 21.1582 17.9163V23.6005C21.1582 25.1685 22.4324 26.4426 24.0003 26.4426Z" fill="url(#paint2_linear_0_2_mobile)"/><path d="M29.0208 23.5996C29.0208 26.4417 26.6192 28.4312 23.9997 28.4312C21.385 28.4312 18.9787 26.4417 18.9787 23.5996H17.3682C17.3682 26.8349 19.945 29.5064 23.0524 29.9659V33.0733H24.9471V29.9659C28.0545 29.5064 30.6313 26.8349 30.6313 23.5996H29.0208Z" fill="white"/><path d="M29.0208 23.5996C29.0208 26.4417 26.6192 28.4312 23.9997 28.4312C21.385 28.4312 18.9787 26.4417 18.9787 23.5996H17.3682C17.3682 26.8349 19.945 29.5064 23.0524 29.9659V33.0733H24.9471V29.9659C28.0545 29.5064 30.6313 26.8349 30.6313 23.5996H29.0208Z" fill="url(#paint3_linear_0_2_mobile)"/></g><defs><clipPath id="bgblur_0_0_2_clip_path_mobile" transform="translate(5.76495 5.08234)"><circle cx="23.915" cy="24.5976" r="16.8151"/></clipPath><clipPath id="bgblur_1_0_2_clip_path_mobile" transform="translate(12.598 12.598)"><circle cx="24.2564" cy="24.2564" r="23.9895"/></clipPath><linearGradient id="paint0_linear_0_2_mobile" x1="23.915" y1="7.51562" x2="23.915" y2="41.6796" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><linearGradient id="paint1_linear_0_2_mobile" x1="24.2564" y1="0" x2="24.2564" y2="48.5128" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="0.528564" stop-color="#F1A775" stop-opacity="0"/></linearGradient><linearGradient id="paint2_linear_0_2_mobile" x1="24.0003" y1="15.0742" x2="24.0003" y2="26.4426" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><linearGradient id="paint3_linear_0_2_mobile" x1="23.9998" y1="23.5996" x2="23.9998" y2="33.0733" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><clipPath id="clip2_0_2_mobile"><rect width="18" height="18" fill="white" transform="translate(15 15.0742)"/></clipPath></defs></svg>
+                <div class="sales-info-label">#Ведущие</div>
+                <div class="sales-info-value">Ксения Собчак</div>
+            </article>
+
+            <article class="sales-info sales-info-hosts sales-info-hosts-2" style="margin-top: 13px;">
+                <div class="sales-info-value">Александр Пряников</div>
+            </article>
+            </div>
+
+            <article class="sales-info sales-info-org sales-info3">
+                <svg class="sales-info-org-badge-single sales-info-badge-desktop" width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg"><foreignObject x="-9.98135" y="-8.79971" width="102.781" height="102.782"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(10.91px);clip-path:url(#bgblur_0_0_1_clip_path);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="21.8134" cx="41.4095" cy="42.5911" r="29.1153" fill="white" fill-opacity="0.01" stroke="url(#paint0_linear_0_1)" stroke-width="0.924296"/><foreignObject x="-21.8134" y="-21.8134" width="127.627" height="127.627"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(10.91px);clip-path:url(#bgblur_1_0_1_clip_path);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="21.8134" cx="42" cy="42" r="41.5379" stroke="url(#paint1_linear_0_1)" stroke-width="0.924296"/><path fill-rule="evenodd" clip-rule="evenodd" d="M28 43V56.5H41.5H55V43V29.5H54.3038C52.8261 29.5 50.5598 30.0734 49.0749 30.823C47.9084 31.4119 46.8955 32.1371 45.8891 33.1041C44.5931 34.3495 43.9645 35.2034 43.1912 36.7692C42.445 38.28 42.0484 39.645 41.8652 41.333L41.7376 42.5081H41.4275C41.1254 42.5081 41.1174 42.4929 41.1174 41.9212C41.1174 39.0261 39.3624 35.1899 37.0649 33.0628C34.7665 30.9349 31.397 29.5 28.6985 29.5H28V43Z" fill="url(#paint2_linear_0_1)"/><defs><clipPath id="bgblur_0_0_1_clip_path" transform="translate(9.98135 8.79971)"><circle cx="41.4095" cy="42.5911" r="29.1153"/></clipPath><clipPath id="bgblur_1_0_1_clip_path" transform="translate(21.8134 21.8134)"><circle cx="42" cy="42" r="41.5379"/></clipPath><linearGradient id="paint0_linear_0_1" x1="41.4095" y1="13.0137" x2="41.4095" y2="72.1686" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><linearGradient id="paint1_linear_0_1" x1="42" y1="0" x2="42" y2="84" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="0.528564" stop-color="#F1A775" stop-opacity="0"/></linearGradient><linearGradient id="paint2_linear_0_1" x1="41.5" y1="29.5" x2="41.5" y2="56.5" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient></defs></svg>
+                <svg class="sales-info-org-badge-single sales-info-badge-mobile" width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg"><foreignObject x="-12.598" y="-12.598" width="73.7086" height="73.7086"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(6.3px);clip-path:url(#bgblur_0_0_3_clip_path_mobile);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="12.598" cx="24.2564" cy="24.2564" r="23.9895" stroke="url(#paint0_linear_0_3_mobile)" stroke-width="0.533812"/><foreignObject x="-5.59796" y="-5.59796" width="59.36" height="59.36"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(6.3px);clip-path:url(#bgblur_1_0_3_clip_path_mobile);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="12.598" cx="24.082" cy="24.082" r="16.8151" fill="#0F0F0F" stroke="url(#paint1_linear_0_3_mobile)" stroke-width="0.533812"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17 23.5V30.5H24H31V23.5V16.5H30.639C29.8728 16.5 28.6977 16.7973 27.9277 17.186C27.3229 17.4913 26.7977 17.8674 26.2758 18.3688C25.6038 19.0146 25.2779 19.4573 24.8769 20.2692C24.49 21.0526 24.2844 21.7604 24.1894 22.6356L24.1232 23.2449H23.9624C23.8058 23.2449 23.8016 23.2371 23.8016 22.9406C23.8016 21.4394 22.8916 19.4503 21.7003 18.3474C20.5086 17.244 18.7614 16.5 17.3622 16.5H17V23.5Z" fill="url(#paint2_linear_0_3_mobile)"/><defs><clipPath id="bgblur_0_0_3_clip_path_mobile" transform="translate(12.598 12.598)"><circle cx="24.2564" cy="24.2564" r="23.9895"/></clipPath><clipPath id="bgblur_1_0_3_clip_path_mobile" transform="translate(5.59796 5.59796)"><circle cx="24.082" cy="24.082" r="16.8151"/></clipPath><linearGradient id="paint0_linear_0_3_mobile" x1="24.2564" y1="0" x2="24.2564" y2="48.5128" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="0.528564" stop-color="#F1A775" stop-opacity="0"/></linearGradient><linearGradient id="paint1_linear_0_3_mobile" x1="24.082" y1="7" x2="24.082" y2="41.164" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient><linearGradient id="paint2_linear_0_3_mobile" x1="24" y1="16.5" x2="24" y2="30.5" gradientUnits="userSpaceOnUse"><stop stop-color="#F5C3A0"/><stop offset="1" stop-color="#F1A775"/></linearGradient></defs></svg>
+                <div class="sales-info-label">#Организатор</div>
+                <div class="sales-info-value sales-info-value-small">
+                <img src="./assets/Vector(1).svg" alt="Логотип Московский Бизнес Клуб" loading="lazy" />
+                </div>
+            </article>
+           </div>
+            
+            </section>
+
+        </section>
+
+        <div class="sales-top-layout-wrapp ceremonia" role="region" aria-labelledby="salesMainTitle">
+            <div class="sales-top-layout">
+            <div class="sales-slider-progress" aria-hidden="true">
+                <div class="sales-slider-progress-bar"></div>
+            </div>
+
+            <div class="sales-col-left">
+
+                <header class="sales-header ceremony2">
+                <h2 class="sales-title">
+                    <span class="sales-title-part sales-title-part-left">Ведущие</span>
+                </h2>
+                <h2 class="sales-title sales-title--white">
+                    <span class="sales-title-part sales-title-part-left">церем</span><span class="sales-title-o">o</span><span class="sales-title-part sales-title-part-right">нии</span>
+                </h2>
+
+                <img class="sales-line" src="./assets/97b69a48afbab8785dbcf31f6cd23ebe2b5b79fe.svg" alt="" aria-hidden="true" loading="lazy" />
+
+                <div class="ceremonia-hosts">
+                    <div class="ceremonia-host">
+                        <h5 class="ceremonia-host-name">Ксения Собчак</h5>
+                        <p class="ceremonia-host-desc sales-copy">Самая медийная личность страны и главный трендсеттер. Её знают все, кто будет в зале, — и нет ведущей, равной ей по масштабу.<br><br>Своё СМИ, репутация одного из лучших интервьюеров поколения, безупречный вкус в моде. Когда Ксения на сцене, вечер автоматически становится событием.</p>
+                    </div>
+                </div>
+                </header>
+
+                <div class="sales-bottom">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="sales-slider-controls">
+                <div class="sales-meta reveal-text" aria-live="polite">01 <span>/ 02</span></div>
+                </div>
+
+                <div class="sales-nav-buttons">
+                    <button class="sales-nav sales-nav-prev" type="button" aria-label="Предыдущий слайд">
+                    <img class="sales-nav-arrow sales-nav-arrow-prev" src="./assets/a0e06579757b5f495cfec4ac59b801a9e6411816.svg" alt="" aria-hidden="true" loading="lazy" />
+                    </button>
+
+                    <button class="sales-nav sales-nav-next" type="button" aria-label="Следующий слайд">
+                    <img class="sales-nav-arrow" src="./assets/a0e06579757b5f495cfec4ac59b801a9e6411816.svg" alt="" aria-hidden="true" loading="lazy" />
+                    </button>
+                </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="sales-col-right">
+                <div class="sales-gallery sales-gallery-main swiper">
+                <div class="swiper-wrapper"></div>
+                </div>
+
+
+            </div>
+
+            </div>
+        </div>
+        <div class="headliners-wrapp">
+            <section class="headliners" aria-labelledby="headlinersTitle">
+                <div class="headliners__top">
+                    <h2 id="headlinersTitle" class="headliners__title sales-title reveal-text">ХЭДЛАЙНЕРЫ</h2>
+                    <p class="headliners__copy sales-copy reveal-text">
+                        Группы «Корни» и «Динамит» — сразу два live-концерта в рамках одной церемонии.
+                    </p>
+                </div>
+                <div class="headliners__cards">
+                    <article class="headliners__card headliners__card--1">
+                        <div class="headliners__card-media" aria-hidden="true"></div>
+                        <div class="headliners__card-label">
+                            <span>Группа «Корни»</span>
+                        </div>
+                    </article>
+                    <article class="headliners__card headliners__card--2">
+                        <div class="headliners__card-media" aria-hidden="true"></div>
+                        <div class="headliners__card-label">
+                            <span>Группа «Динамит»</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+
+        <section class="book">
+        <div class="media-book-stage">
+          <iframe
+            class="media-book-frame"
+            id="mediaBookFrame"
+            src="./book/dist/index.html"
+            title="Интерактивный журнал"
+            loading="eager"
+            scrolling="no"
+          ></iframe>
+          <div
+            class="media-book-interaction-layer"
+            id="mediaBookInteractionLayer"
+            aria-hidden="true"
+          >
+            <div class="media-book-hit-area media-book-hit-area-prev" id="mediaBookHitPrev"></div>
+            <div class="media-book-hit-area media-book-hit-area-next" id="mediaBookHitNext"></div>
+          </div>
+          <div
+            class="media-book-scroll-shim"
+            id="mediaBookScrollShim"
+            aria-hidden="true"
+          ></div>
+        </div>
+
+        <div class="media-content-overlay">
+          <div class="media-title-group">
+            <h2 class="media-title media-title-main reveal-text">СМИ</h2>
+            <div class="media-title-line2">
+              <h2 class="media-title media-title-accent reveal-text wdg">
+                <span class="media-title-o reveal-text">о</span>&nbsp;ПРЕМИИ
+              </h2>
+            </div>
+          </div>
+
+          <div class="media-scroll-hint">
+            <span id="mediaScrollHintText">ЛИСТАЙ ВПРАВО</span>
+            <svg width="19" height="10" viewBox="0 0 19 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 4.70518L5.5 4.70516L17.5 4.70516M17.5 4.70516L12.9286 0.362305M17.5 4.70516L12.9286 9.04802" stroke="#523A25"/>
+            </svg>
+          </div>
+
+          <div class="media-book-overlay" id="mediaBookOverlay">
+            <button class="media-book-overlay-btn media-book-overlay-prev" id="mediaBookOverlayPrev" aria-label="Предыдущая страница">&#8592; НАЗАД</button>
+            <button class="media-book-overlay-btn media-book-overlay-next" id="mediaBookOverlayNext" aria-label="Следующая страница">ВПЕРЁД &#8594;</button>
+          </div>
+          <div class="media-book-swipe-hint">листать вправо &#8594;</div>
+        </div>
+        </section>
+        <section class="screen screen-partners" id="partnersScreen" aria-labelledby="partnersTitle">
+                
+               <div class="parthners-wrapp">
+                 <header class="partners-header">
+                <h2 id="partnersTitle" class="partners-title">
+                    <span class="partners-title-accent reveal-text">ПАРТНЕРЫ</span>
+                    <span class="partners-title-main reveal-text">ПРЕМИИ</span>
+                </h2>
+                <a class="partners-top-button reveal-text" href="#salesPopup">Стать партнером</a>
+                </header>
+
+                <div class="partners-features-wrapper">
+                <article class="partners-feature partners-feature-left">
+                    <div class="partners-feature-logo-wrap">
+                    <img class="partners-logo" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="Логотип: Интерфакс Недвижимость" />
+                    </div>
+                    <p class="partners-feature-badge">Генеральный партнер</p>
+                    <img class="partners-card-corner" src="./assets/white-arrow.svg" aria-hidden="true" alt="" />
+                </article>
+
+                <article class="partners-feature partners-feature-right">
+                    <div class="partners-feature-logo-wrap">
+                    <img class="partners-logo" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="Логотип: Интерфакс Недвижимость" />
+                    </div>
+                    <p class="partners-feature-badge">Официальный партнер</p>
+                    <img class="partners-card-corner" src="./assets/white-arrow.svg" aria-hidden="true" alt="" />
+                </article>
+                </div>
+
+                <div class="partners-row partners-row-light">
+                <div class="partners-row-track" style="margin-bottom: 10px">
+                    <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner1.svg" loading="lazy" decoding="async" alt="Логотип партнера 1" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер номинации
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner2.svg" loading="lazy" decoding="async" alt="Логотип партнера 2" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер церемонии 
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner3.svg" loading="lazy" decoding="async" alt="Логотип партнера 3" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер голосования
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner1.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер номинации
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner2.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер церемонии награждения
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner3.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер голосования
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner3.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер голосования
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner3.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер голосования
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/images/partners/partner3.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер голосования
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                </div>
+                 <div class="partners-row-track">
+                    <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="Логотип партнера 1" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер номинации
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                     <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="Логотип партнера 1" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер номинации
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                     <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="Логотип партнера 1" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер номинации
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                     <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="Логотип партнера 1" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер номинации
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="Логотип партнера 2" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер церемонии 
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="Логотип партнера 3" />
+                        </div>
+                        <span class="partners-card-divider" aria-hidden="true"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot" aria-hidden="true"><span></span></span>Партнер голосования
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер номинации
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер церемонии награждения
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-light" aria-hidden="true">
+                        <div class="partners-logo-wrap">
+                        <img class="partners-logo" src="./assets/runline.svg" loading="lazy" decoding="async" alt="" />
+                        </div>
+                        <span class="partners-card-divider"></span>
+                        <p class="partners-card-meta">
+                        <span class="partners-card-dot"><span></span></span>Партнер голосования
+                        </p>
+                        <img class="partners-card-arrow" src="./assets/brown-arrow.svg" alt="" />
+                    </div>
+                </div>
+              </div>
+
+                <h3 class="partners-caption partners-caption-media">МЕДИАПАРТНЕРЫ:</h3>
+
+                <div class="partners-features-wrapper nomarg">
+                <article class="partners-feature partners-feature-left partners-feature-media-left">
+                    <div class="partners-feature-logo-wrap">
+                    <img class="partners-logo" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="Логотип: Интерфакс Недвижимость" />
+                    </div>
+                    <p class="partners-feature-badge partners-feature-badge-small">Генеральный<br>информационный партнер</p>
+                    <img class="partners-card-corner" src="./assets/white-arrow.svg" aria-hidden="true" alt="" />
+                </article>
+
+                <article class="partners-feature partners-feature-right partners-feature-media-right">
+                    <div class="partners-feature-logo-wrap">
+                    <img class="partners-logo" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="Логотип: Интерфакс Недвижимость" />
+                    </div>
+                    <p class="partners-feature-badge partners-feature-badge-small">Официальный<br>информационный партнер</p>
+                    <img class="partners-card-corner" src="./assets/white-arrow.svg" aria-hidden="true" alt="" />
+                </article>
+                </div>
+
+                <div class="partners-row partners-row-dark partners-row-dark-first">
+                <div class="partners-row-track">
+                    <div class="partners-card partners-card-dark">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="Интерфакс Недвижимость" />
+                    </div>
+                    <span class="partners-card-divider partners-card-divider-dark" aria-hidden="true"></span>
+                    <p class="partners-card-meta partners-card-meta-dark">
+                        <span class="partners-card-dot partners-card-dot-dark" aria-hidden="true"><span></span></span>Партнер номинации
+                    </p>
+                    <img class="partners-card-arrow" src="./assets/white-arrow.svg" aria-hidden="true" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-dark" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    <span class="partners-card-divider partners-card-divider-dark"></span>
+                    <p class="partners-card-meta partners-card-meta-dark">
+                        <span class="partners-card-dot partners-card-dot-dark"><span></span></span>Партнер номинации
+                    </p>
+                    <img class="partners-card-arrow" src="./assets/white-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-dark" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    <span class="partners-card-divider partners-card-divider-dark"></span>
+                    <p class="partners-card-meta partners-card-meta-dark">
+                        <span class="partners-card-dot partners-card-dot-dark"><span></span></span>Партнер номинации
+                    </p>
+                    <img class="partners-card-arrow" src="./assets/white-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-dark" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    <span class="partners-card-divider partners-card-divider-dark"></span>
+                    <p class="partners-card-meta partners-card-meta-dark">
+                        <span class="partners-card-dot partners-card-dot-dark"><span></span></span>Партнер номинации
+                    </p>
+                    <img class="partners-card-arrow" src="./assets/white-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-dark" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    <span class="partners-card-divider partners-card-divider-dark"></span>
+                    <p class="partners-card-meta partners-card-meta-dark">
+                        <span class="partners-card-dot partners-card-dot-dark"><span></span></span>Партнер номинации
+                    </p>
+                    <img class="partners-card-arrow" src="./assets/white-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-dark" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    <span class="partners-card-divider partners-card-divider-dark"></span>
+                    <p class="partners-card-meta partners-card-meta-dark">
+                        <span class="partners-card-dot partners-card-dot-dark"><span></span></span>Партнер номинации
+                    </p>
+                    <img class="partners-card-arrow" src="./assets/white-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-dark" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    <span class="partners-card-divider partners-card-divider-dark"></span>
+                    <p class="partners-card-meta partners-card-meta-dark">
+                        <span class="partners-card-dot partners-card-dot-dark"><span></span></span>Партнер номинации
+                    </p>
+                    <img class="partners-card-arrow" src="./assets/white-arrow.svg" alt="" />
+                    </div>
+                    <div class="partners-card partners-card-dark" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    <span class="partners-card-divider partners-card-divider-dark"></span>
+                    <p class="partners-card-meta partners-card-meta-dark">
+                        <span class="partners-card-dot partners-card-dot-dark"><span></span></span>Партнер номинации
+                    </p>
+                    <img class="partners-card-arrow" src="./assets/white-arrow.svg" alt="" />
+                    </div>
+                </div>
+                
+                </div>
+
+                <h3 class="partners-caption partners-caption-members">С НАМИ УЧАСТВУЮТ:</h3>
+
+                <div class="partners-row partners-row-dark partners-row-dark-second">
+                <div class="partners-row-track">
+                    <div class="partners-card partners-card-dark partners-card-brand-only">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="Интерфакс" />
+                    </div>
+                    </div>
+                    <div class="partners-card partners-card-dark partners-card-brand-only" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    </div>
+                    <div class="partners-card partners-card-dark partners-card-brand-only" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    </div>
+                    <div class="partners-card partners-card-dark partners-card-brand-only" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    </div>
+                    <div class="partners-card partners-card-dark partners-card-brand-only" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    </div>
+                    <div class="partners-card partners-card-dark partners-card-brand-only" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    </div>
+                    <div class="partners-card partners-card-dark partners-card-brand-only" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    </div>
+                    <div class="partners-card partners-card-dark partners-card-brand-only" aria-hidden="true">
+                    <div class="partners-logo-wrap">
+                        <img class="partners-logo partners-logo-dark" src="./assets/images/partners/interfax.webp" loading="lazy" decoding="async" alt="" />
+                    </div>
+                    </div>
+                </div>
+            </div>
+               </div>
+
+            </section>
+
+            <section class="screen screen-advert" id="advertScreen" aria-labelledby="advertTitle">
+            
+            <div class="screen-advert-wrapp">
+              <header class="advert-title-group">
+            <h2 id="advertTitle" class="section-heading">
+                <span class="section-heading-main reveal-text">РЕКЛАМА</span>
+                <span class="section-heading-accent reveal-text">ПРЕМИИ</span>
+            </h2>
+            <p class="advert-subtitle reveal-text">
+                Широкая популярность и признание потребителей благодаря мегамасштабной рекламной кампании
+            </p>
+            </header>
+
+            <div class="advert-3d-slider" aria-roledescription="carousel" aria-label="Галерея рекламных билбордов">
+            <div class="scene">
+                <ul class="ring" id="advertRing">
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect70.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect71.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect72.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect73.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect70.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect71.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect72.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect73.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect72.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                <li class="slide" aria-roledescription="slide">
+                    <img src="./assets/images/promo/promo_rect73.webp" loading="lazy" decoding="async" alt="Билборд: ТТК, Киевская ул., 27">
+                    <p class="slide-caption">ТТК, Киевская ул., 27</p>
+                </li>
+                </ul>
+            </div>
+            </div>
+
+            <div class="advert-3d-caption" id="advertCaption" aria-live="polite" aria-atomic="true"></div>
+            </div>
+
+        </section>
+
+        <section class="screen screen-radio" id="radioScreen">
+        <section class="canvas radio-advert" aria-label="Радиореклама">
+          <div class="radio-map-shell" aria-hidden="true">
+            <div class="radio-stat reveal-text">
+            <strong>19</strong>
+            <span>Крупнейших городов<br />присутствия</span>
+          </div>
+            <img
+              class="radio-map-image"
+              src="./assets/advert-radio-map.svg"
+              alt=""
+            />
+            <svg
+              class="radio-line-overlay"
+              viewBox="0 0 1920 1080"
+              aria-hidden="true"
+            >
+              <line
+                class="radio-line radio-line-h"
+                x1="0"
+                y1="547"
+                x2="1920"
+                y2="547"
+              ></line>
+              <line
+                class="radio-line radio-line-v"
+                x1="960"
+                y1="0"
+                x2="960"
+                y2="1080"
+              ></line>
+            </svg>
+           <div class="radio-pulse-wrapp">
+             <div
+              class="radio-pulse-stream radio-pulse-stream-left"
+              aria-hidden="true"
+            >
+              <span class="radio-pulse-dot"></span>
+              <span class="radio-pulse-dot"></span>
+              <span class="radio-pulse-dot"></span>
+            </div>
+            <div
+              class="radio-pulse-stream radio-pulse-stream-right"
+              aria-hidden="true"
+            >
+              <span class="radio-pulse-dot"></span>
+              <span class="radio-pulse-dot"></span>
+              <span class="radio-pulse-dot"></span>
+            </div>
+            <div
+              class="radio-pulse-stream radio-pulse-stream-top"
+              aria-hidden="true"
+            >
+              <span class="radio-pulse-dot"></span>
+              <span class="radio-pulse-dot"></span>
+              <span class="radio-pulse-dot"></span>
+            </div>
+            <div
+              class="radio-pulse-stream radio-pulse-stream-bottom"
+              aria-hidden="true"
+            >
+              <span class="radio-pulse-dot"></span>
+              <span class="radio-pulse-dot"></span>
+              <span class="radio-pulse-dot"></span>
+            </div>
+           </div>
+            <img src="assets/radio-radar.svg" alt="" class="radio-radar-svg">
+
+            <div class="radio-cities">
+              <span
+                class="radio-city radio-city-1 reveal-text radio-city-lg"
+              ></span>
+              <span class="radio-city radio-city-3 reveal-text"></span>
+              <span
+                class="radio-city radio-city-4 reveal-text radio-city-sm"
+              ></span>
+              <span
+                class="radio-city radio-city-5 reveal-text radio-city-sm"
+              ></span>
+              <span class="radio-city radio-city-6 reveal-text"></span>
+              <span class="radio-city radio-city-7 reveal-text"></span>
+              <span
+                class="radio-city radio-city-8 reveal-text radio-city-lg"
+              ></span>
+              <span class="radio-city radio-city-9 reveal-text"></span>
+              <span
+                class="radio-city radio-city-10 reveal-text radio-city-sm"
+              ></span>
+              <span
+                class="radio-city radio-city-11 reveal-text radio-city-lg"
+              ></span>
+              <span
+                class="radio-city radio-city-12 reveal-text radio-city-lg"
+              ></span>
+              <span class="radio-city radio-city-13 reveal-text"></span>
+              <span
+                class="radio-city radio-city-15 reveal-text radio-city-sm"
+              ></span>
+              <span
+                class="radio-city radio-city-17 reveal-text radio-city-sm"
+              ></span>
+              <span
+                class="radio-city radio-city-18 reveal-text radio-city-sm"
+              ></span>
+              <span
+                class="radio-city radio-city-19 reveal-text radio-city-sm"
+              ></span>
+            </div>
+          </div>
+
+          <div class="radio-note reveal-text">
+            Реклама на крупнейших радиостанциях: Коммерсантъ FM, Monte Carlo,
+            Европа Плюс, Радио Дача, Love Radio, Русское Радио, Радио Рекорд,
+            Шансон, Спутник FM
+          </div>
+
+          <div class="radio-text-div" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="radio-title radio-title-left reveal-text">
+              РАДИ<span class="radio-title-o">o</span>
+            </h2>
+            <h2 class="radio-title radio-title-right reveal-text">РЕКЛАМА</h2>
+          </div>
+
+          
+        </section>
+      </section>
+
+        <section
+          class="interview"
+          aria-label="Интервью с победителями премии"
+        >
+          <div class="interview-heading">
+            <h2 class="interview-title interview-title-top">
+              <span class="interview-title-word">
+                <span class="interview-title-word-part">К</span>
+                <span class="interview-title-o">o</span>
+                <span class="interview-title-word-part">МСОМОЛЬСКАЯ</span>
+              </span>
+              <span class="interview-title-top-tail"> ПРАВДА -</span>
+            </h2>
+            <h2 class="interview-title interview-title-bottom">
+              ИНТЕРВЬЮ С ПОБЕДИТЕЛЯМИ ПРЕМИИ!
+            </h2>
+          </div>
+
+          <div
+            class="interview-ellipse interview-ellipse-top interview-reveal"
+            data-reveal-order="1"
+            aria-hidden="true"
+          ></div>
+          <div
+            class="interview-ellipse interview-ellipse-mid interview-reveal"
+            data-reveal-order="2"
+            aria-hidden="true"
+          ></div>
+          <div
+            class="interview-ellipse interview-ellipse-low interview-reveal"
+            data-reveal-order="3"
+            aria-hidden="true"
+          ></div>
+          <div
+            class="interview-ellipse interview-ellipse-bottom interview-reveal"
+            data-reveal-order="4"
+            aria-hidden="true"
+          ></div>
+          <div class="interview-axis" aria-hidden="true"></div>
+
+          <div class="interview-info-card" id="interviewInfoCard">
+            <img
+              class="interview-info-icon"
+              src="./assets/interview_play_brown.svg"
+              alt=""
+            />
+            <div class="interview-info-copy">
+              <p class="interview-info-title" id="interviewInfoTitle">
+                Интервью Анна Маркина
+              </p>
+              <p class="interview-info-subtitle" id="interviewInfoSubtitle">
+                Бизнес клуб - это пульс бизнеса
+              </p>
+            </div>
+          </div>
+
+          <p class="interview-year interview-year-2025">2025 г.</p>
+          <p class="interview-year interview-year-2024">2024г.</p>
+          <p class="interview-year interview-year-2023">2023 г.</p>
+
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-monte-2025"
+            type="button"
+            data-reveal-order="1"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text">Monte Carlo</span>
+          </button>
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-kommersant-2025"
+            type="button"
+            data-reveal-order="2"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text">Коммерсантъ</span>
+          </button>
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-kp1-2025"
+            type="button"
+            data-reveal-order="3"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img
+                class="interview-node-icon interview-node-icon-dark"
+                src="./assets/Polygon 2.svg"
+                alt=""
+              />
+              <img
+                class="interview-node-icon interview-node-icon-light"
+                src="./assets/polygon3.svg"
+                alt=""
+              />
+            </span>
+            <span class="interview-node-text"
+              >Комсомольская правда |<br />Метры и квадраты ч. 1</span
+            >
+          </button>
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-other-2025"
+            type="button"
+            data-reveal-order="4"
+            data-interview-title="Другие радиостанции"
+            data-interview-subtitle="Подборка эфиров на тематических площадках"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img
+                class="interview-node-icon interview-node-icon-dark"
+                src="./assets/Polygon 2.svg"
+                alt=""
+              />
+              <img
+                class="interview-node-icon interview-node-icon-light"
+                src="./assets/polygon3.svg"
+                alt=""
+              />
+            </span>
+            <span class="interview-node-text">Другие<br />радиостанции</span>
+          </button>
+
+          <a
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-monte-2024"
+            href="https://rutube.ru/video/b8c909128030fae1b8b52523fc760ad6/?r=wd"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-reveal-order="5"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text">Monte Carlo</span>
+          </a>
+          <a
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-kommersant-2024"
+            href="https://rutube.ru/video/e5c270ee2e81d24bc470459ef0c41bb6/?r=wd"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-reveal-order="6"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text">Коммерсантъ</span>
+          </a>
+          <a
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-russian-2024"
+            href="https://rutube.ru/video/fa358bb21f9b06966b5488fff640692b/?r=wd"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-reveal-order="7"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text">Русское<br />радио</span>
+          </a>
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-other-2024"
+            type="button"
+            data-reveal-order="8"
+            data-interview-title="Другие радиостанции"
+            data-interview-subtitle="Дополнительные эфиры и размещения"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img
+                class="interview-node-icon interview-node-icon-dark"
+                src="./assets/Polygon 2.svg"
+                alt=""
+              />
+              <img
+                class="interview-node-icon interview-node-icon-light"
+                src="./assets/polygon3.svg"
+                alt=""
+              />
+            </span>
+            <span class="interview-node-text">Другие<br />радиостанции</span>
+          </button>
+
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-monte-2023"
+            type="button"
+            data-reveal-order="9"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text">Monte Carlo</span>
+          </button>
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-kommersant-2023"
+            type="button"
+            data-reveal-order="10"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text">Коммерсантъ</span>
+          </button>
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-kp1-2023"
+            type="button"
+            data-reveal-order="11"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text"
+              >Комсомольская правда |<br />Метры и квадраты ч. 1</span
+            >
+          </button>
+          <button
+            class="interview-node interview-node-dark interview-card interview-reveal interview-card-kp2-2023"
+            type="button"
+            data-reveal-order="12"
+          >
+            <span class="interview-node-icon-stack" aria-hidden="true">
+              <img class="interview-node-icon interview-node-icon-dark" src="./assets/Polygon 2.svg" alt="" />
+              <img class="interview-node-icon interview-node-icon-light" src="./assets/polygon3.svg" alt="" />
+            </span>
+            <span class="interview-node-text"
+              >Комсомольская правда |<br />Метры и квадраты ч. 2</span
+            >
+          </button>
+
+          <button
+            class="interview-period interview-period-left"
+            id="interviewPeriodPrev"
+            type="button"
+          >
+            Ранее 2016 г.
+          </button>
+          <button
+            class="interview-period interview-period-right"
+            id="interviewPeriodNext"
+            type="button"
+          >
+            2016-2022 г.
+          </button>
+
+          <div
+            class="interview-year-trail interview-year-trail-left"
+            id="interviewYearTrailLeft"
+            aria-hidden="true"
+          >
+            <div class="interview-mini-year interview-mini-year-2010">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2010</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2011a">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2011</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2011b">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2011</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2012">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2012</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="interview-year-trail interview-year-trail-right"
+            id="interviewYearTrailRight"
+            aria-hidden="true"
+          >
+            <div class="interview-mini-year interview-mini-year-2013">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2013</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2014">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2014</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2015">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2015</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2016">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2016</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="interview-year-trail interview-year-trail-next-left"
+            id="interviewYearTrailNextLeft"
+            aria-hidden="true"
+          >
+            <div class="interview-mini-year interview-mini-year-2017">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2017</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2018">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2018</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2019">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2019</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="interview-year-trail interview-year-trail-next-right"
+            id="interviewYearTrailNextRight"
+            aria-hidden="true"
+          >
+            <div class="interview-mini-year interview-mini-year-2020">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2020</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2021">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2021</span
+              >
+            </div>
+            <div class="interview-mini-year interview-mini-year-2022">
+              <img src="./assets/interview_play_light.svg" alt="" /><span
+                >2022</span
+              >
+            </div>
+          </div>
+
+          <button class="interview-cta" type="button">
+            ПОСЛУШАТЬ ВСЕ ИНТЕРВЬЮ
+          </button>
+
+          <button
+            class="interview-dot interview-reveal interview-dot-1"
+            type="button"
+            aria-label="Точка схемы 1"
+            data-reveal-order="13"
+            data-interview-title="2025"
+            data-interview-subtitle="Запуск интервью с победителями на ключевых площадках"
+          ></button>
+          <button
+            class="interview-dot interview-reveal interview-dot-2"
+            type="button"
+            aria-label="Точка схемы 2"
+            data-reveal-order="14"
+            data-interview-title="2024"
+            data-interview-subtitle="Новая волна радиоэфиров и отраслевых комментариев"
+          ></button>
+          <button
+            class="interview-dot interview-reveal interview-dot-3"
+            type="button"
+            aria-label="Точка схемы 3"
+            data-reveal-order="15"
+            data-interview-title="2023"
+            data-interview-subtitle="Расширение сетки интервью и партнерских выпусков"
+          ></button>
+          <button
+            class="interview-dot interview-reveal interview-dot-4"
+            type="button"
+            aria-label="Точка схемы 4"
+            data-reveal-order="16"
+            data-interview-title="Русское радио"
+            data-interview-subtitle="Тематический эфир с участием победителей"
+          ></button>
+          <button
+            class="interview-dot interview-reveal interview-dot-5"
+            type="button"
+            aria-label="Точка схемы 5"
+            data-reveal-order="17"
+            data-interview-title="Коммерсантъ"
+            data-interview-subtitle="Интервью и аналитические включения"
+          ></button>
+          <button
+            class="interview-dot interview-reveal interview-dot-6"
+            type="button"
+            aria-label="Точка схемы 6"
+            data-reveal-order="18"
+            data-interview-title="Все интервью"
+            data-interview-subtitle="Архив материалов за все периоды"
+          ></button>
+        </section>
+
+        <section class="screen screen-reviews" id="reviewsScreen" data-reviews-tab="official">
+          <div class="reviews-sticky-wrapper">
+            <section class="canvas reviews-media" aria-labelledby="reviewsTitle">
+              <div class="reviews-media-head">
+              
+
+              <h2 class="reviews-media-title" id="reviewsTitle">
+                <span class="reviews-media-title-top">ЧТО О НАС</span>
+                <span class="reviews-media-title-anchor">
+                  <span class="reviews-media-title-bottom">ГОВОРЯТ</span>
+                </span>
+              </h2>
+              <nav class="reviews-media-tabs" role="tablist" aria-label="Категории отзывов">
+                <ul role="presentation" style="list-style: none; display: flex; padding: 0; margin: 0;">
+                  <li role="presentation">
+                    <button
+                      class="reviews-media-tab reviews-media-tab-active"
+                      type="button"
+                      role="tab"
+                      aria-selected="true"
+                      aria-controls="reviewsOfficialStage"
+                      id="tab-official"
+                      data-reviews-tab="official"
+                    >
+                      <span>Официальные письма</span>
+                      <img src="./assets/reviews_arrow.svg" alt="" aria-hidden="true" />
+                    </button>
+                  </li>
+                  <li role="presentation">
+                    <button
+                      class="reviews-media-tab"
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="reviewsGratitudeGallery"
+                      id="tab-gratitude"
+                      data-reviews-tab="gratitude"
+                    >
+                      <span>Благодарности</span>
+                      <img src="./assets/reviews_arrow.svg" alt="" aria-hidden="true" />
+                    </button>
+                  </li>
+                  <li role="presentation">
+                    <button
+                      class="reviews-media-tab"
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="reviewsFeedbackStage"
+                      id="tab-feedback"
+                      data-reviews-tab="feedback"
+                    >
+                      <span>Отзывы</span>
+                      <img src="./assets/reviews_arrow.svg" alt="" aria-hidden="true" />
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+              </div>
+        
+              <div 
+                class="reviews-media-stage reviews-media-stage-official" 
+                id="reviewsOfficialStage" 
+                role="tabpanel" 
+                aria-labelledby="tab-official"
+              >
+                <div class="reviews-scroll-container">
+                  <article class="reviews-slide" data-slide="0">
+                    <div class="reviews-portrait-wrapper">
+                      <img class="reviews-portrait-img" src="./assets/about1.jpg" alt="Фото В.В. Гордиенко" />
+                    </div>
+        
+                    <div class="reviews-letter-wrapper">
+                      <img class="reviews-letter-frame" src="./assets/reviews_gratitude_frames.png" alt="" aria-hidden="true" />
+                      <img class="reviews-letter-img" src="./assets/images/reviews/reviews_letter.webp" alt="Скан официального письма" />
+                    </div>
+        
+                    <header class="reviews-person-info">
+                      <h3>В.В. Гордиенко</h3>
+                      <p>Начальник Главного управления архитектуры и градостроительства Московской области</p>
+                    </header>
+                  </article>
+        
+                  <article class="reviews-slide" data-slide="1">
+                    <div class="reviews-portrait-wrapper">
+                      <img class="reviews-portrait-img" src="./assets/about2.jpg" alt="Фото Г. В. Дёгтев" />
+                    </div>
+                    <div class="reviews-letter-wrapper">
+                      <img class="reviews-letter-frame" src="./assets/reviews_gratitude_frames.png" alt="" aria-hidden="true" />
+                      <img class="reviews-letter-img" src="./assets/images/reviews/Rectangle_6868.webp" alt="Скан письма" />
+                    </div>
+                    <header class="reviews-person-info">
+                      <h3>Г. В. Дёгтев</h3>
+                      <p>Руководитель Департамента города Москвы по конкурентной политике</p>
+                    </header>
+                  </article>
+                  
+                  <article class="reviews-slide" data-slide="2">
+                    <div class="reviews-portrait-wrapper">
+                      <img class="reviews-portrait-img" src="./assets/about3.jpg" alt="Фото М.А. Фомин" />
+                    </div>
+                    <div class="reviews-letter-wrapper">
+                      <img class="reviews-letter-frame" src="./assets/reviews_gratitude_frames.png" alt="" aria-hidden="true" />
+                      <img class="reviews-letter-img" src="./assets/images/reviews/reviews_letter.webp" alt="Скан письма" />
+                    </div>
+                    <header class="reviews-person-info">
+                      <h3>М.А. Фомин</h3>
+                      <p>Заместитель Председателя Правительства Московской области — министр строительного комплекса Московской области</p>
+                    </header>
+                  </article>
+                  
+                  <article class="reviews-slide" data-slide="3">
+                    <div class="reviews-portrait-wrapper">
+                      <img class="reviews-portrait-img" src="./assets/about4.jpg" alt="Фото М.Ш. Хуснуллин" />
+                    </div>
+                    <div class="reviews-letter-wrapper">
+                      <img class="reviews-letter-frame" src="./assets/reviews_gratitude_frames.png" alt="" aria-hidden="true" />
+                      <img class="reviews-letter-img" src="./assets/images/reviews/reviews_letter.webp" alt="Скан письма" />
+                    </div>
+                    <header class="reviews-person-info">
+                      <h3>М.Ш. Хуснуллин</h3>
+                      <p>Заместитель Мэра Москвы в Правительстве Москвы по вопросам градостроительной политики и строительства</p>
+                    </header>
+                  </article>
+                </div>
+              </div>
+        
+              <div 
+                class="reviews-media-stage reviews-media-stage-gratitude" 
+                role="tabpanel" 
+                aria-labelledby="tab-gratitude" 
+                hidden
+              >
+                <div class="reviews-gratitude-gallery" id="reviewsGratitudeGallery" aria-label="Галерея благодарностей">
+                  <div class="reviews-gratitude-slides-wrapper">
+                    <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="0" aria-hidden="false">
+                      <img class="reviews-gratitude-card-frame" src="./assets/reviews_gratitude_frames.png" alt="" aria-hidden="true" />
+                      <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_1.webp" alt="Благодарственное письмо 1" />
+                    </figure>
+                    <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="1" aria-hidden="true">
+                      <img class="reviews-gratitude-card-frame" src="./assets/reviews_gratitude_frames.png" alt="" aria-hidden="true" />
+                      <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_2.webp" alt="" />
+                    </figure>
+                    <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="2" aria-hidden="true">
+                      <img class="reviews-gratitude-card-frame" src="./assets/reviews_gratitude_frames.png" alt="" aria-hidden="true" />
+                      <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_3.webp" alt="" />
+                    </figure>
+                    <figure class="reviews-gratitude-card" data-gratitude-card data-gratitude-index="3" aria-hidden="true">
+                      <img class="reviews-gratitude-card-frame" src="./assets/reviews_gratitude_frames.png" alt="" aria-hidden="true" />
+                      <img class="reviews-gratitude-card-image" src="./assets/images/reviews/reviews_gratitude_4.webp" alt="" />
+                    </figure>
+                  </div>
+        
+                  <div class="reviews-gratitude-cursor" id="reviewsGratitudeCursor" aria-hidden="true">
+                    <img class="reviews-gratitude-cursor-ring" src="./assets/reviews_gratitude_cursor_circle.svg" alt="" />
+                    <img class="reviews-gratitude-cursor-arrow" src="./assets/reviews_gratitude_cursor_arrow.svg" alt="" />
+                  </div>
+                </div>
+              </div>
+        
+              <div 
+                class="reviews-media-stage reviews-media-stage-feedback" 
+                id="reviewsFeedbackStage" 
+                role="tabpanel" 
+                aria-labelledby="tab-feedback" 
+                hidden
+              >
+                <div class="reviews-feedback-list" role="region" aria-live="polite">
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_center.webp" alt="Отзыв Ольги Галагиной" data-feedback-card data-feedback-label="Отзыв Ольги Галагиной" data-feedback-index="0" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_right_1.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 2" data-feedback-index="1" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_right_2.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 3" data-feedback-index="2" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_right_3.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 4" data-feedback-index="3" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_right_2.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 5" data-feedback-index="4" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_left_3.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 6" data-feedback-index="5" />
+                  <img class="reviews-feedback-card" src="./assets/images/reviews/reviews_feedback_left_1.webp" alt="" aria-hidden="true" data-feedback-card data-feedback-label="Отзыв 7" data-feedback-index="6" />
+                </div>
+        
+                <nav class="reviews-feedback-controls">
+                  <button class="reviews-feedback-nav reviews-feedback-nav-left" type="button" aria-label="Предыдущий отзыв">
+                    <span class="reviews-feedback-nav-visual" aria-hidden="true">
+                      <img class="reviews-feedback-nav-layer reviews-feedback-nav-layer--default reviews-feedback-nav-layer--prev" src="./assets/17830c88a928c3e47f6f6900ace88431311bda0c.svg" alt="" />
+                      <img class="reviews-feedback-nav-layer reviews-feedback-nav-layer--gold reviews-feedback-nav-layer--prev" src="./assets/goldarrow.svg" alt="" />
+                    </span>
+                  </button>
+                  <button class="reviews-feedback-nav reviews-feedback-nav-right" type="button" aria-label="Следующий отзыв">
+                    <span class="reviews-feedback-nav-visual" aria-hidden="true">
+                      <img class="reviews-feedback-nav-layer reviews-feedback-nav-layer--default" src="./assets/a0e06579757b5f495cfec4ac59b801a9e6411816.svg" alt="" />
+                      <img class="reviews-feedback-nav-layer reviews-feedback-nav-layer--gold" src="./assets/goldarrow.svg" alt="" />
+                    </span>
+                  </button>
+                </nav>
+              </div>
+        
+            </section>
+          </div>
+        </section>
+        <section class="screen screen-media-library">
+        <div class="reviews-media-library-wrapper">
+          <h2 class="reviews-media-library">МЕДИАТЕКА</h2>
+
+          <img
+            class="reviews-media-arc reviews-media-arc-top"
+            src="./assets/reviews_arc_top.svg"
+            alt=""
+          />
+          <img
+            class="reviews-media-arc reviews-media-arc-bottom"
+            src="./assets/reviews_arc_bottom.svg"
+            alt=""
+          />
+
+          <div class="reviews-media-stream media-lib-carousel" id="mediaLibCarousel" aria-label="Медиатека">
+            <!-- Ряд 1 -->
+            <div class="media-lib-row">
+              <div class="media-lib-scene">
+                <div class="media-lib-ring" id="mediaLibRing0">
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_01.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_02.webp" alt="Медиатека 1" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_03.webp" alt="Медиатека 2" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_04.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_05.webp" alt="Медиатека 3" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_11.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_12.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_13.webp" alt="" decoding="async" /></div>
+                </div>
+              </div>
+            </div>
+            <!-- Ряд 2 -->
+            <div class="media-lib-row">
+              <div class="media-lib-scene">
+                <div class="media-lib-ring" id="mediaLibRing1">
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_06.webp" alt="Медиатека 4" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_07.webp" alt="Медиатека 5" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_08.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_09.webp" alt="Медиатека 6" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_10.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_14.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_15.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_01.webp" alt="" decoding="async" /></div>
+                </div>
+              </div>
+            </div>
+            <!-- Ряд 3 -->
+            <div class="media-lib-row">
+              <div class="media-lib-scene">
+                <div class="media-lib-ring" id="mediaLibRing2">
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_11.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_12.webp" alt="Медиатека 7" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_13.webp" alt="Медиатека 8" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_14.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_15.webp" alt="Медиатека 9" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_02.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_03.webp" alt="" decoding="async" /></div>
+                  <div class="media-lib-slide"><img src="./assets/images/reviews/reviews_stream_05.webp" alt="" decoding="async" /></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reviews-media-film" aria-hidden="true">
+            <img
+              class="reviews-media-film-image"
+              src="./assets/images/reviews/Group_10.webp"
+              alt=""
+            />
+          </div>
+
+          <div
+            class="reviews-media-dates reviews-media-ticker"
+            aria-label="Хронология медиатеки"
+          >
+            <div class="reviews-media-ticker-track">
+              <div class="reviews-media-ticker-set">
+                <div class="reviews-media-ticker-chip">
+                  <span>2010 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2011 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2012 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2013 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2014 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2015 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2016 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2017 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2018 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2019 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2020 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2021 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2022 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+              </div>
+              <div class="reviews-media-ticker-set" aria-hidden="true">
+                <div class="reviews-media-ticker-chip">
+                  <span>2010 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2011 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2012 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2013 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2014 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2015 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2016 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2017 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2018 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2019 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2020 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2021 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+                <div class="reviews-media-ticker-chip">
+                  <span>2022 год</span
+                  ><img src="./assets/reviews_arrow.svg" alt="" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="screen-videoteka" id="videotekaScreen" aria-label="Видеотека">
+          <h2 class="videoteka-title videoteka-title-main videoteka-title-desktop">
+            ВИДЕ<span class="videoteka-title-o">O</span>ТЕКА
+          </h2>
+
+          <div
+            class="videoteka-tabs"
+            role="tablist"
+            aria-label="Категории видеотеки"
+          >
+            <h2 class="videoteka-title videoteka-title-main videoteka-title-mobile">
+              ВИДЕ<span class="videoteka-title-o">O</span>ТЕКА
+            </h2>
+            <button
+              class="videoteka-tab is-active"
+              type="button"
+              aria-selected="true"
+              data-category="ceremony"
+            >
+              <span>Церемония</span>
+              <img src="./assets/videoteka_tab_arrow.svg" alt="" />
+            </button>
+            <button class="videoteka-tab" type="button" aria-selected="false" data-category="promo">
+              <span>Реклама премии</span>
+              <img src="./assets/videoteka_tab_arrow.svg" alt="" />
+            </button>
+            <button class="videoteka-tab" type="button" aria-selected="false" data-category="winners">
+              <span>Реклама победителей</span>
+              <img src="./assets/videoteka_tab_arrow.svg" alt="" />
+            </button>
+            <button class="videoteka-tab" type="button" aria-selected="false" data-category="tv">
+              <span>ТВ - репортажи</span>
+              <img src="./assets/videoteka_tab_arrow.svg" alt="" />
+            </button>
+            <button class="videoteba-tab-btn" type="button">
+              <span>Смотреть все видео</span>
+              <img src="./assets/videoteka_tab_arrow.svg" alt="" />
+            </button>
+          </div>
+
+
+
+          <div class="videoteka-list">
+            <article class="videoteka-item" data-category="ceremony">
+              <div class="videoteka-item-media yt-player" data-rutube-id="46d36972a5b8de64259fb3104d65c36d">
+                <img class="videoteka-item-image yt-thumb" src="./assets/video1.jpg" alt="Премия «Рекорды Рынка Недвижимости» назвала лучшие проекты и компании, получившие статус №1" loading="lazy" />
+                <button class="videoteka-item-play yt-play-btn" aria-label="Воспроизвести видео"></button>
+              </div>
+              <div class="videoteka-item-copy">
+                <h3>Премия «Рекорды Рынка Недвижимости» назвала лучшие проекты и компании, получившие статус «№1».</h3>
+                <p>Состоялся Оскар рынка недвижимости 2025! 30 мая ежегодная международная премия «Рекорды Рынка Недвижимости 2025» определила лучшие объекты и компании, получившие заветный Оскар и статус «№1 на рынке недвижимости».</p>
+              </div>
+              <a class="videoteka-item-link" href="https://rutube.ru/video/46d36972a5b8de64259fb3104d65c36d/?r=wd" target="_blank" aria-label="Открыть видео 1"><img src="./assets/videoteka_link_arrow.svg" alt="" aria-hidden="true"/></a>
+            </article>
+
+            <article class="videoteka-item" data-category="ceremony">
+              <div class="videoteka-item-media yt-player" data-rutube-id="b6ad31c9225223c08c7710d496c8c9c1">
+                <img class="videoteka-item-image yt-thumb" src="./assets/video2.jpg" alt="Премия «Рекорды Рынка Недвижимости 2024» назвала лучшие проекты и компании, получившие статус №1" loading="lazy" />
+                <button class="videoteka-item-play yt-play-btn" aria-label="Воспроизвести видео"></button>
+              </div>
+              <div class="videoteka-item-copy">
+                <h3>Премия «Рекорды Рынка Недвижимости 2024» назвала лучшие проекты и компании, получившие статус «№1».</h3>
+                <p>31 мая прошла 16-я ежегодная международная премия «Рекорды Рынка Недвижимости» определив лучшие объекты и компании, заслуженно получившие заветный Оскар и статус «№1 на рынке недвижимости».</p>
+              </div>
+              <a class="videoteka-item-link" href="https://rutube.ru/video/b6ad31c9225223c08c7710d496c8c9c1/?r=wd" target="_blank" aria-label="Открыть видео 2"><img src="./assets/videoteka_link_arrow.svg" alt="" aria-hidden="true"/></a>
+            </article>
+
+            <article class="videoteka-item" data-category="promo">
+              <div class="videoteka-item-media yt-player" data-rutube-id="b6efa6973ab945e856b26ff55536e389">
+                <img class="videoteka-item-image yt-thumb" src="./assets/zastavka.jpg" alt="Рекорды шагают по стране. Путешествие в недвижимость мечты!" loading="lazy" />
+                <button class="videoteka-item-play yt-play-btn" aria-label="Воспроизвести видео"></button>
+              </div>
+              <div class="videoteka-item-copy">
+                <h3>«Рекорды шагают по стране. Путешествие в недвижимость мечты!»</h3>
+                <p>Московский Бизнес Клуб представляет проект о недвижимости в формате мини-сериала: ведущая Анна Маркина вместе с семьёй и экспертом рынка путешествует по Южному берегу Крыма, показывая лучшие локации, стиль жизни и тёплые семейные моменты. Это не просто обзор, а история о поиске дома мечты.</p>
+              </div>
+              <a class="videoteka-item-link" href="https://rutube.ru/video/b6efa6973ab945e856b26ff55536e389/" target="_blank" aria-label="Открыть видео 3"><img src="./assets/videoteka_link_arrow.svg" alt="" aria-hidden="true"/></a>
+            </article>
+
+            <article class="videoteka-item" data-category="tv">
+              <div class="videoteka-item-media yt-player" data-rutube-id="cabb0faea08bcc580b4d8f726aec6ed2">
+                <img class="videoteka-item-image yt-thumb" src="./assets/video4.jpg" alt="Рекорды Рынка Недвижимости 2023 | LISCHANNEL" loading="lazy" />
+                <button class="videoteka-item-play yt-play-btn" aria-label="Воспроизвести видео"></button>
+              </div>
+              <div class="videoteka-item-copy">
+                <h3>«Рекорды Рынка Недвижимости 2023» | LISCHANNEL</h3>
+                <p>Состоялся Оскар рынка недвижимости 2025! 30 мая ежегодная международная премия «Рекорды Рынка Недвижимости 2025» определила лучшие объекты и компании, получившие заветный Оскар и статус «№1 на рынке недвижимости».</p>
+              </div>
+              <a class="videoteka-item-link" href="https://rutube.ru/video/cabb0faea08bcc580b4d8f726aec6ed2/?r=wd" target="_blank" aria-label="Открыть видео 4"><img src="./assets/videoteka_link_arrow.svg" alt="" aria-hidden="true"/></a>
+            </article>
+          </div>
+          <button type="button" class="videoteka-all-videos-btn">
+            Смотреть все видео
+            <img src="./assets/arrow-btn.svg" width="11" height="15" alt="" aria-hidden="true" />
+          </button>
+        </section>
+        <section class="screen screen-news" id="newsScreen" aria-labelledby="news-title-id">
+          <div class="news-wrapp">
+            <h2 class="news-title" id="news-title-id">
+              <span class="news-title-word">
+                <span class="part-1">Н</span>
+                <span class="news-title-o">O</span>
+                <span class="part-2">ВОСТИ /</span>
+                <span class="news-title-tail">СТАТЬИ</span>
+              </span>
+            </h2>
+        
+            <nav class="news-tabs" role="tablist" aria-label="Категории новостей">
+              <button
+                class="news-tab is-active"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                aria-controls="newsTrack"
+                id="tab-all"
+                data-news-filter="all"
+              >
+                <span>Все</span>
+                <span class="news-tab-arrows" aria-hidden="true">
+                  <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                  <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                </span>
+                <img class="news-tab-trigger-doun" src="./assets/doun.svg" alt="" aria-hidden="true" />
+              </button>
+
+              <div class="news-tabs-dropdown" id="newsTabsDropdown">
+                <div class="news-tabs-dropdown-list">
+                <button class="news-tab news-tab-option-all" type="button" role="tab" aria-selected="true" aria-controls="newsTrack" data-news-filter="all">
+                  <span>Все</span>
+                  <span class="news-tab-arrows" aria-hidden="true">
+                    <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                    <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                  </span>
+                </button>
+
+                <button class="news-tab" type="button" role="tab" aria-selected="false" aria-controls="newsTrack" data-news-filter="news">
+                  <span>Новости</span>
+                  <span class="news-tab-arrows" aria-hidden="true">
+                    <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                    <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                  </span>
+                </button>
+
+                <button class="news-tab" type="button" role="tab" aria-selected="false" aria-controls="newsTrack" data-news-filter="useful">
+                  <span>Полезное</span>
+                  <span class="news-tab-arrows" aria-hidden="true">
+                    <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                    <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                  </span>
+                </button>
+
+                <button class="news-tab" type="button" role="tab" aria-selected="false" aria-controls="newsTrack" data-news-filter="premieres">
+                  <span>Премьеры</span>
+                  <span class="news-tab-arrows" aria-hidden="true">
+                    <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                    <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                  </span>
+                </button>
+
+                <button class="news-tab" type="button" role="tab" aria-selected="false" aria-controls="newsTrack" data-news-filter="expert">
+                  <span>Экспертная колонка</span>
+                  <span class="news-tab-arrows" aria-hidden="true">
+                    <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                    <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                  </span>
+                </button>
+
+                <button class="news-tab" type="button" role="tab" aria-selected="false" aria-controls="newsTrack" data-news-filter="nominees">
+                  <span>Новости номинантов</span>
+                  <span class="news-tab-arrows" aria-hidden="true">
+                    <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                    <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                  </span>
+                </button>
+
+                <button class="news-tab" type="button" role="tab" aria-selected="false" aria-controls="newsTrack" data-news-filter="analytics">
+                  <span>Аналитика</span>
+                  <span class="news-tab-arrows" aria-hidden="true">
+                    <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                    <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                  </span>
+                </button>
+
+                <button class="news-tab" type="button" role="tab" aria-selected="false" aria-controls="newsTrack" data-news-filter="reviews">
+                  <span>Обзоры</span>
+                  <span class="news-tab-arrows" aria-hidden="true">
+                    <img class="news-tab-arrow news-tab-arrow--idle" src="./assets/news_tab_arrow_brown.svg" alt="" />
+                    <img class="news-tab-arrow news-tab-arrow--hover" src="./assets/videoteka_tab_arrow.svg" alt="" />
+                  </span>
+                </button>
+                </div>
+              </div>
+            </nav>
+        
+            <div
+              class="news-gallery"
+              id="newsGallery"
+              role="region"
+              aria-label="Галерея новостей"
+            >
+              <div class="news-gallery-viewport">
+              <div class="news-track" id="newsTrack" role="tabpanel" aria-labelledby="tab-all">
+                
+                <article class="news-card" data-news-card data-news-category="news">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_1.webp"
+                    alt="Премия Рекорды Рынка Недвижимости зафиксировала цены 2025 года"
+                    loading="lazy"
+                  />
+                  <h3>Премия “Рекорды Рынка Недвижимости” зафиксировала цены 2025 года до 15 февраля</h3>
+                  <p><time datetime="2026-01-22">22.01.2026</time></p>
+                </article>
+        
+                <article class="news-card" data-news-card data-news-category="useful">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_2.webp"
+                    alt="Инструкция по выбору пакета участия"
+                    loading="lazy"
+                  />
+                  <h3>Как выбрать пакет для участия в премии?</h3>
+                  <p><time datetime="2026-01-25">25.01.2026</time></p>
+                </article>
+        
+                <article class="news-card" data-news-card data-news-category="analytics">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_3.webp"
+                    alt="Ребрендинг Московского Бизнес Клуба"
+                    loading="lazy"
+                  />
+                  <h3>Московский Бизнес Клуб запускает ребрендинг в 2026 году</h3>
+                  <p><time datetime="2026-01-22">22.01.2026</time></p>
+                </article>
+        
+                <article class="news-card" data-news-card data-news-category="nominees">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_2.webp"
+                    alt="Сравнение тарифов"
+                    loading="lazy"
+                  />
+                  <h3>Сравнение пакетов и карточка номинанта</h3>
+                  <p><time datetime="2026-01-20">20.01.2026</time></p>
+                </article>
+        
+                <article class="news-card" data-news-card data-news-category="premieres">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_1.webp"
+                    alt="Главные премьеры сезона"
+                    loading="lazy"
+                  />
+                  <h3>Премия "Рекорды Рынка Недвижимости" зафиксировала цены 2025 года до 15 февраля</h3>
+                  <p><time datetime="2026-01-18">18.01.2026</time></p>
+                </article>
+
+                <article class="news-card" data-news-card data-news-category="expert">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_3.webp"
+                    alt="Экспертная колонка о трендах рынка"
+                    loading="lazy"
+                  />
+                  <h3>Экспертная колонка: что изменится на рынке после сезона премии</h3>
+                  <p><time datetime="2026-01-15">15.01.2026</time></p>
+                </article>
+
+                <article class="news-card" data-news-card data-news-category="reviews">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_1.webp"
+                    alt="Обзор номинаций премии"
+                    loading="lazy"
+                  />
+                  <h3>Обзор номинаций: кому достались главные акценты сезона</h3>
+                  <p><time datetime="2026-01-12">12.01.2026</time></p>
+                </article>
+
+                <article class="news-card" data-news-card data-news-category="news">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_3.webp"
+                    alt="Итоги отборочного этапа"
+                    loading="lazy"
+                  />
+                  <h3>Итоги отборочного этапа и даты следующих эфиров</h3>
+                  <p><time datetime="2026-01-10">10.01.2026</time></p>
+                </article>
+
+                <article class="news-card" data-news-card data-news-category="analytics">
+                  <img
+                    class="news-card-image"
+                    src="./assets/images/news/news_article_2.webp"
+                    alt="Аналитика по участию в премии"
+                    loading="lazy"
+                  />
+                  <h3>Аналитика: динамика заявок и география номинантов</h3>
+                  <p><time datetime="2026-01-08">08.01.2026</time></p>
+                </article>
+        
+              </div>
+              </div>
+        
+              <div class="news-cursor" id="newsCursor" aria-hidden="true">
+                <img class="news-cursor-ring" src="./assets/news_cursor_circle.svg" alt="" />
+                <img class="news-cursor-arrow" src="./assets/news_cursor_arrow.svg" alt="" />
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="screen-organizer" id="organizerScreen" aria-labelledby="organizerTitle">
+          <div class="organizer-decor" aria-hidden="true">
+            <img class="organizer-bg-pc organizer-bg-pc--desktop" src="./assets/bg-pc.svg" alt="" width="1217" height="599" />
+            <img class="organizer-bg-pc organizer-bg-pc--mobile" src="./assets/patern.svg" alt="" style="width:100%"/>
+            <img class="organizer-mark" src="./assets/images/organizer/organizer_mark.webp" alt="">
+            <img class="organizer-pattern organizer-pattern--desktop" src="./assets/organizer_pattern.svg" alt="" width="1098" height="391" />
+            <img class="organizer-pattern organizer-pattern--mobile" src="./assets/organizer_pattern.svg" alt="" width="1098" height="391" />
+          </div>
+        
+          <!-- <h2 class="organizer-title" id="organizerTitle">
+            <span>МОСКОВСКИЙ</span>
+            <span>БИЗНЕС</span>
+            <span>КЛУБ</span>
+          </h2> -->
+          <div class="organizer-content">
+           <div>
+            <p class="organizer-kicker">Организатор премии</p>
+            <p class="organizer-award-name">РЕКОРДЫ РЫНКА НЕДВИЖИМОСТИ</p>
+           </div>
+           <p class="organizer-site">MOSBIZCLUB.RU</p>
+          </div>
+        </section>
+        <section class="screen screen-subscribe" id="subscribeScreen">
+        <section
+          class="subscribe-news"
+          aria-label="Подписка на новости премии"
+        >
+          <h2 class="subscribe-news-title">
+            УЗНАЙТЕ
+            <span class="subscribe-news-title-o">O</span> ВАЖНЫХ<br />СОБЫТИЯХ
+            ПЕРВЫМИ
+          </h2>
+          <p class="subscribe-news-subtitle">*Подпишитесь на новости премии</p>
+
+          <form class="subscribe-news-form" action="#" method="dialog">
+            <label class="subscribe-news-field subscribe-news-field-email">
+              <input
+                class="subscribe-news-input"
+                type="email"
+                placeholder="Ваш email"
+              />
+            </label>
+            <label class="subscribe-news-field subscribe-news-field-phone">
+              <input
+                class="subscribe-news-input"
+                type="tel"
+                placeholder="+7 (999) 999 99 99"
+              />
+            </label>
+            <button class="subscribe-news-submit" type="submit">
+              ПОДПИСАТЬСЯ
+            </button>
+          </form>
+
+          <div class="subscribe-news-consent">
+            <button
+              class="subscribe-news-check"
+              id="subscribeCheck"
+              type="button"
+              aria-pressed="false"
+              aria-label="Согласие на обработку данных"
+            >
+              <img
+                class="subscribe-news-check-icon"
+                src="./assets/ccb5c64de7f69c65b94b33145c2dcd50f58b6aaf.svg"
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
+            <p class="subscribe-news-consent-text">
+              Нажимая на кнопку «Подписаться», вы подтверждаете
+              <span
+                >свое согласие на обработку персональных данных и получение
+                сообщений информационного характера.</span
+              >
+            </p>
+          </div>
+        </section>
+        <section class="award-scene" aria-label="Премия 2026">
+          <video
+            class="award-scene-video"
+            src="./assets/Горизонт.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            aria-hidden="true"
+          ></video>
+          <img
+            class="award-scene-bg award-scene-bg-base"
+            src="./assets/images/award/award_scene_mobile_bg_1.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            class="award-scene-bg award-scene-bg-overlay"
+            src="./assets/images/award/award_scene_mobile_bg_2.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            class="award-scene-logo"
+            src="./assets/images/award/log.webp"
+            alt="Премия рекорды рынка недвижимости"
+          />
+        </section>
+        <section class="contacts-section" aria-label="Связаться с нами">
+          <h2 class="contacts-title">
+            <span class="contacts-title-line1">СВЯЗАТЬСЯ</span><span class="contacts-title-gap" aria-hidden="true"> </span><span class="contacts-title-line2">С НАМИ:</span>
+          </h2>
+
+          <div class="contacts-cards">
+          <article class="contacts-card contacts-card-anna">
+            <div class="contacts-card-photo-shell">
+              <img
+                class="contacts-card-photo contacts-card-photo-anna"
+                src="./assets/images/contacts/contact_anna_markina.webp"
+                alt="Анна Маркина"
+              />
+            </div>
+            <div class="contacts-card-role contacts-card-role-anna">
+              РУКОВОДИТЕЛЬ ПРЕМИИ
+            </div>
+            <div class="contacts-card-info">
+              <div class="contacts-card-copy">
+                <p class="contacts-card-name">АННА МАРКИНА</p>
+                <a class="contacts-card-link" href="tel:+74956322266"
+                  >+7 965 360 66 66</a
+                >
+                <a class="contacts-card-link" href="mailto:anna@mosbizclub.ru"
+                  >anna@mosbizclub.ru</a
+                >
+              </div>
+              <div class="contacts-card-actions">
+                <a
+                  class="contacts-card-action"
+                  href="tel:+796536066"
+                  aria-label="Позвонить Анне Маркиной"
+                >
+                  <span class="contacts-card-action-icons" aria-hidden="true">
+                    <img class="contacts-card-action-img contacts-card-action-img--default" src="./assets/contact_phone_icon.svg" alt="" />
+                    <img class="contacts-card-action-img contacts-card-action-img--hover" src="./assets/Vector.svg" alt="" />
+                  </span>
+                </a>
+                <a
+                  class="contacts-card-action"
+                  href="https://t.me/anna_markina10"
+                  aria-label="Написать Анне Маркиной в Telegram"
+                >
+                  <span class="contacts-card-action-icons" aria-hidden="true">
+                    <img class="contacts-card-action-img contacts-card-action-img--default" src="./assets/contact_telegram_icon.svg" alt="" />
+                    <img class="contacts-card-action-img contacts-card-action-img--hover" src="./assets/file-icons_telegram.svg" alt="" />
+                  </span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="contacts-card contacts-card-valentina">
+            <div class="contacts-card-photo-shell">
+              <img
+                class="contacts-card-photo contacts-card-photo-valentina"
+                src="./assets/images/contacts/contact_valentina_egarmina.webp"
+                alt="Валентина Егармина"
+              />
+            </div>
+            <div class="contacts-card-role contacts-card-role-valentina">
+              СПОНСОРСТВО
+            </div>
+            <div class="contacts-card-info">
+              <div class="contacts-card-copy">
+                <p class="contacts-card-name">ВАЛЕНТИНА ЕГАРМИНА</p>
+                <a class="contacts-card-link" href="tel:+79255074660"
+                  >+7 (925) 507 46 60</a
+                >
+                <a class="contacts-card-link" href="mailto:mail@mosbizclub.ru"
+                  >mail@mosbizclub.ru</a
+                >
+              </div>
+              <div class="contacts-card-actions">
+                <a
+                  class="contacts-card-action"
+                  href="tel:+79255074660"
+                  aria-label="Позвонить Валентине Егарминой"
+                >
+                  <span class="contacts-card-action-icons" aria-hidden="true">
+                    <img class="contacts-card-action-img contacts-card-action-img--default" src="./assets/contact_phone_icon.svg" alt="" />
+                    <img class="contacts-card-action-img contacts-card-action-img--hover" src="./assets/Vector.svg" alt="" />
+                  </span>
+                </a>
+                <a
+                  class="contacts-card-action"
+                  href="https://t.me/event_mbk"
+                  aria-label="Написать Валентине Егарминой в Telegram"
+                >
+                  <span class="contacts-card-action-icons" aria-hidden="true">
+                    <img class="contacts-card-action-img contacts-card-action-img--default" src="./assets/contact_telegram_icon.svg" alt="" />
+                    <img class="contacts-card-action-img contacts-card-action-img--hover" src="./assets/file-icons_telegram.svg" alt="" />
+                  </span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="contacts-card contacts-card-ratnikova">
+            <div class="contacts-card-photo-shell">
+              <img
+                class="contacts-card-photo contacts-card-photo-ratnikova"
+                src="./assets/images/contacts/contact_anna_ratnikova.webp"
+                alt="Анна Ратникова"
+              />
+            </div>
+            <div class="contacts-card-role contacts-card-role-ratnikova">
+              ИНФОПАРТНЕРСТВО
+            </div>
+            <div class="contacts-card-info">
+              <div class="contacts-card-copy">
+                <p class="contacts-card-name">АННА РАТНИКОВА</p>
+                <a class="contacts-card-link" href="tel:+70000000000"
+                  >+7 (000) 000 00 00</a
+                >
+                <a
+                  class="contacts-card-link"
+                  href="mailto:manager@mosbizclub.ru"
+                  >manager@mosbizclub.ru</a
+                >
+              </div>
+              <div class="contacts-card-actions">
+                <a
+                  class="contacts-card-action"
+                  href="tel:+70000000000"
+                  aria-label="Позвонить Анне Ратниковой"
+                >
+                  <span class="contacts-card-action-icons" aria-hidden="true">
+                    <img class="contacts-card-action-img contacts-card-action-img--default" src="./assets/contact_phone_icon.svg" alt="" />
+                    <img class="contacts-card-action-img contacts-card-action-img--hover" src="./assets/Vector.svg" alt="" />
+                  </span>
+                </a>
+                <a
+                  class="contacts-card-action"
+                  href="https://t.me/anna_d1107"
+                  aria-label="Написать Анне Ратниковой в Telegram"
+                >
+                  <span class="contacts-card-action-icons" aria-hidden="true">
+                    <img class="contacts-card-action-img contacts-card-action-img--default" src="./assets/contact_telegram_icon.svg" alt="" />
+                    <img class="contacts-card-action-img contacts-card-action-img--hover" src="./assets/file-icons_telegram.svg" alt="" />
+                  </span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="contacts-card contacts-card-pavel">
+            <div class="contacts-card-photo-shell">
+              <img
+                class="contacts-card-photo contacts-card-photo-pavel"
+                src="./assets/images/contacts/contact_pavel_bagatko.webp"
+                alt="Павел Багатько"
+              />
+            </div>
+            <div class="contacts-card-role contacts-card-role-pavel">
+              УЧАСТИЕ И БИЛЕТЫ
+            </div>
+            <div class="contacts-card-info">
+              <div class="contacts-card-copy">
+                <p class="contacts-card-name">ПАВЕЛ БАГАТЬКО</p>
+                <a class="contacts-card-link" href="tel:+79637529582"
+                  >+7 (963) 752 95 82</a
+                >
+                <a class="contacts-card-link" href="mailto:pr@mosbizclub.ru"
+                  >pr@mosbizclub.ru</a
+                >
+              </div>
+              <div class="contacts-card-actions">
+                <a
+                  class="contacts-card-action"
+                  href="tel:+79637529582"
+                  aria-label="Позвонить Павлу Багатько"
+                >
+                  <span class="contacts-card-action-icons" aria-hidden="true">
+                    <img class="contacts-card-action-img contacts-card-action-img--default" src="./assets/contact_phone_icon.svg" alt="" />
+                    <img class="contacts-card-action-img contacts-card-action-img--hover" src="./assets/Vector.svg" alt="" />
+                  </span>
+                </a>
+                <a
+                  class="contacts-card-action"
+                  href="https://t.me/pablo_mosbiz"
+                  aria-label="Написать Павлу Багатько в Telegram"
+                >
+                  <span class="contacts-card-action-icons" aria-hidden="true">
+                    <img class="contacts-card-action-img contacts-card-action-img--default" src="./assets/contact_telegram_icon.svg" alt="" />
+                    <img class="contacts-card-action-img contacts-card-action-img--hover" src="./assets/file-icons_telegram.svg" alt="" />
+                  </span>
+                </a>
+              </div>
+            </div>
+          </article>
+          </div>
+        </section>
+        <section
+          class="footer-section"
+          aria-label="Навигация и материалы премии"
+        >
+          <div class="footer-header">
+          <div class="footer-logo">
+            <video class="footer-logo__video" autoplay loop muted playsinline>
+              <source src="./assets/logo.webm" type="video/webm">
+            </video>
+            <img class="footer-logo__photo" src="./assets/images/award/log.png" alt="" />
+          </div>
+
+          <div class="footer-ctas">
+          <a class="footer-cta footer-cta-primary" href="#">
+            <span>Купить билет</span>
+            <img
+              class="footer-cta-arrow"
+              src="./assets/partners_arrow_white_small.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </a>
+          <a class="footer-cta footer-cta-secondary" href="#">
+            <span>Победители 2026</span>
+            <img
+              class="footer-cta-arrow"
+              src="./assets/partners_arrow_white_small.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </a>
+          </div>
+          </div>
+
+          <div class="footer-columns">
+            <div class="footer-column">
+              <h2 class="footer-column-title">О ПРЕМИИ</h2>
+              <img
+                class="footer-column-arrow"
+                src="./assets/news_cursor_arrow.svg"
+                alt=""
+                aria-hidden="true"
+              />
+              <div class="footer-column-links">
+                <a class="footer-link" href="#">Что о нас говорят?</a>
+                <a class="footer-link" href="#">Реклама премии</a>
+                <a class="footer-link" href="#">Что вам дает участие?</a>
+                <a class="footer-link" href="#">Церемония награждения</a>
+                <a class="footer-link" href="#">Пост-релиз Премии</a>
+                <a class="footer-link" href="#">Требования к номинациям</a>
+              </div>
+            </div>
+
+            <div class="footer-column">
+              <h2 class="footer-column-title">ПРЕМИЯ 2026</h2>
+              <img
+                class="footer-column-arrow"
+                src="./assets/news_cursor_arrow.svg"
+                alt=""
+                aria-hidden="true"
+              />
+              <div class="footer-column-links">
+                <a class="footer-link" href="#">Номинанты</a>
+                <a class="footer-link" href="#">Номинации</a>
+                <a class="footer-link" href="#">Жюри</a>
+                <a class="footer-link" href="#">Сроки проведения</a>
+                <a class="footer-link" href="#">Условия участия</a>
+                <a class="footer-link" href="#">Стать партнером</a>
+              </div>
+            </div>
+
+            <div class="footer-column">
+              <h2 class="footer-column-title">МАТЕРИАЛЫ</h2>
+              <img
+                class="footer-column-arrow"
+                src="./assets/news_cursor_arrow.svg"
+                alt=""
+                aria-hidden="true"
+              />
+              <div class="footer-column-links">
+                <a class="footer-link" href="#">СМИ о премии</a>
+                <a class="footer-link" href="#">Медиатека</a>
+                <a class="footer-link" href="#">Видеотека</a>
+                <a class="footer-link" href="#">Реклама и СМИ</a>
+                <a class="footer-link" href="#">Радио реклама</a>
+                <a class="footer-link" href="#">Новости и статьи</a>
+              </div>
+            </div>
+
+            <div class="footer-column footer-column-legal">
+              <h2 class="footer-column-title">ЮР. МАТЕРИАЛЫ</h2>
+              <img
+                class="footer-column-arrow"
+                src="./assets/news_cursor_arrow.svg"
+                alt=""
+                aria-hidden="true"
+              />
+              <div class="footer-column-links">
+                <a class="footer-link" href="#">ИП Маркина Анна Андреевна</a>
+                <a class="footer-link" href="#">127473, г. Москва, ул. Селезневская, д. 30, к. 1, кв. 66</a>
+                <a class="footer-link" href="#">ИНН 772155592830</a>
+                <a class="footer-link" href="#">ОГРНИП 312774607201226</a>
+                <a class="footer-link is-accent" href="tel:+79169999999"
+                  >+7 925 507 46 60</a
+                >
+                <a
+                  class="footer-link is-accent"
+                  href="mailto:mail@mosbizclub.ru"
+                  >mail@mosbizclub.ru</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-divider" aria-hidden="true"></div>
+
+          <div class="footer-bottom">
+          <div class="footer-left">
+          <div class="footer-newsletter">
+          <p class="footer-newsletter-label">Подписаться на рассылку:</p>
+          <div class="footer-newsletter-row">
+            <input
+              class="footer-newsletter-input"
+              type="email"
+              placeholder="Введите Email"
+            />
+            <div class="footer-newsletter-line" aria-hidden="true"></div>
+            <button
+              class="footer-newsletter-submit"
+              type="button"
+              aria-label="Подписаться на рассылку"
+            >
+            </button>
+          </div>
+          </div>
+
+          <div class="footer-socials">
+            <a class="footer-social-link" href="#">Dzen</a>
+            <a class="footer-social-link" href="#">Telegram</a>
+            <a class="footer-social-link" href="#">Вконтакте</a>
+            <a class="footer-social-link" href="#">RuTube</a>
+            <a class="footer-social-link" href="#">Telegram-канал</a>
+            <a class="footer-social-link" href="#">Max</a>
+          </div>
+          </div>
+
+          <div class="footer-bottom-links">
+            <a class="footer-bottom-link" href="#"
+              >Политика конфидециальности</a
+            >
+            <a class="footer-bottom-link" href="#">Отказ от ответственности</a>
+          </div>
+
+          <button type="button" class="footer-to-top" id="footerToTop" aria-label="Наверх">
+            <img src="./assets/up.svg" alt="" />
+          </button>
+          </div>
+
+          <p class="footer-copyright">© 2020 РЕКОРДЫ РЫНКА НЕДВИЖИМОСТИ</p>
+        </section>
+      <div class="sales-popup" id="salesPopup" aria-hidden="true" data-lenis-prevent>
+        <div class="sales-popup-backdrop"></div>
+        <button class="sales-popup-close" id="salesPopupClose" type="button" aria-label="Закрыть окно">
+          <img src="./assets/0d772051306beea1adbca36d6958a7e0b52b72c8.svg" alt="" />
+        </button>
+        <div class="sales-popup-shell" role="dialog" aria-modal="true" aria-labelledby="salesPopupTitle">
+          <img class="sales-popup-corner sales-popup-corner-tl" src="./assets/006e765f438bc72bd458197b9aa87b99ac8e9bf8.svg" alt="" />
+          <img class="sales-popup-corner sales-popup-corner-bl" src="./assets/006e765f438bc72bd458197b9aa87b99ac8e9bf8.svg" alt="" />
+          <img class="sales-popup-corner sales-popup-corner-tr" src="./assets/8d04344be97c08fe49e526a620b2fce6d64a03cc.svg" alt="" />
+          <img class="sales-popup-corner sales-popup-corner-br" src="./assets/8d04344be97c08fe49e526a620b2fce6d64a03cc.svg" alt="" />
+          <div class="sales-popup-panel">
+            <h2 class="sales-popup-title" id="salesPopupTitle">
+              Заполните предварительную заявку,<br />мы перезвоним вам в течение часа.
+            </h2>
+            <form class="sales-popup-form" action="#" method="dialog">
+              <label class="sales-popup-field sales-popup-field-name">
+                <input class="sales-popup-input" type="text" placeholder="ФИО" />
+              </label>
+              <label class="sales-popup-field sales-popup-field-company">
+                <input class="sales-popup-input" type="text" placeholder="Компания" />
+              </label>
+              <label class="sales-popup-field sales-popup-field-role">
+                <input class="sales-popup-input" type="text" placeholder="Должность" />
+              </label>
+              <label class="sales-popup-field sales-popup-field-email">
+                <input class="sales-popup-input" type="email" placeholder="Ваш email" />
+              </label>
+              <label class="sales-popup-field sales-popup-field-phone">
+                <input class="sales-popup-input" type="tel" placeholder="+7 (999) 999 99 99" />
+              </label>
+              <button class="sales-popup-submit" type="submit">ОТПРАВИТЬ ЗАЯВКУ</button>
+            </form>
+            <div class="sales-popup-consent">
+              <button class="sales-popup-check is-checked" id="salesPopupCheck" type="button" aria-pressed="true" aria-label="Согласие на обработку данных">
+                <img class="sales-popup-check-icon" src="./assets/ccb5c64de7f69c65b94b33145c2dcd50f58b6aaf.svg" alt="" />
+              </button>
+              <p class="sales-popup-consent-text">
+                Нажимая на кнопку «Оставить заявку», вы подтверждаете
+                <span>свое согласие на обработку персональных данных и получение сообщений информационного характера.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="./hero3d.js"></script>
+    <script src="./script.js"></script>
+</body>
+</html>

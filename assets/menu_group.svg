@@ -1,0 +1,29 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 106 106" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 1000002322">
+<g id="Ellipse 89">
+<circle cx="53" cy="53" r="35" fill="url(#paint0_linear_4003_98)"/>
+<circle cx="53" cy="53" r="35" fill="url(#paint1_linear_4003_98)"/>
+</g>
+<g id="Ellipse 90">
+<circle cx="53" cy="53" r="52.5" stroke="var(--stroke-0, black)"/>
+<circle cx="53" cy="53" r="52.5" stroke="url(#paint2_linear_4003_98)"/>
+</g>
+<path id="Vector 12" d="M36.666 44.833H70.1493" stroke="var(--stroke-0, white)" stroke-width="1.63333" stroke-linecap="round"/>
+<path id="Vector 13" d="M36.666 53H70.1493" stroke="var(--stroke-0, white)" stroke-width="1.63333" stroke-linecap="round"/>
+<path id="Vector 14" d="M36.666 61.167H70.1493" stroke="var(--stroke-0, white)" stroke-width="1.63333" stroke-linecap="round"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_4003_98" x1="53" y1="-7.66667" x2="53" y2="88" gradientUnits="userSpaceOnUse">
+<stop stop-color="#BE001E"/>
+<stop offset="1" stop-color="#DC1924"/>
+</linearGradient>
+<linearGradient id="paint1_linear_4003_98" x1="53" y1="-7.66667" x2="53" y2="88" gradientUnits="userSpaceOnUse">
+<stop stop-color="#BE001E"/>
+<stop offset="1" stop-color="#A9001E"/>
+</linearGradient>
+<linearGradient id="paint2_linear_4003_98" x1="53" y1="-38.8667" x2="53" y2="106" gradientUnits="userSpaceOnUse">
+<stop stop-color="#BE001E"/>
+<stop offset="1" stop-color="#A9001E"/>
+</linearGradient>
+</defs>
+</svg>
