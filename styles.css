@@ -7464,6 +7464,7 @@ left: 0;
     .sales-col-left {
         width: 335px;
         height: auto;
+        min-height: 320px;
     }
 
     .sales-conditions {
